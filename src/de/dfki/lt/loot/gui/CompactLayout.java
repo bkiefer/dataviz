@@ -21,6 +21,7 @@ public class CompactLayout extends AbstractLayout {
     addLayout(new CompactMapLayout());
     addLayout(new CompactConsLayout());
     addLayout(new SimpleTreeLayout());
+    addLayout(new BasicAtomLayout());
   }
 
 

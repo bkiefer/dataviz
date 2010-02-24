@@ -29,6 +29,7 @@ public class ViewContext {
     _visited = new HashMap<Object, Integer>();
     _nextCoref = 0;
     _equivs = new ArrayList<List<GraphicalNode>>();
+    _equivs.add(null);
     _backPointer = new HashMap<Object, GraphicalNode>();
   }
 

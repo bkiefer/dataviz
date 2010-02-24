@@ -40,7 +40,7 @@ public abstract class AbstractLayout implements Layout {
     GraphicalNode result = null;
     for (FacetLayout layout : _facetLayouts) {
       if ((facets & layout.facet()) != 0) {
-        result = layout.transform(null, context, facetMask);
+        result = layout.transform(model, context, facetMask);
       }
       if (result != null) break;
     }
@@ -82,7 +82,7 @@ public abstract class AbstractLayout implements Layout {
       }
       // now: draw only coref, corefNo is the equivalence class no and node
       // the representative
-      node = new TextNode(Integer.toString(- corefNo), Style.get("coref"));
+      node = new TextNode(Integer.toString(corefNo), Style.get("coref"));
     } else {
       // no coref: construct only subnode
       node = someFSNode(model, context, facetMask);

@@ -13,7 +13,7 @@ public class CompactMapLayout extends FacetLayout {
 
   @Override
   public int facet() {
-    return ModelAdapter.CONS;
+    return ModelAdapter.MAP;
   }
 
   @Override
