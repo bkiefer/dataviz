@@ -15,8 +15,6 @@ public abstract class ModelAdapter {
 
   public abstract int facets(Object model);
 
-  public abstract Iterator getSubModels(Object model);
-
   public String getAttribute(Object model, String name) {
     return null;
   }

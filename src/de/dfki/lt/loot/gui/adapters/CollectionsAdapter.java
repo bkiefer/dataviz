@@ -27,17 +27,6 @@ public class CollectionsAdapter extends ModelAdapter {
     return ModelAdapter.ATOM;
   }
 
-  @Override
-  public Iterator getSubModels(Object model) {
-    if (model instanceof Map) {
-      return ((Map)model).values().iterator();
-    }
-    if (model instanceof List) {
-      return ((List)model).iterator();
-    }
-    return null;
-  }
-
   /* -- ConsFacet -- */
 
   @Override
