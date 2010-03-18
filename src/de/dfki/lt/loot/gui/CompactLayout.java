@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package de.dfki.lt.loot.gui;
 
 import java.util.Iterator;
@@ -15,8 +18,15 @@ import de.dfki.lt.loot.gui.adapters.MapAdapterIterator;
 import de.dfki.lt.loot.gui.adapters.ModelAdapter;
 import de.dfki.lt.loot.gui.connectors.StraightConnector;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class CompactLayout.
+ */
 public class CompactLayout extends AbstractLayout {
 
+  /**
+   * Instantiates a new compact layout.
+   */
   public CompactLayout() {
     addLayout(new CompactMapLayout());
     addLayout(new CompactConsLayout());

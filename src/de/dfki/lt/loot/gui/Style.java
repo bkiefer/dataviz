@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package de.dfki.lt.loot.gui;
 
 import java.awt.BasicStroke;
@@ -8,6 +11,7 @@ import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.util.HashMap;
 
+// TODO: Auto-generated Javadoc
 /**
  * This is the <code>Style</code> class. There are four different Styles:
  * 'type', 'feature' and 'bracket' and the default style.
@@ -15,13 +19,25 @@ import java.util.HashMap;
  */
 public class Style {
 
+  /** The font. */
   private Font font;
+  
+  /** The fg col. */
   private Color fgCol;
+  
+  /** The bg col. */
   private Color bgCol;
+  
+  /** The padding. */
   private Padding padding;
+  
+  /** The stroke. */
   private Stroke stroke;
 
+  /** The style map. */
   private static HashMap<String, Style> styleMap;
+  
+  /** The default style. */
   private static Style defaultStyle = new Style();
 
   // This is the style map. Contains style information about the three styles.
@@ -64,12 +80,11 @@ public class Style {
    * Objects: They are created by using the styleMap, so this constructor is
    * private as well.
    * 
-   * @param aFont
-   * @param foreground
-   * @param background
-   * @param aPadding
-   * @param aLineWidth
-   * @param aStroke
+   * @param aFont the a font
+   * @param foreground the foreground
+   * @param background the background
+   * @param aPadding the a padding
+   * @param aStroke the a stroke
    */
   private Style(Font aFont, Color foreground, Color background,
       Padding aPadding, Stroke aStroke) {
@@ -81,18 +96,29 @@ public class Style {
     this.stroke = (null == aStroke ? new BasicStroke() : aStroke);
   }
 
+  /**
+   * Adds the.
+   * 
+   * @param name the name
+   * @param aFont the a font
+   * @param foreground the foreground
+   * @param background the background
+   * @param aPadding the a padding
+   * @param aStroke the a stroke
+   */
   public static void add(String name,
       Font aFont, Color foreground, Color background,
       Padding aPadding, Stroke aStroke) {
     styleMap.put(name, 
         new Style(aFont, foreground, background, aPadding, aStroke));
   }
+  
   /**
    * Looks up the given style name in the styleMap and returns the appropriate
-   * <code>Style</code> object
+   * <code>Style</code> object.
    * 
-   * @param name
-   * @return the desired <code>Style</code> object
+   * @param name the name
+   * @return the desired  object
    */
   public static Style get(String name) {
     if (null == name || 0 == name.length()) {
@@ -106,41 +132,83 @@ public class Style {
   }
 
   // Getters and Setters:
-  /** @return the font */
+  /**
+   * Gets the font.
+   * 
+   * @return the font
+   */
   public Font getFont() { return this.font; }
 
-  /** @param aFont the font to set */
+  /**
+   * Sets the font.
+   * 
+   * @param aFont the font to set
+   */
   public void setFont(Font aFont) { this.font = aFont; }
 
-  /** @return the foregroundColour */
+  /**
+   * Gets the foreground colour.
+   * 
+   * @return the foregroundColour
+   */
   public Color getForegroundColour() { return this.fgCol; }
 
-  /** @param aForegroundColour the foregroundColour to set */
+  /**
+   * Sets the foreground colour.
+   * 
+   * @param aColor the new foreground colour
+   */
   public void setForegroundColour(Color aColor) { this.fgCol = aColor; }
 
-  /** @return the backgroundColour */
+  /**
+   * Gets the background colour.
+   * 
+   * @return the backgroundColour
+   */
   public Color getBackgroundColour() { return this.bgCol; }
 
-  /** @param aBackgroundColour the backgroundColour to set */
+  /**
+   * Sets the background colour.
+   * 
+   * @param aColor the new background colour
+   */
   public void setBackgroundColour(Color aColor) { this.bgCol = aColor; }
 
-  /** @return the padding */
+  /**
+   * Gets the padding.
+   * 
+   * @return the padding
+   */
   public Padding getPadding() { return this.padding; }
 
-  /** @param aPadding the padding to set */
+  /**
+   * Sets the padding.
+   * 
+   * @param aPadding the padding to set
+   */
   public void setPadding(Padding aPadding) { this.padding = aPadding; }
 
-  /** @return the stroke */
+  /**
+   * Gets the stroke.
+   * 
+   * @return the stroke
+   */
   public Stroke getStroke() { return this.stroke; }
 
-  /** @param aStroke the stroke to set */
+  /**
+   * Sets the stroke.
+   * 
+   * @param aStroke the stroke to set
+   */
   public void setStroke(Stroke aStroke) { this.stroke = aStroke; }
   // END Getters and Setters
   
-  /** Adjust Graphics properties according to style.
-   * @param  g the current graphics context
+  /**
+   * Adjust Graphics properties according to style.
+   * 
+   * @param g the g
    * @return the incoming object. Might also be a copy if further changes made
-   *         that necessary
+   * that necessary
    */
   public Graphics setStyle(Graphics g) {
 

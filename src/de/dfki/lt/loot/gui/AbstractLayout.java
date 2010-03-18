@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package de.dfki.lt.loot.gui;
 
 import java.util.ArrayList;
@@ -8,22 +11,32 @@ import de.dfki.lt.loot.gui.nodes.CompositeNode;
 import de.dfki.lt.loot.gui.nodes.GraphicalNode;
 import de.dfki.lt.loot.gui.nodes.TextNode;
 
+// TODO: Auto-generated Javadoc
 /** This implements a quite generic `meta layout', which delegates the true
  *  layout to the facet layouts.
  */
 public abstract class AbstractLayout implements Layout {
 
+  /** The _facet layouts. */
   private List<FacetLayout> _facetLayouts = new ArrayList<FacetLayout>(10);
 
+  /**
+   * Adds the layout.
+   * 
+   * @param layout the layout
+   */
   public void addLayout(FacetLayout layout) {
     _facetLayouts.add(layout);
     layout.register(this);
   }
 
   /**
+   * Compute layout.
+   * 
    * @param model   an object to transform into a graphical representation
+   * @param adapt the adapt
    * @return a GraphicalNode representation of the model
-   *         You will need to call adjustSize(Graphics g) on the return value.
+   * You will need to call adjustSize(Graphics g) on the return value.
    */
   public GraphicalNode computeLayout(Object model, ModelAdapter adapt) {
     ViewContext context = new ViewContext(model, adapt);
@@ -34,6 +47,14 @@ public abstract class AbstractLayout implements Layout {
 
   //dispatch between the different types of fs nodes. The model has to
   // provide the distinction between the nodes
+  /**
+   * Some fs node.
+   * 
+   * @param model the model
+   * @param context the context
+   * @param facetMask the facet mask
+   * @return the graphical node
+   */
   protected GraphicalNode
   someFSNode(Object model, ViewContext context, int facetMask) {
     int facets = context._adapt.facets(model) & facetMask;
@@ -50,8 +71,14 @@ public abstract class AbstractLayout implements Layout {
     return result;
   }
 
-  /** dispatch between the different types of fs nodes. The model has to
+  /**
+   * dispatch between the different types of fs nodes. The model has to
    * provide the distinction between the nodes by fulfilling facets
+   * 
+   * @param model the model
+   * @param context the context
+   * @param facetMask the facet mask
+   * @return the graphical node
    */
   @Override
   public GraphicalNode

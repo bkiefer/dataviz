@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package de.dfki.lt.loot.gui;
 
 import de.dfki.lt.loot.Pair;
@@ -9,13 +12,23 @@ import de.dfki.lt.loot.gui.nodes.TabularNode;
 import de.dfki.lt.loot.gui.nodes.TextNode;
 import de.dfki.lt.loot.gui.nodes.BracketNode.Orientation;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class AlignMapLayout.
+ */
 public class AlignMapLayout extends FacetLayout {
 
+  /* (non-Javadoc)
+   * @see de.dfki.lt.loot.gui.FacetLayout#facet()
+   */
   @Override
   public int facet() {
     return ModelAdapter.ALL;
   }
 
+  /* (non-Javadoc)
+   * @see de.dfki.lt.loot.gui.FacetLayout#transform(java.lang.Object, de.dfki.lt.loot.gui.ViewContext, int)
+   */
   @Override
   public GraphicalNode
   transform(Object model, ViewContext context, int facetMask) {

@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package de.dfki.lt.loot.gui.nodes;
 
 import java.awt.Graphics;
@@ -5,6 +8,7 @@ import java.awt.Point;
 
 import de.dfki.lt.loot.gui.Style;
 
+// TODO: Auto-generated Javadoc
 /**
  *
  * This is the <code>BasicNode</code> class.
@@ -12,34 +16,56 @@ import de.dfki.lt.loot.gui.Style;
  */
 public abstract class BasicNode extends GraphicalNode {
 
+  /**
+   * Instantiates a new basic node.
+   */
   BasicNode() {
     super();
   }
 
+  /**
+   * Instantiates a new basic node.
+   * 
+   * @param aStyle the a style
+   */
   BasicNode(Style aStyle) {
     super(aStyle);
   }
 
-  /** Only relevant for complex nodes that have sub-nodes: add the given
-   *  node to the sub-nodes of this node
+  /**
+   * Only relevant for complex nodes that have sub-nodes: add the given
+   * node to the sub-nodes of this node.
+   * 
+   * @param subNode the sub node
    */
   @Override
   public void addNode(GraphicalNode subNode) {}
 
-  /** Only relevant for complex nodes that have sub-nodes: add the given
-   *  node to the sub-nodes of this node
+  /**
+   * Only relevant for complex nodes that have sub-nodes: add the given
+   * node to the sub-nodes of this node.
+   * 
+   * @param subNode the sub node
    */
   @Override
   public void removeNode(GraphicalNode subNode) {}
 
-  /** Only relevant for complex nodes that have sub-nodes: add the given
-   *  node to the sub-nodes of this node
+  /**
+   * Only relevant for complex nodes that have sub-nodes: add the given
+   * node to the sub-nodes of this node.
+   * 
+   * @param old the old
+   * @param newNode the new node
    */
   @Override
   public void exchangeNode(GraphicalNode old, GraphicalNode newNode) {}
 
-  /** This is what all basic nodes return correctly. Complex nodes have to
-   *  implement this method. (another reason for having a BasicNode class)
+  /**
+   * This is what all basic nodes return correctly. Complex nodes have to
+   * implement this method. (another reason for having a BasicNode class)
+   * 
+   * @param p the p
+   * @return the child containing point
    */
   @Override
   protected GraphicalNode getChildContainingPoint(Point p) {

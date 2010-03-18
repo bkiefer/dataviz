@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package de.dfki.lt.loot.gui.nodes;
 
 import java.awt.Graphics;
@@ -5,15 +8,27 @@ import java.awt.Rectangle;
 
 import de.dfki.lt.loot.gui.Style;
 
-/** Class for angle brackets: '<' '>'
+// TODO: Auto-generated Javadoc
+/**
+ * Class for angle brackets: '<' '>'.
  */
 public class AngleBracketNode  extends BracketNode  {
 
+  /**
+   * Instantiates a new angle bracket node.
+   * 
+   * @param anOrientation the an orientation
+   * @param aStyle the a style
+   */
   public AngleBracketNode(Orientation anOrientation, Style aStyle) {
     super(anOrientation, aStyle);
   }
 
-  /** paint the bracket. r is in absolute coordinates, Padding already removed
+  /**
+   * paint the bracket. r is in absolute coordinates, Padding already removed
+   * 
+   * @param r the r
+   * @param g the g
    */ 
   public void paintAbsolute(Rectangle r, Graphics g){
     // The rectangle's height and width with added origin offset, the lower
@@ -44,6 +59,9 @@ public class AngleBracketNode  extends BracketNode  {
     } // end switch
   }
   
+  /* (non-Javadoc)
+   * @see de.dfki.lt.loot.gui.nodes.BracketNode#growTo(int, int)
+   */
   public void growTo(int width, int height) {
     if (height > width) {
       this.area.height = Math.min(height, 300);

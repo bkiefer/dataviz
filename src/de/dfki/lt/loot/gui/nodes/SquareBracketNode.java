@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package de.dfki.lt.loot.gui.nodes;
 
 import java.awt.Graphics;
@@ -5,17 +8,30 @@ import java.awt.Rectangle;
 
 import de.dfki.lt.loot.gui.Style;
 
-/** Class for square brackets: '[' ']'
+// TODO: Auto-generated Javadoc
+/**
+ * Class for square brackets: '[' ']'.
  */
 public class SquareBracketNode extends BracketNode {
 
+  /** The Constant useCharacters. */
   private static final boolean useCharacters = false;
 
+  /**
+   * Instantiates a new square bracket node.
+   * 
+   * @param anOrientation the an orientation
+   * @param aStyle the a style
+   */
   public SquareBracketNode(Orientation anOrientation, Style aStyle) {
     super(anOrientation, aStyle);
   }
 
-  /** paint the bracket. r is in absolute coordinates, Padding already removed
+  /**
+   * paint the bracket. r is in absolute coordinates, Padding already removed
+   * 
+   * @param r the r
+   * @param g the g
    */
   @Override
   public void paintAbsolute(Rectangle r, Graphics g){

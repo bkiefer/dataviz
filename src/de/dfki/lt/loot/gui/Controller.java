@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package de.dfki.lt.loot.gui;
 
 import java.awt.Point;
@@ -7,23 +10,40 @@ import java.awt.event.MouseMotionListener;
 
 import de.dfki.lt.loot.gui.nodes.GraphicalNode;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class Controller.
+ */
 public class Controller implements MouseMotionListener {
 
+  /** The view. */
   DrawingPanel view ;
 
+  /** The under mouse. */
   GraphicalNode underMouse;
 
+  /**
+   * Instantiates a new controller.
+   * 
+   * @param dp the dp
+   */
   Controller(DrawingPanel dp) {
     view = dp;
     dp.addMouseMotionListener(this);
     underMouse = null;
   }
 
+  /* (non-Javadoc)
+   * @see java.awt.event.MouseMotionListener#mouseDragged(java.awt.event.MouseEvent)
+   */
   public void mouseDragged(MouseEvent e) {
     // TODO Auto-generated method stub
     return;
   }
 
+  /* (non-Javadoc)
+   * @see java.awt.event.MouseMotionListener#mouseMoved(java.awt.event.MouseEvent)
+   */
   public void mouseMoved(MouseEvent e) {
     // TODO Auto-generated method stub
     Point p = e.getPoint();
