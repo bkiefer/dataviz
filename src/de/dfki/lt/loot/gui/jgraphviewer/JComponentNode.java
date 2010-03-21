@@ -4,7 +4,10 @@
 package de.dfki.lt.loot.gui.jgraphviewer;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Rectangle;
+
+import javax.swing.JPanel;
 
 import org.jgraph.graph.AttributeMap;
 import org.jgraph.graph.DefaultGraphCell;
@@ -28,6 +31,9 @@ public class JComponentNode<I, D> extends DefaultGraphCell implements Node<I, D>
 	
 	/** The _node. */
 	private Node<I, D> _node;
+	
+	/** The _comp. */
+	private JPanel _comp = null;
 
 	/**
 	 * Instantiates a new j component node.
@@ -35,16 +41,15 @@ public class JComponentNode<I, D> extends DefaultGraphCell implements Node<I, D>
 	 * @param node the node
 	 * @param view the view
 	 */
-	public JComponentNode(Node<I, D> node, VertexView view )
+	public JComponentNode(Node<I, D> node, VertexView view, JPanel comp)
 	{
 		_view = (NodeView) view;
 		_node = node;
+		_comp = comp;
 		
 		AttributeMap map = new AttributeMap();
-		Rectangle rec = null;
-		rec = new Rectangle(20, 20, 300, 300);
 		
-		GraphConstants.setBounds(map, rec);
+		GraphConstants.setBounds(map, comp.getBounds());
 		GraphConstants.setGradientColor(map, Color.white.brighter());
 		GraphConstants.setBorderColor(map, Color.blue);
 		GraphConstants.setBackground(map, Color.RED);
@@ -55,13 +60,13 @@ public class JComponentNode<I, D> extends DefaultGraphCell implements Node<I, D>
 	}
 	
 	/**
-	 * Instantiates a new j component node.
+	 * Instantiates a new j component node, with a TextNodeView.
 	 * 
 	 * @param node the node
 	 */
-	public JComponentNode(Node<I, D> node)
+	public JComponentNode(Node<I, D> node, JPanel comp)
 	{
-		this(node, new TextNodeView(node));
+		this(node, new NodeView(node), comp);
 	}
 	
 	/* (non-Javadoc)
@@ -115,5 +120,23 @@ public class JComponentNode<I, D> extends DefaultGraphCell implements Node<I, D>
 	 */
 	public NodeView getView() {
 		return _view;
+	}
+	
+	/**
+	 * Gets the component ( the graphical visualization of the node )
+	 * 
+	 * @return JPanel the graphical visualization of the node
+	 */
+	public JPanel getComp(){
+		return _comp;
+	}
+	
+	/**
+	 * Sets the component ( the graphical visualization of the node )
+	 * 
+	 * @param comp  the graphical visualization of the node
+	 */
+	public void setComp(JPanel comp){
+		_comp = comp;
 	}
 }

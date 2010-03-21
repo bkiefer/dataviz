@@ -12,9 +12,10 @@ import javax.swing.JScrollPane;
 import javax.swing.border.TitledBorder;
 
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class InformationPanel.
+ * The Class InformationPanel. This Class is used to Create a JPanel ( contained by a JScrollPane )
+ * for displaying informations about a graph or someting else. 
+ * @autor chris
  */
 public class InformationPanel extends JScrollPane {
 
@@ -22,7 +23,15 @@ public class InformationPanel extends JScrollPane {
 	private JPanel _infoPanel;
 	
 	/**
-	 * Instantiates a new information panel.
+	 * Instantiates a new information panel.<br />
+	 * The parameters of this JPanel are in this constructor : <br/>
+	 * ¿ Background Color : 237, 237, 237.
+	 * ¿ TitelBorder : "Informations".
+	 * ¿ Size : 200, 600.
+	 * The parameters for the JScrollPane : <br/>
+	 * ¿ Background Color : 237, 237, 237.
+	 * ¿ Preferred Size : 200, 600.
+	 * 
 	 */
 	public InformationPanel()
 	{
@@ -38,9 +47,10 @@ public class InformationPanel extends JScrollPane {
 	}
 	
 	/**
-	 * Change info.
+	 * Change the informations of the Information Panel.<br/>
+	 * the old component will be removed.
 	 * 
-	 * @param infos the infos
+	 * @param infos the infos, by JComponent.
 	 */
 	public void changeInfo(JComponent infos)
 	{
@@ -49,6 +59,15 @@ public class InformationPanel extends JScrollPane {
 		_infoPanel.add(infos);
 		this.setViewportView(_infoPanel);
 		
+	}
+	
+	/**
+	 * Getter for the informations Panel
+	 * 
+	 * @return the informations Panel
+	 */
+	public JPanel getInfoPanel(){
+		return _infoPanel;
 	}
 
 }

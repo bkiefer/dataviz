@@ -19,6 +19,8 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -31,6 +33,7 @@ import javax.swing.JTextArea;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.TitledBorder;
+import javax.swing.text.Highlighter;
 
 import org.jgraph.JGraph;
 import org.jgraph.event.GraphModelEvent;
@@ -54,9 +57,11 @@ import com.jgraph.layout.JGraphLayout;
 import com.jgraph.layout.hierarchical.JGraphHierarchicalLayout;
 import com.jgraph.layout.organic.JGraphFastOrganicLayout;
 
+import de.dfki.lt.loot.HighLight;
 import de.dfki.lt.loot.visualization.InformationPanel;
 import de.dfki.lt.loot.visualization.edges.DataGraphEdge;
 import de.dfki.lt.loot.visualization.exceptions.GraphNodeException;
+import de.dfki.lt.loot.visualization.graph.Viewer;
 import de.dfki.lt.loot.visualization.nodes.GraphNode;
 import de.dfki.lt.loot.visualization.nodes.Node;
 
@@ -67,7 +72,7 @@ import de.dfki.lt.loot.visualization.nodes.Node;
  * @param <I> the generic type
  * @param <D> the generic type
  */
-public class GraphViewer<I, D> extends JPanel implements MouseListener{
+public class GraphViewer<I, D> extends JPanel implements Viewer{
 	
 	/** The scroll. */
 	protected JScrollPane scroll;
@@ -79,7 +84,7 @@ public class GraphViewer<I, D> extends JPanel implements MouseListener{
 	protected DefaultGraphModel jGraphModel = null;
 	
 	/** The all cell list. */
-	private HashMap<String, DefaultGraphCell> allCellList = new HashMap<String, DefaultGraphCell>();
+	private HashMap<String, JComponentStringNode> allCellList = new HashMap<String, JComponentStringNode>();
 	
 	/**
 	 * Instantiates a new graph viewer.
@@ -143,8 +148,6 @@ public class GraphViewer<I, D> extends JPanel implements MouseListener{
 		addGraphLayout(nodes, edges);
 		
 		jGraph.addKeyListener(new KeyBordListener());
-		//jGraph.addMouseWheelListener(new WheelListener());
-		jGraph.addMouseListener(this);
 		jGraph.addGraphSelectionListener(new GraphSelection(info));
 		setSize(600, 600);
 		setVisible(true);
@@ -265,11 +268,7 @@ public class GraphViewer<I, D> extends JPanel implements MouseListener{
 	
 	
 	
-	/**
-	 * The Class GraphMode.
-	 * 
-	 * @return
-	 */
+	
 	/*
 	private DefaultGraphCell getCell(JComponentStringNode jCell)
 	{
@@ -289,6 +288,11 @@ public class GraphViewer<I, D> extends JPanel implements MouseListener{
 		return cell;
 	}*/
 	
+	/**
+	 * The Class GraphMode.
+	 * 
+	 * @return
+	 */
 	private class GraphMode implements GraphModelListener
 	{
 		
@@ -315,7 +319,7 @@ public class GraphViewer<I, D> extends JPanel implements MouseListener{
 		{
 			DefaultGraphCell cell = (DefaultGraphCell) objCell;
 			VertexView vertex = null;
-			vertex = new TextNodeView(objCell);
+			vertex = new NodeView(objCell);
 			return vertex;
 		}
 	}
@@ -323,7 +327,7 @@ public class GraphViewer<I, D> extends JPanel implements MouseListener{
 	/**
 	 * The Class JComponentStringNode.
 	 */
-	private class JComponentStringNode extends JComponentNode<Object, Object>{
+	private static class JComponentStringNode extends JComponentNode<Object, Object>{
 
 		/**
 		 * Instantiates a new j component string node.
@@ -331,7 +335,24 @@ public class GraphViewer<I, D> extends JPanel implements MouseListener{
 		 * @param node the node
 		 */
 		public JComponentStringNode(GraphNode node) {
-			super(node);
+			super(node, comp(new Rectangle(20, 20, 300, 300), node));
+		}
+		
+		private static JPanel comp(Rectangle rec, GraphNode node){
+			
+			
+			JPanel panel = new JPanel();
+			panel.setBorder(new TitledBorder(node.getId().toString()));
+			panel.setBackground(new Color(237, 237, 237));
+			panel.setLayout(new BorderLayout());
+			JTextArea txtArea = new JTextArea(node.getData().toString());
+			txtArea.setBackground(Color.GREEN);
+			panel.add(txtArea, BorderLayout.CENTER);
+			panel.setBounds(rec.getBounds());
+			
+			//_comp.addMouseListener(new InformationListener());
+			
+			return panel;		
 		}
 		
 	}
@@ -387,38 +408,6 @@ public class GraphViewer<I, D> extends JPanel implements MouseListener{
 		
 	}
 	
-	
-	
-	/*
-	private class WheelListener implements MouseWheelListener{
-
-		@Override
-		public void mouseWheelMoved(MouseWheelEvent e) {
-			
-		       int notches = e.getWheelRotation();
-		       if (notches < 0) {
-		    	   Point2D point = jGraph.fromScreen(new Point(e.getPoint()));
-		    	   
-		    	   //Point2D point = jGraph.toScreen(e.getPoint());
-		    	   System.out.println("Point : " + new Point(e.getPoint()));
-		    	   //jGraph.setScale(0.8 * jGraph.getScale(), new Point(300, 300));
-		    	   jGraph.scrollPointToVisible(point);
-		    	  
-		    	   
-		           
-		       } else {
-		    	   //Point2D point = jGraph.fromScreen(new Point(e.getPoint()));
-		    	   Point2D point = jGraph.toScreen(e.getPoint());
-		    	   //System.out.println("Point : " +  new Point(e.getPoint()));
-		    	   //jGraph.setScale(1.2 * jGraph.getScale(), new Point(300, 300));
-		    	   jGraph.scrollPointToVisible(point);
-		       }
-			
-		}
-		
-	}
-	*/
-	
 	/**
 	 * The Class GraphSelection.
 	 */
@@ -451,53 +440,26 @@ public class GraphViewer<I, D> extends JPanel implements MouseListener{
 		}
 		
 	}
-	
-	/* (non-Javadoc)
-	 * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)
-	 */
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		
-	}
 
-	/* (non-Javadoc)
-	 * @see java.awt.event.MouseListener#mouseEntered(java.awt.event.MouseEvent)
-	 */
 	@Override
-	public void mouseEntered(MouseEvent e) {
+	public int setHightLight(String[] toLight) {
 		
+		Collection<JComponentStringNode> cells = allCellList.values();
+		Iterator<JComponentStringNode> it = cells.iterator();
+		while(it.hasNext())
+		{
+			Component[] comps = it.next().getComp().getComponents();
+			for (int i = 0; i < comps.length; i++)
+			{
+				if( comps[i] instanceof JTextArea)
+				{
+					System.out.println("IN IN IN");
+					comps[i] = HighLight.areaHighLight((JTextArea) comps[i], toLight);
+				}
+			}
+		}
+		
+		return 0;
 	}
-
-	/* (non-Javadoc)
-	 * @see java.awt.event.MouseListener#mouseExited(java.awt.event.MouseEvent)
-	 */
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	/* (non-Javadoc)
-	 * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
-	 */
-	@Override
-	public void mousePressed(MouseEvent e) {
-		//Point point = (Point) jGraph.fromScreen(new Point(e.getPoint()));
-		//jGraph = jGraph.toScreen(point);
-		
-		//Point2D point = jGraph.fromScreen(new Point(e.getPoint()));
-		//Point2D point = jGraph.toScreen(e.getPoint());
-		
-	}
-
-	/* (non-Javadoc)
-	 * @see java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
-	 */
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
 }
 

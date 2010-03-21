@@ -4,16 +4,23 @@
 package de.dfki.lt.loot.visualization;
 
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class VisualizationFrame.
+ * The Class VisualizationFrame. A classical Frame to display the main visualisation.<br/>
+ * 
+ * @autor chris
  */
 public class VisualizationFrame extends JFrame {
 
 	/**
-	 * Instantiates a new visualization frame.
+	 * Instantiates a new visualization frame.<br/>
+	 * With the following options :<br/>
+	 * ¿ Location relativ to : null<br/>
+	 * ¿ Size : 800, 600<br/>
+	 * ¿ ContentPane VisualizationPanel.getView()<br/>
+	 * ¿ Default Clode Op : JFrame.EXIT_ON_CLOSE<br/>
+	 * ¿ Resizable : true<br/>
+	 * ¿ Visible : true<br/>
 	 * 
 	 * @param visualization the visualization
 	 */

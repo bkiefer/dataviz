@@ -22,7 +22,7 @@ import de.dfki.lt.loot.visualization.nodes.GraphNode;
 /**
  * The Class IndividualViewer.
  */
-public class IndividualViewer {
+public class IndividualViewer implements Viewer{
 	
 	/** The _individual view. */
 	private JPanel _individualView;
@@ -79,6 +79,12 @@ public class IndividualViewer {
 	 */
 	public JPanel getView(){
 		return _individualView;
+	}
+
+	@Override
+	public int setHightLight(String[] toLight) {
+		// TODO Not implemented now
+		return 0;
 	}
 
 }

@@ -5,9 +5,9 @@ package de.dfki.lt.loot.visualization;
 
 import javax.swing.JPanel;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface VisualizationAdapter.
+ * @autor chris
  */
 public interface VisualizationAdapter {
 

@@ -33,7 +33,7 @@ import edu.uci.ics.jung.visualization.renderers.Renderer.VertexLabel.Position;
 /**
  * The Class SimpleGraphViewer.
  */
-public class SimpleGraphViewer {
+public class SimpleGraphViewer implements Viewer{
 	
 	/** The _graph. */
 	private SimpleGraph _graph;
@@ -225,6 +225,12 @@ public class SimpleGraphViewer {
 		}
     	
     }
+
+	@Override
+	public int setHightLight(String[] toLight) {
+		// TODO Not implemented now
+		return 0;
+	}
 	
 
 }

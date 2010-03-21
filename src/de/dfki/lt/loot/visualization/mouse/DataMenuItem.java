@@ -86,7 +86,7 @@ public class DataMenuItem<V, E> extends JMenuItem implements VertexListener<V, E
                 visComp.getPickedVertexState().pick(vertex, false);
                 
                 
-                //TODO Hier wird die GenerizitŠt verloren : Dass geht nicht
+                //TODO Hier wird die GenerizitŠt verloren : Das geht nicht
                 
         		JFrame frame = new JFrame("Node : "+ ((GraphNode) vertex).getId());
         		frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
