@@ -15,7 +15,7 @@ import javax.swing.border.TitledBorder;
 /**
  * The Class InformationPanel. This Class is used to Create a JPanel ( contained by a JScrollPane )
  * for displaying informations about a graph or someting else. 
- * @autor chris
+ * @author chris
  */
 public class InformationPanel extends JScrollPane {
 
@@ -25,12 +25,12 @@ public class InformationPanel extends JScrollPane {
 	/**
 	 * Instantiates a new information panel.<br />
 	 * The parameters of this JPanel are in this constructor : <br/>
-	 * ¿ Background Color : 237, 237, 237.
-	 * ¿ TitelBorder : "Informations".
-	 * ¿ Size : 200, 600.
+	 * .) Background Color : 237, 237, 237.
+	 * .) TitelBorder : "Informations".
+	 * .) Size : 200, 600.
 	 * The parameters for the JScrollPane : <br/>
-	 * ¿ Background Color : 237, 237, 237.
-	 * ¿ Preferred Size : 200, 600.
+	 * .) Background Color : 237, 237, 237.
+	 * .) Preferred Size : 200, 600.
 	 * 
 	 */
 	public InformationPanel()

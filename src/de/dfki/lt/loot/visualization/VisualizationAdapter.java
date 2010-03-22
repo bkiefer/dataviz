@@ -1,13 +1,11 @@
-/*
- * 
- */
+
 package de.dfki.lt.loot.visualization;
 
 import javax.swing.JPanel;
 
 /**
  * The Interface VisualizationAdapter.
- * @autor chris
+ * @author chris
  */
 public interface VisualizationAdapter {
 
