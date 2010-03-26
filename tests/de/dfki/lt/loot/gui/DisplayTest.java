@@ -9,6 +9,8 @@ import de.dfki.lt.loot.gui.adapters.CollectionsAdapter;
 import de.dfki.lt.loot.gui.adapters.EmptyModelAdapter;
 import de.dfki.lt.loot.gui.adapters.ModelAdapter;
 import de.dfki.lt.loot.gui.connectors.StraightConnector;
+import de.dfki.lt.loot.gui.layouts.CompactLayout;
+import de.dfki.lt.loot.gui.layouts.Layout;
 import de.dfki.lt.loot.gui.nodes.GraphNode;
 import de.dfki.lt.loot.gui.nodes.GraphicalNode;
 import de.dfki.lt.loot.gui.nodes.TextNode;
@@ -69,11 +71,8 @@ class TestIntersectLayout implements Layout {
   @Override
   public GraphicalNode transform(Object model, ViewContext context,
       int facetMask) {
-    // TODO Auto-generated method stub
     return null;
   }
-
-
 }
 
 
