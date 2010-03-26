@@ -1,8 +1,7 @@
-/*
- * 
- */
-package de.dfki.lt.loot.gui;
+package de.dfki.lt.loot.gui.layouts;
 
+import de.dfki.lt.loot.gui.Style;
+import de.dfki.lt.loot.gui.ViewContext;
 import de.dfki.lt.loot.gui.adapters.ModelAdapter;
 import de.dfki.lt.loot.gui.nodes.AngleBracketNode;
 import de.dfki.lt.loot.gui.nodes.CompositeNode;
@@ -10,24 +9,13 @@ import de.dfki.lt.loot.gui.nodes.GraphicalNode;
 import de.dfki.lt.loot.gui.nodes.TextNode;
 import de.dfki.lt.loot.gui.nodes.BracketNode.Orientation;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class CompactConsLayout.
- */
 public class CompactConsLayout extends FacetLayout {
 
-  /* (non-Javadoc)
-   * @see de.dfki.lt.loot.gui.FacetLayout#facet()
-   */
   @Override
   public int facet() {
-    // TODO Auto-generated method stub
     return ModelAdapter.CONS;
   }
 
-  /* (non-Javadoc)
-   * @see de.dfki.lt.loot.gui.FacetLayout#transform(java.lang.Object, de.dfki.lt.loot.gui.ViewContext, int)
-   */
   @Override
   public GraphicalNode
   transform(Object model, ViewContext context, int facetMask) {

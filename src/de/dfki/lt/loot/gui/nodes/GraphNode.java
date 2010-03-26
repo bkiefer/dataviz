@@ -1,6 +1,3 @@
-/*
- * 
- */
 package de.dfki.lt.loot.gui.nodes;
 
 import java.awt.Graphics;
@@ -11,47 +8,23 @@ import java.util.List;
 
 import de.dfki.lt.loot.gui.connectors.Connector;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class GraphNode.
- */
 public class GraphNode extends GraphicalNode {
 
-  /**
-   * The Class LayoutAlgorithm.
-   */
   public abstract class LayoutAlgorithm {
-    
-    /**
-     * Execute.
-     * 
-     * @return the rectangle
-     */
     public abstract Rectangle execute();
   }
 
   // This node's list of subNodes
-  /** The _sub nodes. */
   private List<GraphicalNode> _subNodes;
 
-  /** The _connectors. */
   private List<Connector> _connectors;
 
-  /** The _algorithm. */
   private LayoutAlgorithm _algorithm;
 
-  /**
-   * Instantiates a new graph node.
-   * 
-   * @param aModel the a model
-   */
   public GraphNode(Object aModel) {
     this.model = aModel;
   }
 
-  /* (non-Javadoc)
-   * @see de.dfki.lt.loot.gui.nodes.GraphicalNode#adjustSize(java.awt.Graphics)
-   */
   @Override
   public void adjustSize(Graphics g) {
     // Adjust the size of all subNodes so we know their final dimensions
@@ -77,18 +50,12 @@ public class GraphNode extends GraphicalNode {
     }
   }
 
-  /* (non-Javadoc)
-   * @see de.dfki.lt.loot.gui.nodes.GraphicalNode#getChildContainingPoint(java.awt.Point)
-   */
   @Override
   protected GraphicalNode getChildContainingPoint(Point p) {
     // TODO Auto-generated method stub
     return null;
   }
 
-  /* (non-Javadoc)
-   * @see de.dfki.lt.loot.gui.nodes.GraphicalNode#paintAbsolute(java.awt.Rectangle, java.awt.Graphics)
-   */
   @Override
   public void paintAbsolute(Rectangle absoluteArea, Graphics g) {
     if (this._connectors != null)
@@ -102,10 +69,7 @@ public class GraphNode extends GraphicalNode {
       }
   }
 
-  /**
-   * Adds another <code>GraphicalNode</code> to the list of subNodes.
-   * 
-   * @param subNode the sub node
+  /** Adds another <code>GraphicalNode</code> to the list of subNodes.
    */
   @Override
   public void addNode(GraphicalNode subNode) {
@@ -118,32 +82,20 @@ public class GraphNode extends GraphicalNode {
     subNode.setParentNode(this);
   }
 
-  /**
-   * Remove the given subNode from my sub-nodes list.
-   * 
-   * @param subNode the sub node
-   */
+  /** Remove the given subNode from my sub-nodes list */
   @Override
   public void removeNode(GraphicalNode subNode) {
     this._subNodes.remove(subNode);
     subNode.setParentNode(null);
   }
 
-  /**
-   * Exchange the given oldNode by newNode.
-   * 
-   * @param old the old
-   * @param newNode the new node
-   */
+  /** Exchange the given oldNode by newNode */
   @Override
   public void exchangeNode(GraphicalNode old, GraphicalNode newNode) {
     // TODO Auto-generated method stub
   }
 
-  /**
-   * Adds another <code>AbstractConnector</code> to the list of connectors.
-   * 
-   * @param conn the conn
+  /** Adds another <code>AbstractConnector</code> to the list of connectors.
    */
   public void addConnector(Connector conn) {
     // initialize the connectors list if needed
@@ -153,27 +105,12 @@ public class GraphNode extends GraphicalNode {
     _connectors.add(conn);
   }
 
-  /**
-   * Sets the layout algorithm.
-   * 
-   * @param algo the new layout algorithm
-   */
   public void setLayoutAlgorithm(LayoutAlgorithm algo) {
     _algorithm = algo;
   }
 
-  /**
-   * Gets the nodes.
-   * 
-   * @return the nodes
-   */
   public List<GraphicalNode> getNodes() { return _subNodes; }
 
-  /**
-   * Gets the connectors.
-   * 
-   * @return the connectors
-   */
   public List<Connector> getConnectors() { return _connectors; }
 
 }

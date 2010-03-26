@@ -1,7 +1,6 @@
-/*
- * 
- */
 package de.dfki.lt.loot.gui;
+
+import de.dfki.lt.loot.gui.layouts.CompactLayout;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -26,7 +25,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-// TODO: Auto-generated Javadoc
 /**
  * <code>MainFrame</code> defines the main window of the application.
  *
@@ -38,45 +36,17 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 @SuppressWarnings("serial")
 public class MainFrame extends JFrame {
 
-  /**
-   * The listener interface for receiving closeAll events.
-   * The class that is interested in processing a closeAll
-   * event implements this interface, and the object created
-   * with that class is registered with a component using the
-   * component's <code>addCloseAllListener<code> method. When
-   * the closeAll event occurs, that object's appropriate
-   * method is invoked.
-   * 
-   * @see CloseAllEvent
-   */
   public interface CloseAllListener {
-    
-    /**
-     * All closed.
-     */
     public abstract void allClosed();
   }
 
-  /**
-   * The Class ReleaseSemaphoreOnCloseAll.
-   */
   private class ReleaseSemaphoreOnCloseAll implements CloseAllListener {
-    
-    /** The my sem. */
     Semaphore mySem;
 
-    /**
-     * Instantiates a new release semaphore on close all.
-     * 
-     * @param sem the sem
-     */
     public ReleaseSemaphoreOnCloseAll(Semaphore sem) {
       mySem = sem;
     }
 
-    /* (non-Javadoc)
-     * @see de.dfki.lt.loot.gui.MainFrame.CloseAllListener#allClosed()
-     */
     public void allClosed() {
       mySem.release();
     }
@@ -133,7 +103,7 @@ public class MainFrame extends JFrame {
   /** This contains the currently open frames. */
   private static List<MainFrame> openFrames = new ArrayList<MainFrame>();
 
-  /** This Listener is called when the last Frame has been closed. */
+  /** This Listener is called when the last Frame has been closed */
   private static CloseAllListener clAll = null;
 
   /** This contains the content area. */
@@ -142,14 +112,8 @@ public class MainFrame extends JFrame {
   /** This contains the current directory. */
   private File currentDir;
 
-  /** The f. */
   FontChooser f;
 
-  /**
-   * Inits the.
-   * 
-   * @param dp the dp
-   */
   private void init(DrawingPanel dp) {
     // create content panel and add it to the frame
     JPanel contentPane = new JPanel(new BorderLayout());
@@ -183,55 +147,32 @@ public class MainFrame extends JFrame {
     this.setVisible(true);
   }
 
-  /**
-   * Instantiates a new main frame.
-   * 
-   * @param title the title
-   * @param currDir the curr dir
-   * @param dp the dp
-   */
   MainFrame(String title, File currDir, DrawingPanel dp) {
     super(title);
     this.currentDir = currDir;
     this.init(dp);
   }
 
-  /**
-   * Instantiates a new main frame.
-   * 
-   * @param title the title
-   * @param tfs the tfs
-   */
   public MainFrame(String title, Object tfs) {
     super(title);
     if (tfs != null) {
+      if (this.contentArea == null) {
+        this.init(new DrawingPanel(new CompactLayout(),
+            ModelAdapterFactory.getAdapter(tfs)));
+      }
       this.setModel(tfs);
     }
   }
 
-  /**
-   * Instantiates a new main frame.
-   * 
-   * @param <MODEL> the generic type
-   * @param title the title
-   * @param dp the dp
-   */
   public <MODEL> MainFrame(String title, DrawingPanel dp) {
     this(title, null, dp);
   }
 
-  /**
-   * Release on all closed.
-   * 
-   * @param sem the sem
-   */
   public void releaseOnAllClosed(Semaphore sem) {
     clAll = new ReleaseSemaphoreOnCloseAll(sem);
   }
 
-  /**
-   * a method to close a frame from within the program.
-   */
+  /** a method to close a frame from within the program */
   public void close() {
     this.dispatchEvent(
         new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
@@ -330,23 +271,12 @@ public class MainFrame extends JFrame {
   }
 
 
-  /**
-   * Sets the model.
-   * 
-   * @param model the new model
-   */
   public void setModel(Object model) {
     (this.contentArea).setModel(model);
 
     this.contentArea.repaint();
   }
 
-  /**
-   * Open file.
-   * 
-   * @param fileToOpen the file to open
-   * @return the object
-   */
   public Object openFile(File fileToOpen) {
     // add some smart code to assess the file type and call the right `open'
     // method

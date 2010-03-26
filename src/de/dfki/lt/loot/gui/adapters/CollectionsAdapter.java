@@ -1,6 +1,3 @@
-/*
- * 
- */
 package de.dfki.lt.loot.gui.adapters;
 
 import java.util.Iterator;
@@ -9,18 +6,10 @@ import java.util.Map;
 
 import de.dfki.lt.loot.Pair;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class CollectionsAdapter.
- */
 public class CollectionsAdapter extends ModelAdapter {
 
-  /** The _current list iterator. */
   Iterator _currentListIterator;
 
-  /* (non-Javadoc)
-   * @see de.dfki.lt.loot.gui.adapters.ModelAdapter#facets(java.lang.Object)
-   */
   @Override
   public int facets(Object model) {
     if (model instanceof Map) {
@@ -40,9 +29,6 @@ public class CollectionsAdapter extends ModelAdapter {
 
   /* -- ConsFacet -- */
 
-  /* (non-Javadoc)
-   * @see de.dfki.lt.loot.gui.adapters.ModelAdapter#getFirst(java.lang.Object)
-   */
   @Override
   public Object getFirst(Object model){
     if (_currentListIterator == null) {
@@ -53,43 +39,25 @@ public class CollectionsAdapter extends ModelAdapter {
         : null);  // null should never have to be returned
   };
 
-  /* (non-Javadoc)
-   * @see de.dfki.lt.loot.gui.adapters.ModelAdapter#getRest(java.lang.Object)
-   */
   @Override
   public Object getRest(Object model){
     return _currentListIterator;
   };
 
   /* -- MapFacet -- */
-  /**
-   * The Class CollectionsMapAdapterIterator.
-   */
   private class CollectionsMapAdapterIterator implements MapAdapterIterator {
 
-    /** The _entry iterator. */
     private Iterator _entryIterator;
 
-    /**
-     * Instantiates a new collections map adapter iterator.
-     * 
-     * @param map the map
-     */
     CollectionsMapAdapterIterator(Map map) {
       _entryIterator = map.entrySet().iterator();
     }
 
-    /* (non-Javadoc)
-     * @see de.dfki.lt.loot.gui.adapters.MapAdapterIterator#hasNext()
-     */
     @Override
     public boolean hasNext() {
       return _entryIterator.hasNext();
     }
 
-    /* (non-Javadoc)
-     * @see de.dfki.lt.loot.gui.adapters.MapAdapterIterator#next()
-     */
     @Override
     public Pair<String, Object> next() {
       Map.Entry entry = (Map.Entry) _entryIterator.next();
@@ -99,9 +67,6 @@ public class CollectionsAdapter extends ModelAdapter {
     }
   }
 
-  /* (non-Javadoc)
-   * @see de.dfki.lt.loot.gui.adapters.ModelAdapter#mapIterator(java.lang.Object)
-   */
   @Override
   public MapAdapterIterator mapIterator(Object model){
     return new CollectionsMapAdapterIterator((Map)model);

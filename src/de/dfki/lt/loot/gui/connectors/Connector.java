@@ -1,6 +1,3 @@
-/*
- * 
- */
 package de.dfki.lt.loot.gui.connectors;
 
 import java.awt.Graphics;
@@ -9,24 +6,12 @@ import java.awt.Rectangle;
 import de.dfki.lt.loot.gui.Style;
 import de.dfki.lt.loot.gui.nodes.GraphicalNode;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class Connector.
- */
 public abstract class Connector {
   
-  /** The _to node. */
   protected GraphicalNode _fromNode, _toNode;
   
-  /** The _style. */
   protected Style _style;
   
-  /**
-   * Instantiates a new connector.
-   * 
-   * @param from the from
-   * @param to the to
-   */
   public Connector(GraphicalNode from, GraphicalNode to) {
     _fromNode = from;
     _toNode = to;
@@ -34,13 +19,6 @@ public abstract class Connector {
     _toNode.addInConnector(this);
   }
   
-  /**
-   * Instantiates a new connector.
-   * 
-   * @param from the from
-   * @param to the to
-   * @param style the style
-   */
   public Connector(GraphicalNode from, GraphicalNode to, Style style) {
     _fromNode = from;
     _toNode = to;
@@ -49,10 +27,8 @@ public abstract class Connector {
     _style = style;
   }
   
-  /**
-   * paints the node with regard to the given offset.
-   * 
-   * @param parentArea the parent's absolute area
+  /** paints the node with regard to the given offset
+   * @param parentArea the parent's absolute area 
    * @param g Graphics object
    */
   public final void paint(Rectangle parentArea, Graphics g) {
@@ -87,53 +63,29 @@ public abstract class Connector {
     paintAbsolute(parentArea, g);
   }
 
-  /**
-   * really paint this connector, using absolute coordinates.
-   * 
-   * @param absoluteArea the absolute area
-   * @param g the g
-   */
+  /** really paint this connector, using absolute coordinates */
   public abstract void paintAbsolute(Rectangle absoluteArea, Graphics g);
 
   
-  /**
-   * assume the _from and _to nodes have computed their appropriate size and
-   * position, now do necessary computations for yourself.
-   * 
-   * @param g the g
+  /** assume the _from and _to nodes have computed their appropriate size and
+   *  position, now do necessary computations for yourself
    */
   public abstract void adjust(Graphics g);
   
-  /**
-   * get the node from which this connector leaves.
-   * 
-   * @return the graphical node
-   */
+  /** get the node from which this connector leaves */
   public GraphicalNode fromNode() {
     return _fromNode;
   }
   
-  /**
-   * get the node from which this connector leaves.
-   * 
-   * @return the graphical node
-   */
+  /** get the node from which this connector leaves */
   public GraphicalNode toNode() {
     return _toNode;
   }
   
-  /**
-   * Gets the style.
-   * 
-   * @return the style
-   */
+  /** @return the style */
   public Style getStyle() { return this._style; }
 
-  /**
-   * Sets the style.
-   * 
-   * @param aStyle the style to set
-   */
+  /** @param aStyle the style to set */
   public void setStyle(Style aStyle) { this._style = aStyle; }
   // END Getters and Setters
 

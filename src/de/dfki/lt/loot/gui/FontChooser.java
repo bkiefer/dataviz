@@ -1,6 +1,3 @@
-/*
- * 
- */
 package de.dfki.lt.loot.gui;
 
 /*Kevin Boone, August 1999
@@ -12,7 +9,6 @@ import java.awt.event.*;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-// TODO: Auto-generated Javadoc
 /*
 class FontChooser 
 This program has only one class, which is a subclass of Applet as usual.
@@ -23,9 +19,6 @@ an ItemEvent event. This causes the operation itemStateChange to
 be executed. 
  */
 
-/**
- * The Class FontChooser.
- */
 @SuppressWarnings("serial")
 public class FontChooser extends JFrame implements ItemListener {
   /*
@@ -36,19 +29,13 @@ public class FontChooser extends JFrame implements ItemListener {
    * These objects have to be stored as attribtues, as they are created in the
    * constructor but used in the operation itemStateChange.
    */
-  /** The font display label. */
   Label fontDisplayLabel;
-  
-  /** The font list. */
   List fontList;
 
   /*
    * FontChooser constructor
    */
 
-  /**
-   * Instantiates a new font chooser.
-   */
   public FontChooser() {
     super("Select Font");
     
@@ -92,9 +79,6 @@ public class FontChooser extends JFrame implements ItemListener {
    * font name (that is, any item in the font list
    */
 
-  /* (non-Javadoc)
-   * @see java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
-   */
   public void itemStateChanged(ItemEvent e) {
     // Only proceed if an item is being selected. This operation is also
     // called for the item that is being de-selected. We don't want

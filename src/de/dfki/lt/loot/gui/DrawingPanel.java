@@ -7,6 +7,7 @@ import java.awt.Graphics;
 import javax.swing.JPanel;
 
 import de.dfki.lt.loot.gui.adapters.ModelAdapter;
+import de.dfki.lt.loot.gui.layouts.Layout;
 import de.dfki.lt.loot.gui.nodes.GraphicalNode;
 
 /**
@@ -37,6 +38,7 @@ public class DrawingPanel extends JPanel {
   private boolean _unadjusted;
 
   /** Mediates between user input and model */
+  @SuppressWarnings("unused")
   private Controller _controller;
 
   /**

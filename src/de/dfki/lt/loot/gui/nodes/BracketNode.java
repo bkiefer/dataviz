@@ -1,6 +1,3 @@
-/*
- * 
- */
 package de.dfki.lt.loot.gui.nodes;
 
 import java.awt.Graphics;
@@ -9,7 +6,6 @@ import java.awt.Rectangle;
 
 import de.dfki.lt.loot.gui.Style;
 
-// TODO: Auto-generated Javadoc
 /**
  * 
  * This is the abstract <code>BracketNode</code> class. It contains some
@@ -22,39 +18,24 @@ import de.dfki.lt.loot.gui.Style;
  * @author Antonia Scheidel
  */
 public abstract class BracketNode extends BasicNode {
-  
-  /** The Bracket chars. */
   protected static String BracketChars="⎡⎢⎣⎤⎥⎦⎧⎨⎩⎪⎫⎬⎭⎮⎰⎱⎝⎜⎞⎟⎠";
   
-  /** The font offset. */
   protected int fontHeight = -1, fontWidth, fontOffset;
   
   // these are the fields, see enumerations for values.
-  /** The orientation. */
   protected Orientation orientation;
 
   // In which direction does the bracket point? < points west, } points east
-  /**
-   * The Enum Orientation.
-   */
   public enum Orientation {
-    
-    /** The north. */
-    north, 
- /** The south. */
- south, 
- /** The east. */
- east, 
- /** The west. */
- west
+    north, south, east, west
   }
 
   /**
    * Default constructor: Create a new <code>BracketNode</code> and set its
-   * orientation and style.
+   * orientation and style
    * 
-   * @param anOrientation the an orientation
-   * @param aStyle the a style
+   * @param anOrientation
+   * @param aStyle
    */
   protected BracketNode(Orientation anOrientation, Style aStyle) {
     super(aStyle);
@@ -62,20 +43,12 @@ public abstract class BracketNode extends BasicNode {
   }
 
   // BEGIN Getters and Setters
-  /**
-   * Gets the orientation.
-   * 
-   * @return the bracket's orientation
-   */
+  /** @return the bracket's orientation */
   public Orientation getOrientation() {
     return this.orientation;
   }
 
-  /**
-   * set the bracket's orientation.
-   * 
-   * @param anOrientation the new orientation
-   */
+  /** set the bracket's orientation */
   public void setOrientation(Orientation anOrientation) {
     this.orientation = anOrientation;
   }
@@ -120,9 +93,6 @@ public abstract class BracketNode extends BasicNode {
     super.adjustSize(g);
   } // end adjustSize
   
-  /* (non-Javadoc)
-   * @see de.dfki.lt.loot.gui.nodes.GraphicalNode#growTo(int, int)
-   */
   public void growTo(int width, int height) {
     this.area.width = width;
     this.area.height = height;

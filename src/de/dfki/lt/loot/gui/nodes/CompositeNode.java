@@ -1,6 +1,3 @@
-/*
- * 
- */
 package de.dfki.lt.loot.gui.nodes;
 
 import java.awt.Graphics;
@@ -12,7 +9,6 @@ import java.util.ListIterator;
 
 import de.dfki.lt.loot.gui.Style;
 
-// TODO: Auto-generated Javadoc
 /**
  * This is the <code>CompositeNode</code> class. <code>CompositeNodes</code>
  * are <code>GraphicalNodes</code> with a number of subNodes (which are
@@ -25,37 +21,23 @@ import de.dfki.lt.loot.gui.Style;
 public class CompositeNode extends GraphicalNode {
 
   // This node's list of subNodes
-  /** The sub nodes. */
   private List<GraphicalNode> subNodes;
 
   // The way the subNodes are aligned. n, s, e, w like in TabularNode,
   // h and v are horizontally resp. vertically centered
-  /** The align. */
   private char align;
 
-  /**
-   * Instantiates a new composite node.
-   * 
-   * @param alignment the alignment
-   * @param aStyle the a style
-   */
   public CompositeNode(char alignment, Style aStyle) {
     super(aStyle);
     align = alignment;
   }
 
-  /**
-   * Instantiates a new composite node.
-   * 
-   * @param alignment the alignment
-   */
   public CompositeNode(char alignment) { align = alignment; }
 
-  /**
-   * Adds another <code>GraphicalNode</code> to this
+  /** Adds another <code>GraphicalNode</code> to this
    * <code>CompositeNode</code>'s list of subNodes.
-   * 
-   * @param subNode the sub node
+   *
+   * @param subNode
    */
   @Override
   public void addNode(GraphicalNode subNode) {
@@ -68,23 +50,14 @@ public class CompositeNode extends GraphicalNode {
     subNode.setParentNode(this);
   }
 
-  /**
-   * Remove the given subNode from my sub-nodes list.
-   * 
-   * @param subNode the sub node
-   */
+  /** Remove the given subNode from my sub-nodes list */
   @Override
   public void removeNode(GraphicalNode subNode) {
     this.subNodes.remove(subNode);
     subNode.setParentNode(null);
   }
 
-  /**
-   * Replace the node old by newNode in my sub-nodes list.
-   * 
-   * @param old the old
-   * @param newNode the new node
-   */
+  /** Replace the node old by newNode in my sub-nodes list */
   @Override
   public void exchangeNode(GraphicalNode old, GraphicalNode newNode) {
     ListIterator<GraphicalNode> li = subNodes.listIterator();
@@ -112,11 +85,6 @@ public class CompositeNode extends GraphicalNode {
       subNode.paint(absoluteArea, g);
   }
 
-  /**
-   * Adjust horizontal.
-   * 
-   * @param g the g
-   */
   private void adjustHorizontal(Graphics g) {
     // Used to determine final width and height of the CompositeNode.
     int maxHeight = 0, maxWidth = 0;
@@ -154,11 +122,6 @@ public class CompositeNode extends GraphicalNode {
     this.area.setSize(maxWidth + offset, maxHeight + offset);
   }
 
-  /**
-   * Adjust vertical.
-   * 
-   * @param g the g
-   */
   private void adjustVertical(Graphics g) {
     // Used to determine final width and height of the CompositeNode.
     int maxHeight = 0, maxWidth = 0;
@@ -216,9 +179,6 @@ public class CompositeNode extends GraphicalNode {
     }
   } // end adjustSize
 
-  /* (non-Javadoc)
-   * @see de.dfki.lt.loot.gui.nodes.GraphicalNode#getChildContainingPoint(java.awt.Point)
-   */
   @Override
   protected GraphicalNode getChildContainingPoint(Point p) {
     for (GraphicalNode child : subNodes) {

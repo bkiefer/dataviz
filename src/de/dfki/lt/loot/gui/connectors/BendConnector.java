@@ -1,6 +1,3 @@
-/*
- * 
- */
 package de.dfki.lt.loot.gui.connectors;
 
 import java.awt.Graphics;
@@ -10,30 +7,13 @@ import java.awt.geom.Point2D;
 import de.dfki.lt.loot.gui.Style;
 import de.dfki.lt.loot.gui.nodes.GraphicalNode;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class BendConnector.
- */
 public class BendConnector extends Connector {
-  
-  /** The _y points. */
   int[] _xPoints, _yPoints;
-  
-  /** The _n points. */
   int _nPoints;
   
-  /** The _from delta y. */
   double _fromDeltaX, _fromDeltaY;
-  
-  /** The _to delta y. */
   double _toDeltaX, _toDeltaY;
 
-  /**
-   * Sets the deltas.
-   * 
-   * @param fromAngle the from angle
-   * @param toAngle the to angle
-   */
   private void setDeltas(double fromAngle, double toAngle) {
     _fromDeltaX = Math.acos(fromAngle);
     _fromDeltaX = Math.asin(fromAngle);
@@ -41,42 +21,18 @@ public class BendConnector extends Connector {
     _toDeltaX = Math.asin(toAngle);
   }
   
-  /**
-   * Instantiates a new bend connector.
-   * 
-   * @param from the from
-   * @param to the to
-   * @param fromAngle the from angle
-   * @param toAngle the to angle
-   */
   public BendConnector(GraphicalNode from, GraphicalNode to,
       double fromAngle, double toAngle) {
     super(from, to);
     setDeltas(fromAngle, toAngle);
   }
   
-  /**
-   * Instantiates a new bend connector.
-   * 
-   * @param from the from
-   * @param to the to
-   * @param fromAngle the from angle
-   * @param toAngle the to angle
-   * @param s the s
-   */
   public BendConnector(GraphicalNode from, GraphicalNode to,
       double fromAngle, double toAngle, Style s) {
     super(from, to, s);
     setDeltas(fromAngle, toAngle);
   }
   
-  /**
-   * Gets the direction.
-   * 
-   * @param rect the rect
-   * @param rimPoint the rim point
-   * @return the direction
-   */
   public int getDirection(Rectangle rect, Point2D rimPoint) {
     if ((rimPoint.getX() > rect.x)
         && (rimPoint.getX() < rect.x + rect.width)) {
@@ -87,9 +43,6 @@ public class BendConnector extends Connector {
     return ((rimPoint.getX() < rect.x + rect.width >>> 1) ? -2 : 2);
   }
   
-  /* (non-Javadoc)
-   * @see de.dfki.lt.loot.gui.connectors.Connector#adjust(java.awt.Graphics)
-   */
   @Override
   public void adjust(Graphics g) {
     Rectangle fromRect = _fromNode.getRect();
@@ -113,9 +66,6 @@ public class BendConnector extends Connector {
 
   }
 
-  /* (non-Javadoc)
-   * @see de.dfki.lt.loot.gui.connectors.Connector#paintAbsolute(java.awt.Rectangle, java.awt.Graphics)
-   */
   @Override
   public void paintAbsolute(Rectangle absRect, Graphics g) {
     g.drawPolyline(_xPoints, _yPoints, _nPoints);

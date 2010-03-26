@@ -1,6 +1,3 @@
-/*
- * 
- */
 package de.dfki.lt.loot.gui.nodes;
 
 import java.awt.Graphics;
@@ -9,13 +6,10 @@ import java.util.EnumMap;
 
 import de.dfki.lt.loot.gui.Style;
 
-// TODO: Auto-generated Javadoc
-/**
- * Class for parenthesis (round) brackets: '(' ')'.
+/** Class for parenthesis (round) brackets: '(' ')'
  */
 public class ParenBracketNode extends BracketNode {
 
-  /** The to. */
   private static EnumMap<Orientation, Integer> from, to;
   {
     from = new EnumMap<Orientation, Integer>(Orientation.class);
@@ -26,21 +20,11 @@ public class ParenBracketNode extends BracketNode {
     from.put(Orientation.south, 0); to.put(Orientation.south, -180);
   }
   
-  /**
-   * Instantiates a new paren bracket node.
-   * 
-   * @param anOrientation the an orientation
-   * @param aStyle the a style
-   */
   public ParenBracketNode(Orientation anOrientation, Style aStyle) {
     super(anOrientation, aStyle);
   }
 
-  /**
-   * paint the bracket. r is in absolute coordinates, Padding already removed
-   * 
-   * @param r the r
-   * @param g the g
+  /** paint the bracket. r is in absolute coordinates, Padding already removed
    */ 
   public void paintAbsolute(Rectangle r, Graphics g){
     // draw the bracket according to the OrientationType provided

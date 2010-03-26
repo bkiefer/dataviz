@@ -1,6 +1,3 @@
-/*
- * 
- */
 package de.dfki.lt.loot.gui.nodes;
 
 import java.awt.Graphics;
@@ -8,27 +5,15 @@ import java.awt.Rectangle;
 
 import de.dfki.lt.loot.gui.Style;
 
-// TODO: Auto-generated Javadoc
-/**
- * Class for curly brackets: '{' '}'.
+/** Class for curly brackets: '{' '}'
  */
 public class BraceBracketNode  extends BracketNode  {
 
-  /**
-   * Instantiates a new brace bracket node.
-   * 
-   * @param anOrientation the an orientation
-   * @param aStyle the a style
-   */
   public BraceBracketNode(Orientation anOrientation, Style aStyle) {
     super(anOrientation, aStyle);
   }
 
-  /**
-   * paint the bracket. r is in absolute coordinates, Padding already removed
-   * 
-   * @param r the r
-   * @param g the g
+  /** paint the bracket. r is in absolute coordinates, Padding already removed
    */ 
   public void paintAbsolute(Rectangle r, Graphics g){
     // The corresponding corner point ('R'ight 'L'ower)

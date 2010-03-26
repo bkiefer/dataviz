@@ -1,32 +1,7 @@
-/*
- * 
- */
-package de.dfki.lt.loot.gui;
+package de.dfki.lt.loot.gui.layouts;
 
-import java.util.Iterator;
-
-import de.dfki.lt.loot.Pair;
-import de.dfki.lt.loot.gui.nodes.AngleBracketNode;
-import de.dfki.lt.loot.gui.nodes.CompositeNode;
-import de.dfki.lt.loot.gui.nodes.GraphNode;
-import de.dfki.lt.loot.gui.nodes.GraphicalNode;
-import de.dfki.lt.loot.gui.nodes.SimpleTreeLayoutAlgorithm;
-import de.dfki.lt.loot.gui.nodes.SquareBracketNode;
-import de.dfki.lt.loot.gui.nodes.TextNode;
-import de.dfki.lt.loot.gui.nodes.BracketNode.Orientation;
-import de.dfki.lt.loot.gui.adapters.MapAdapterIterator;
-import de.dfki.lt.loot.gui.adapters.ModelAdapter;
-import de.dfki.lt.loot.gui.connectors.StraightConnector;
-
-// TODO: Auto-generated Javadoc
-/**
- * The Class CompactLayout.
- */
 public class CompactLayout extends AbstractLayout {
 
-  /**
-   * Instantiates a new compact layout.
-   */
   public CompactLayout() {
     addLayout(new CompactMapLayout());
     addLayout(new CompactConsLayout());

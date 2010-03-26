@@ -1,33 +1,21 @@
-/*
- * 
- */
-package de.dfki.lt.loot.gui;
+package de.dfki.lt.loot.gui.layouts;
 
 import java.util.Iterator;
 
+import de.dfki.lt.loot.gui.ViewContext;
 import de.dfki.lt.loot.gui.adapters.ModelAdapter;
 import de.dfki.lt.loot.gui.connectors.StraightConnector;
 import de.dfki.lt.loot.gui.nodes.GraphNode;
 import de.dfki.lt.loot.gui.nodes.GraphicalNode;
 import de.dfki.lt.loot.gui.nodes.SimpleTreeLayoutAlgorithm;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class SimpleTreeLayout.
- */
 public class SimpleTreeLayout extends FacetLayout {
 
-  /* (non-Javadoc)
-   * @see de.dfki.lt.loot.gui.FacetLayout#facet()
-   */
   @Override
   public int facet() {
     return ModelAdapter.TREE;
   }
 
-  /* (non-Javadoc)
-   * @see de.dfki.lt.loot.gui.FacetLayout#transform(java.lang.Object, de.dfki.lt.loot.gui.ViewContext, int)
-   */
   @Override
   public GraphicalNode
   transform(Object model, ViewContext context, int facetMask) {
@@ -38,15 +26,6 @@ public class SimpleTreeLayout extends FacetLayout {
     return result;
   }
 
-  /**
-   * Transform tree inner.
-   * 
-   * @param model the model
-   * @param context the context
-   * @param graphNode the graph node
-   * @param facetMask the facet mask
-   * @return the graphical node
-   */
   @SuppressWarnings("unchecked")
   private GraphicalNode
   transformTreeInner(Object model, ViewContext context,

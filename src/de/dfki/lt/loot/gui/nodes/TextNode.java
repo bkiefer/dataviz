@@ -1,6 +1,3 @@
-/*
- * 
- */
 package de.dfki.lt.loot.gui.nodes;
 
 import java.awt.Graphics;
@@ -10,7 +7,6 @@ import java.awt.RenderingHints;
 
 import de.dfki.lt.loot.gui.Style;
 
-// TODO: Auto-generated Javadoc
 /**
  * This is the TextNode class. A TextNode's content is just a String.
  * 
@@ -21,24 +17,19 @@ import de.dfki.lt.loot.gui.Style;
 public class TextNode extends BasicNode {
 
   // this is the String content of the TextNode
-  /** The text. */
   private String text;
   // eventually nonzero offsets because of baseline
-  /** The y offset. */
   private int xOffset, yOffset;
 
-  /**
-   * The default constructor: Creates a new instance of <code>TextNode</code>.
-   * 
-   * @param content The TextNode's content
+  /** The default constructor: Creates a new instance of <code>TextNode</code>
+   * @param content
+   *          The TextNode's content
    */
   public TextNode(String content) { this.text = content; }
 
-  /**
-   * The default constructor: Creates a new instance of <code>TextNode</code>.
-   * 
-   * @param content The TextNode's content
-   * @param aStyle the a style
+  /** The default constructor: Creates a new instance of <code>TextNode</code>
+   * @param content
+   *          The TextNode's content
    */
   public TextNode(String content, Style aStyle) {
     super(aStyle);
@@ -46,23 +37,15 @@ public class TextNode extends BasicNode {
   }
 
   // Begin Getters and Setters:
-  /**
-   * Gets the text.
-   * 
-   * @return the TextNode's content String
-   */
+  /** @return the TextNode's content String */
   public String getText() { return this.text; }
 
-  /**
-   * Sets the text.
-   * 
-   * @param content the new text
+  /** @param text
+   *         The String we want to assign to this TextNode's <code>text</code>
    */
   public void setText(String content) { this.text = content; }
 
-  /**
-   * draws a String (formatted by g) from text and origin.
-   * 
+  /** draws a String (formatted by g) from text and origin
    * @param inner the inner rectangle (padding already treated correctly)
    * @param g the graphics context
    */

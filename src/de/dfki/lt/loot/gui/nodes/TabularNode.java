@@ -1,6 +1,3 @@
-/*
- * 
- */
 package de.dfki.lt.loot.gui.nodes;
 
 import java.awt.Graphics;
@@ -11,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-// TODO: Auto-generated Javadoc
 /**
  * This is the <code>CompositeNode</code> class. <code>CompositeNodes</code>
  * are <code>GraphicalNodes</code> with a number of subNodes (which are
@@ -25,28 +21,28 @@ public class TabularNode extends GraphicalNode {
 
   // This node's table of subNodes, the rows are the inner Lists, i.e.,
   // iterating over rows means iterating over nodeTable
-  /** The node table. */
   private ArrayList<GraphicalNode> nodeTable;
 
-  /** the list of row format specifications, must be same size as nodeTable valid chars are W   n   N \ | / w - c - e / | \ S   s   E north, northEast, east, southEast, south, Southwest, West and center, respectively length of strings must confirm to length of row. */
+  /** the list of row format specifications, must be same size as nodeTable
+   * valid chars are
+   *   W   n   N
+   *     \ | /
+   *   w - c - e
+   *     / | \
+   *   S   s   E
+   * north, northEast, east, southEast, south, Southwest, West and center,
+   * respectively
+   * length of strings must confirm to length of row
+   */
   private List<String> specs;
-  
-  /** The default spec. */
   private String defaultSpec;
 
-  /** determines which dimension is fixed in the beginning, if this is true, then the initial spec determines row count, else column count. */
+  /** determines which dimension is fixed in the beginning, if this is true,
+   * then the initial spec determines row count, else column count
+   */
   private boolean rowOriented;
-  
-  /** The col count. */
   private int rowCount, colCount;
 
-  /**
-   * Gets the node.
-   * 
-   * @param row the row
-   * @param col the col
-   * @return the node
-   */
   private GraphicalNode getNode(int row, int col) {
     return nodeTable.get(
         rowOriented ?
@@ -54,25 +50,11 @@ public class TabularNode extends GraphicalNode {
         col * rowCount + row);
   }
 
-  /**
-   * Gets the spec.
-   * 
-   * @param row the row
-   * @param col the col
-   * @return the spec
-   */
   private char getSpec(int row, int col) {
     return (rowOriented ?
         specs.get(row).charAt(col) : specs.get(col).charAt(row));
   }
 
-  /**
-   * Instantiates a new tabular node.
-   * 
-   * @param rows the rows
-   * @param defSpec the def spec
-   * @param size the size
-   */
   public TabularNode(boolean rows, String defSpec, int size) {
     defaultSpec = defSpec;
     nodeTable = new ArrayList<GraphicalNode>(defaultSpec.length() * size);
@@ -87,21 +69,11 @@ public class TabularNode extends GraphicalNode {
     this.specs = new ArrayList<String>(size);
   }
 
-  /**
-   * Instantiates a new tabular node.
-   * 
-   * @param rows the rows
-   * @param defSpec the def spec
-   */
   public TabularNode(boolean rows, String defSpec) {
     this(rows, defSpec, 5);
   }
 
-  /**
-   * Add new row, with given row spec.
-   * 
-   * @param spec the spec
-   */
+  /** Add new row, with given row spec */
   public void startNext(String spec) {
     if (this.defaultSpec.length() != spec.length())
       throw new IllegalArgumentException();
@@ -114,18 +86,14 @@ public class TabularNode extends GraphicalNode {
     this.specs.add(spec);
   }
 
-  /**
-   * Add new row, with default row spec.
-   */
+  /** Add new row, with default row spec */
   public void startNext() {
     startNext(this.defaultSpec);
   }
 
-  /**
-   * Adds another <code>GraphicalNode</code> to the current row of this
+  /** Adds another <code>GraphicalNode</code> to the current row of this
    * <code>TabularNode</code>. subNode may be null to get empty cells.
-   * 
-   * @param subNode the sub node
+   * @param subNode
    */
   @Override
   public void addNode(GraphicalNode subNode) {
@@ -138,23 +106,14 @@ public class TabularNode extends GraphicalNode {
     if (subNode != null) subNode.setParentNode(this);
   }
 
-  /**
-   * Remove the given subNode from my sub-nodes list.
-   * 
-   * @param subNode the sub node
-   */
+  /** Remove the given subNode from my sub-nodes list */
   @Override
   public void removeNode(GraphicalNode subNode) {
     this.nodeTable.remove(subNode);
     subNode.setParentNode(null);
   }
 
-  /**
-   * Replace node old by newNode.
-   * 
-   * @param old the old
-   * @param newNode the new node
-   */
+  /** Replace node old by newNode */
   @Override
   public void exchangeNode(GraphicalNode old, GraphicalNode newNode) {
     ListIterator<GraphicalNode> li = nodeTable.listIterator();
@@ -256,16 +215,12 @@ public class TabularNode extends GraphicalNode {
     this.area.setSize(totalWidth, totalHeight);
   }
 
-  /**
-   * Adjust the origin of subNode according to the current cell's alignment
-   * and area.
-   * 
-   * @param subNode the sub node
-   * @param align the align
-   * @param x the x
-   * @param y the y
-   * @param width the width
-   * @param height the height
+  /** Adjust the origin of subNode according to the current cell's alignment
+   *  and area.
+   *
+   * @param subNode: the sub-node to adjust
+   * @param alignment: an alignment character, for list see doc of specs
+   * @param x, y, width, height: the position and size of the current cell
    */
   private void adjustOrigin(GraphicalNode subNode, char align,
       int x, int y, int width, int height) {
@@ -300,9 +255,6 @@ public class TabularNode extends GraphicalNode {
   } // end method
 
 
-  /* (non-Javadoc)
-   * @see de.dfki.lt.loot.gui.nodes.GraphicalNode#getChildContainingPoint(java.awt.Point)
-   */
   @Override
   protected GraphicalNode getChildContainingPoint(Point p) {
     for (GraphicalNode child : nodeTable) {
