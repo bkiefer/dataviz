@@ -4,10 +4,12 @@ import java.awt.Color;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.JButton;
 import javax.swing.JTextArea;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Highlighter;
+import javax.swing.text.LayeredHighlighter;
 
 /**
  * HighLight
@@ -66,6 +68,7 @@ public abstract class HighLight {
 	/**
 	 * A highlighter that gives you the possibility to pass your own REGEX.<br/>
 	 * One at the begining one at the end.
+	 * @param <LayeredHighlightInfo>
 	 * 
 	 * @param area the JTextArea that will be modified
 	 * @param toHighLight the searched Strings
@@ -73,7 +76,7 @@ public abstract class HighLight {
 	 * @param postRegex The REGEX that will be added to the searched words at the end
 	 * @return JTextArea the modified aera
 	 */
-	public static JTextArea areaHighLight (JTextArea area, String[] toHighLight, String preRegex, String postRegex)
+	public static <LayeredHighlightInfo> JTextArea areaHighLight (JTextArea area, String[] toHighLight, String preRegex, String postRegex)
 	{
 		Color colorToUse = _colors[0];
 		_preRegex = preRegex;

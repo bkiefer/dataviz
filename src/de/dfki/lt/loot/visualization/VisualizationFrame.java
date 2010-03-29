@@ -3,7 +3,14 @@
  */
 package de.dfki.lt.loot.visualization;
 
+import java.awt.BorderLayout;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+
+import de.dfki.lt.loot.visualization.graph.Viewer;
 
 /**
  * The Class VisualizationFrame. A classical Frame to display the main visualisation.<br/>
@@ -12,6 +19,8 @@ import javax.swing.JFrame;
  */
 public class VisualizationFrame extends JFrame {
 
+	private VisualizationPanel _viPanel;
+	
 	/**
 	 * Instantiates a new visualization frame.<br/>
 	 * With the following options :<br/>
@@ -33,9 +42,11 @@ public class VisualizationFrame extends JFrame {
     	this.setLocationRelativeTo(null);
     	//this.setSize(500, 500);
     	this.setSize(800, 600);
-   	
+    	
+    	_viPanel = new VisualizationPanel(visualization);
     	//On prévient notre JFrame que ce sera notre JPanel qui sera son contentPane
-    	this.setContentPane(visualization.getView());
+    	this.setContentPane(_viPanel.getView());
+    	_viPanel.combo().addItemListener(new Item());
     	
     	 	
     	//Terminer le processus lorsqu'on clique sur "Fermer"
@@ -46,4 +57,52 @@ public class VisualizationFrame extends JFrame {
 
     	this.setVisible(true);
 	}
+	
+	/**
+     * The Class ItemState.
+     */
+    class Item implements ItemListener{
+    	
+            /**
+             * Item state changed.
+             * 
+             * @param e the ItemEvent
+             */
+            public void itemStateChanged(ItemEvent e) {
+            	/*
+            	if(e.getStateChange() == ItemEvent.SELECTED)
+            	{
+            		
+            		JFrame frame = new JFrame();
+            		frame.setTitle("DebbugViewer2");
+                	
+                	
+                	//Nous allons maintenant dire à notre objet de se positionner au centre
+                	frame.setLocationRelativeTo(null);
+                	//this.setSize(500, 500);
+                	frame.setSize(800, 600);
+                	
+                
+                	//On prévient notre JFrame que ce sera notre JPanel qui sera son contentPane
+                	frame.setContentPane(_viPanel.getVisu());
+                	//_viPanel.combo().addItemListener(new Item());
+                	
+                	 	
+                	//Terminer le processus lorsqu'on clique sur "Fermer"
+                	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+                	// Non modifiable
+                	frame.setResizable(true);
+
+                	frame.setVisible(true);
+            	}
+            	*/
+            	if(e.getStateChange() == ItemEvent.SELECTED)
+            	{
+            		System.out.println("TETETETETETETETETETETETETETEt");
+            		
+                    
+            	}
+            }               
+    }
 }

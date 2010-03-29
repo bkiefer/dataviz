@@ -1,13 +1,27 @@
+/*
+ * 
+ */
 package de.dfki.lt.loot.visualization;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.HashMap;
 import java.util.Vector;
 
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JViewport;
+import javax.swing.ScrollPaneLayout;
 
 import de.dfki.lt.loot.gui.jgraphviewer.GraphViewer;
+import de.dfki.lt.loot.visualization.VisualizationFrame.Item;
 import de.dfki.lt.loot.visualization.edges.DataGraphEdge;
 import de.dfki.lt.loot.visualization.exceptions.HandlerException;
 import de.dfki.lt.loot.visualization.graph.IndividualViewer;
@@ -15,22 +29,33 @@ import de.dfki.lt.loot.visualization.graph.SimpleGraphViewer;
 import de.dfki.lt.loot.visualization.graph.Viewer;
 import de.dfki.lt.loot.visualization.nodes.GraphNode;
 
-
+// TODO: Auto-generated Javadoc
 /**
  * The Class VisualizationPanel. This Class is used to handel the different Types of GraphVisualisation.<br/>
  * This Panel contains the menus, the left information Panel and at the right the visualization Panel.<br/>
  * This <i>should be</i> the Class used by the adapter classes. But can be bypassed by using directly a Viewer class.
  * @autor chris
  */
-public class VisualizationPanel {
+public class VisualizationPanel<I, D> extends JFrame {
+	
+	
+	/** The main JPanel */
+	private JPanel _panel = new JPanel(new BorderLayout());
+	
+	
+	/** The _combo. */
+	private JComboBox _combo = new JComboBox();
 	
 	/** The visualization container.  Implemented Viewer Class for the graph visualization.<br/>
 	 *  Will be print at the right side of the VisualizationPanel.
 	 */
-	private Viewer _visualizationContainer;
+	private  Viewer _visualizationContainer;
+	
+	/** The _all viewer. */
+	private Vector<Viewer> _allViewer;
 
 	/** The informations panel. Contains informations about the graph visualization ( only if the viewer use it )*/
-	private InformationPanel _informations;
+	private InformationPanel _informations, _visuPanel;
 	
 	
 	/**
@@ -42,39 +67,62 @@ public class VisualizationPanel {
 	 * @param type the type of Graph
 	 * @throws HandlerException the handler exception
 	 */
-	public VisualizationPanel(GraphNode root, HashMap<String, GraphNode> nodes, Vector<DataGraphEdge> edges, Type type) throws HandlerException
+	public VisualizationPanel(VisualizationAdapter<I, D> adapter)
 	{
-		_informations = new InformationPanel();
+		super();
+		_allViewer = new Vector<Viewer>();
+		_informations = new InformationPanel(new Dimension(200, 600), "Informations");
+		_visuPanel = new InformationPanel("LogicalForm");
 		
-		_visualizationContainer = viewHandler(root, nodes, edges, type);
+		for(int i = 0; i < adapter.getTypes().length; i++)
+		{
+			try {
+				_allViewer.add(viewHandler(adapter, adapter.getTypes()[i]));
+			} catch (HandlerException e) {
+				e.printStackTrace();
+			}
+		}
 		
+		for(Viewer elements : _allViewer)
+		{
+			String[] h = {"Owner"};
+			elements.setHightLight(h);
+			_combo.addItem(elements);
+		}
+		
+		
+		_combo.addItemListener(new ItemState(adapter));
+		_visualizationContainer = _allViewer.firstElement();
+		
+		_visuPanel.changeInfo(_visualizationContainer.getView());
+		//_port.setView(_visualizationContainer.getView());
+		
+		_panel.setSize(new Dimension(800, 600));
+		_panel.add(_informations, BorderLayout.WEST);
+		_panel.add(_visuPanel, BorderLayout.CENTER);
+		_combo.setPreferredSize(new Dimension(100, 50));
+		_panel.add(_combo, BorderLayout.NORTH);
+		
+		this.setTitle("DebbugViewer");
+    	
+    	
+    	//Nous allons maintenant dire ˆ notre objet de se positionner au centre
+    	this.setLocationRelativeTo(null);
+    	
+    	//this.setSize(500, 500);
+    	this.setSize(800, 600);
+    	
+    	this.setContentPane(_panel);
+    	
+    	 	
+    	//Terminer le processus lorsqu'on clique sur "Fermer"
+    	this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+    	// Non modifiable
+    	this.setResizable(true);
+
+    	this.setVisible(true);
 	}
-	
-	/**
-	 * Instantiates a new visualization panel.
-	 * 
-	 * @param root the root
-	 * @param nodes the nodes
-	 * @param type the type
-	 * @throws HandlerException the handler exception
-	 */
-	public VisualizationPanel(GraphNode root, HashMap<String, GraphNode> nodes, Type type) throws HandlerException
-	{
-		this(root, nodes, null, type);
-	}
-	
-	/**
-	 * Instantiates a new visualization panel.
-	 * 
-	 * @param nodes the nodes
-	 * @param type the type
-	 * @throws HandlerException the handler exception
-	 */
-	public VisualizationPanel(HashMap<String, GraphNode> nodes, Type type) throws HandlerException
-	{
-		this(null, nodes, null, type);
-	}
-	
 	
 	/**
 	 * View handler. Witch Viewer is appropirate ? Are they enough informations passed in the constructor ?
@@ -86,31 +134,30 @@ public class VisualizationPanel {
 	 * @return the j panel for the Graph visualization
 	 * @throws HandlerException the handler exception
 	 */
-	private Viewer viewHandler(final GraphNode root, final HashMap<String, GraphNode> nodes, final Vector<DataGraphEdge> edges, final Type type) throws HandlerException
+	private Viewer viewHandler(VisualizationAdapter<I, D> adapter, Type type) throws HandlerException
 	{
 		switch(type){
 			case DAGGRAPH:
-				if(root != null && nodes != null && edges != null)
-					return (new SimpleGraphViewer(root, nodes, edges, _informations));
+				if(adapter.getRoot() != null && adapter.getNodes() != null && adapter.getEdges() != null)
+					return (new SimpleGraphViewer<I, D>(adapter.getRoot(), adapter.getNodes(), adapter.getEdges(), _informations));
 				break;
 			case INDIVIDUAL:
-				if(root == null && nodes != null && edges == null)
-					return (new IndividualViewer(nodes, _informations));
+				if(adapter.getNodes() != null)
+					return (new IndividualViewer<I, D>(adapter.getNodes(), _informations));
 				break;
 			case JGRAPH:
-				if(root != null && nodes != null && edges != null)
-					return(new GraphViewer<Object, Object>(root, nodes, edges, _informations));
+				if(adapter.getRoot() != null && adapter.getNodes() != null && adapter.getEdges() != null)
+					return(new GraphViewer<I , D>(adapter.getRoot(), adapter.getNodes(), adapter.getEdges(), _informations));
 				break;
 			default:
 				throw new HandlerException("There is no representation for these parameters");
-				
 				
 		}
 		return null;
 	}
 	
 	/**
-	 * To set the Highlighter
+	 * To set the Highlighter.
 	 * 
 	 * @param toLight the words, sentences to highlight
 	 */
@@ -125,14 +172,84 @@ public class VisualizationPanel {
 	 */
 	public JPanel getView()
 	{
+		/**
 		JPanel panel = new JPanel();
 		panel.setSize(new Dimension(800, 600));
 		panel.setLayout(new BorderLayout());
 		panel.add(_informations, BorderLayout.WEST);
 		panel.add(_visualizationContainer.getView(), BorderLayout.CENTER);
-		
-		return panel;
+		_combo.setPreferredSize(new Dimension(100, 50));
+		panel.add(_combo, BorderLayout.NORTH);
+		*/
+		//_port.setView(_panel);
+		return _panel;
 		
 	}
+	
+	public JComboBox combo()
+	{
+		return _combo;
+	}
+	
+    /**
+     * The Class ItemState.
+     */
+    class ItemState implements ItemListener{
+    	VisualizationAdapter _adapter;
+    		public ItemState (VisualizationAdapter adapter){
+    			_adapter = adapter;
+    		}
+    		
+            /**
+             * Item state changed.
+             * 
+             * @param e the ItemEvent
+             */
+            public void itemStateChanged(ItemEvent e) {
+            	if(e.getStateChange() == ItemEvent.SELECTED)
+            	{
+            		System.out.println("TETETETETETETETETETETETETETE");
+            		_visualizationContainer = (Viewer)e.getItem();
+                    //_informations.changeInfo(_visualizationContainer.getView());
+                   
+                   _visuPanel.changeInfo(_visualizationContainer.getView());
+                   
+                    
+                    /*
+                   JFrame frame = new JFrame();
+                   
+                   frame.setTitle("DebbugViewer2");
+               	
+               	
+               	//Nous allons maintenant dire ˆ notre objet de se positionner au centre
+                   frame.setLocationRelativeTo(null);
+               	//this.setSize(500, 500);
+                   frame.setSize(800, 600);
+               	
+               
+               	
+               	 	
+               	//Terminer le processus lorsqu'on clique sur "Fermer"
+                   frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+               	// Non modifiable
+                   frame.setResizable(true);
+
+               		frame.setVisible(true);
+                   
+               		frame.setContentPane(getContentPane());
+               		//setContentPane(_visuPanel);
+                   //repaint();
+                   getContentPane();
+                   getContentPane().add(new JTextArea("tetetttebebbe e ebeb"), BorderLayout.CENTER);
+                   repaint();
+                   pack();
+               		frame.pack();*/
+                    
+                    repaint();
+                    
+            	}
+            }               
+    }
 
 }

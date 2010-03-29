@@ -27,8 +27,9 @@ public class JComponentNode<I, D> extends DefaultGraphCell implements Node<I, D>
 {
 	
 	/** The _view. */
-	private NodeView _view;
-	
+	/*
+	private NodeViewer _view;
+	*/
 	/** The _node. */
 	private Node<I, D> _node;
 	
@@ -43,7 +44,7 @@ public class JComponentNode<I, D> extends DefaultGraphCell implements Node<I, D>
 	 */
 	public JComponentNode(Node<I, D> node, VertexView view, JPanel comp)
 	{
-		_view = (NodeView) view;
+		//_view = (NodeViewer) view;
 		_node = node;
 		_comp = comp;
 		
@@ -66,7 +67,7 @@ public class JComponentNode<I, D> extends DefaultGraphCell implements Node<I, D>
 	 */
 	public JComponentNode(Node<I, D> node, JPanel comp)
 	{
-		this(node, new NodeView(node), comp);
+		this(node, new NodeViewer(node), comp);
 	}
 	
 	/* (non-Javadoc)
@@ -110,7 +111,7 @@ public class JComponentNode<I, D> extends DefaultGraphCell implements Node<I, D>
 	 */
 	public void setNode(Node<I, D> node) {
 		_node = node;
-		_view.setCell(node);
+		//_view.setCell(node);
 	}
 	
 	/**
@@ -118,10 +119,11 @@ public class JComponentNode<I, D> extends DefaultGraphCell implements Node<I, D>
 	 * 
 	 * @return the view
 	 */
-	public NodeView getView() {
+	/*
+	public NodeViewer getView() {
 		return _view;
 	}
-	
+	*/
 	/**
 	 * Gets the component ( the graphical visualization of the node )
 	 * 

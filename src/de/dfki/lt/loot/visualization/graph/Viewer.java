@@ -1,5 +1,7 @@
 package de.dfki.lt.loot.visualization.graph;
 
+import java.awt.Component;
+
 import javax.swing.JPanel;
 
 /**
@@ -9,6 +11,20 @@ import javax.swing.JPanel;
  *
  */
 public interface Viewer {
+	
+	/**
+	 * To set the name of this visualization. Usefull for the Menu.
+	 * 
+	 * @param String name the new name for this visualization
+	 */
+	public void setName(String name);
+	
+	/**
+	 * To get the name of this visualization. Usefull for the Menu
+	 * 
+	 * @return String the name
+	 */
+	public String getName();
 	
 	/**
 	 * To obtain the JPanel with the graph visualisation

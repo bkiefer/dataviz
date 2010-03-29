@@ -12,16 +12,17 @@ import de.dfki.lt.loot.visualization.edges.DataGraphEdge;
 import de.dfki.lt.loot.visualization.exceptions.GraphEdgeException;
 import de.dfki.lt.loot.visualization.exceptions.GraphNodeException;
 import de.dfki.lt.loot.visualization.nodes.GraphNode;
+import de.dfki.lt.loot.visualization.nodes.Node;
 import edu.uci.ics.jung.graph.DirectedSparseMultigraph;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class SimpleGraph.
  */
-public class SimpleGraph {
+public class SimpleGraph<I, D> {
 	
 	/** The _graph. */
-	private DirectedSparseMultigraph<GraphNode, DataGraphEdge> _graph;
+	private DirectedSparseMultigraph<Node<I, D>, DataGraphEdge> _graph;
 	
 	/**
 	 * Instantiates a new simple graph.
@@ -29,30 +30,10 @@ public class SimpleGraph {
 	 * @param nodes the nodes
 	 * @param edges the edges
 	 */
-	public SimpleGraph(HashMap<String, GraphNode> nodes, Vector<DataGraphEdge> edges )
+	public SimpleGraph(HashMap<String, Node<I, D>> nodes, Vector<DataGraphEdge> edges )
 	{
-		_graph = new DirectedSparseMultigraph<GraphNode, DataGraphEdge>();
+		_graph = new DirectedSparseMultigraph<Node<I, D>, DataGraphEdge>();
 		initGraph(nodes, edges);
-		
-		try {
-			GraphNode test = new GraphNode("Test", "kk");
-		
-			nodes.put("Test", test);
-			_graph.addVertex(test);
-		
-			DataGraphEdge dge = new DataGraphEdge("Test", "size", "-");
-			_graph.addEdge( dge, nodes.get(dge.getOut()), test);
-			dge = new DataGraphEdge("Test", "color", "-");
-			_graph.addEdge( dge, nodes.get(dge.getOut()), test);
-		} catch (GraphNodeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (GraphEdgeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		
 	}
 	
 	/**
@@ -61,14 +42,13 @@ public class SimpleGraph {
 	 * @param nodes the nodes
 	 * @param edges the edges
 	 */
-	private void initGraph(HashMap<String, GraphNode> nodes, Vector<DataGraphEdge> edges)
+	private void initGraph(HashMap<String, Node<I, D>> nodes, Vector<DataGraphEdge> edges)
 	{
-		System.out.println("Nodes : " + nodes.values());
-		Collection<GraphNode> nodeCol = nodes.values();
-		Iterator<GraphNode> itN = nodeCol.iterator();
+		Collection<Node<I, D>> nodeCol = nodes.values();
+		Iterator<Node<I, D>> itN = nodeCol.iterator();
 		while(itN.hasNext())
 		{
-			_graph.addVertex((GraphNode) itN.next());
+			_graph.addVertex((Node<I, D>) itN.next());
 		}
 		
 		Iterator<DataGraphEdge>itE = edges.iterator();
@@ -85,7 +65,7 @@ public class SimpleGraph {
 	 * 
 	 * @return the graph
 	 */
-	public DirectedSparseMultigraph<GraphNode, DataGraphEdge> getGraph()
+	public DirectedSparseMultigraph<Node<I, D>, DataGraphEdge> getGraph()
 	{
 		return _graph;
 	}

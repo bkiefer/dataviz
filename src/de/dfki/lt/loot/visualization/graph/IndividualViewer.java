@@ -17,12 +17,16 @@ import javax.swing.border.TitledBorder;
 
 import de.dfki.lt.loot.visualization.InformationPanel;
 import de.dfki.lt.loot.visualization.nodes.GraphNode;
+import de.dfki.lt.loot.visualization.nodes.Node;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class IndividualViewer.
  */
-public class IndividualViewer implements Viewer{
+public class IndividualViewer<I, D> implements Viewer{
+	
+	/** The name of this visualization. */
+	private String _name; 
 	
 	/** The _individual view. */
 	private JPanel _individualView;
@@ -33,10 +37,10 @@ public class IndividualViewer implements Viewer{
 	 * @param nodes the nodes
 	 * @param informationPanel the information panel
 	 */
-	public IndividualViewer(HashMap<String, GraphNode> nodes, InformationPanel informationPanel)
+	public IndividualViewer(HashMap<String, Node<I, D>> nodes, InformationPanel informationPanel)
 	{
 		_individualView = new JPanel(new BorderLayout());
-		JTextArea system = new JTextArea(nodes.get("0").getData().toString());
+		JTextArea system = new JTextArea(((GraphNode) nodes.values().toArray()[0]).getData().toString());
 		system.setBackground(new Color(237, 237, 237));
 		JScrollPane scroll = new JScrollPane(system);
 		scroll.setBackground(new Color(237, 237, 237));
@@ -85,6 +89,27 @@ public class IndividualViewer implements Viewer{
 	public int setHightLight(String[] toLight) {
 		// TODO Not implemented now
 		return 0;
+	}
+
+	@Override
+	public String getName() {
+		return _name;
+	}
+
+	@Override
+	public void setName(String name) {
+		_name = name;
+		
+	}
+	
+	/**
+	 * To String.
+	 * 
+	 * @return The name of this visualization. Usefull for the Menu creation.
+	 */
+	public String toString()
+	{
+		return _name;
 	}
 
 }

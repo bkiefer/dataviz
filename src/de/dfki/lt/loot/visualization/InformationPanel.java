@@ -33,17 +33,41 @@ public class InformationPanel extends JScrollPane {
 	 * .) Preferred Size : 200, 600.
 	 * 
 	 */
-	public InformationPanel()
+	public InformationPanel(Dimension dim, String title)
 	{
 		super();
 		_infoPanel = new JPanel();
 		_infoPanel.setBackground(new Color(237, 237, 237));
-		this.setBorder(new TitledBorder("Informations"));
-		this.setSize(new Dimension(200, 600));
+		this.setBorder(new TitledBorder(title));
+		this.setSize(dim);
 		//_scrollPanel.setBorder(new TitledBorder("Informations"));
-		this.setPreferredSize(new Dimension(200, 600));
+		this.setPreferredSize(dim);
 		this.setBackground(new Color(237, 237, 237));
 		this.setViewportView(_infoPanel);
+		this.setWheelScrollingEnabled(true);
+	}
+	
+	/**
+	 * Instantiates a new information panel.<br />
+	 * The parameters of this JPanel are in this constructor : <br/>
+	 * .) Background Color : 237, 237, 237.
+	 * .) TitelBorder : "Informations".
+	 * .) Size : 200, 600.
+	 * The parameters for the JScrollPane : <br/>
+	 * .) Background Color : 237, 237, 237.
+	 * .) Preferred Size : 200, 600.
+	 * 
+	 */
+	public InformationPanel( String title)
+	{
+		super();
+		_infoPanel = new JPanel();
+		_infoPanel.setBackground(new Color(237, 237, 237));
+		this.setBorder(new TitledBorder(title));
+		//_scrollPanel.setBorder(new TitledBorder("Informations"));
+		this.setBackground(new Color(237, 237, 237));
+		this.setViewportView(_infoPanel);
+		this.setWheelScrollingEnabled(true);
 	}
 	
 	/**

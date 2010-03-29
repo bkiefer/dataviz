@@ -16,7 +16,7 @@ import org.jgraph.graph.VertexView;
 /**
  * The Class NodeView.
  */
-public class NodeView extends VertexView {
+public class NodeViewer extends VertexView {
 	
 	/** The renderer. */
 	private static CompViewRenderer renderer = new CompViewRenderer();
@@ -55,7 +55,7 @@ public class NodeView extends VertexView {
 	 * 
 	 * @param cell the cell
 	 */
-	public NodeView(Object cell)
+	public NodeViewer(Object cell)
 	{
 		super(cell);
 	}
