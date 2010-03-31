@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JUNG2"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JGraph5"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry excluding="de/dfki/lt/loot/gui/AlignLayout.java|JGraph/|de/dfki/lt/loot/visualization/edges/DataGraphEdgeFactory.java|de/dfki/lt/loot/visualization/graph/SimpleGraph.java|de/dfki/lt/loot/visualization/graph/SimpleGraphViewer.java|de/dfki/lt/loot/visualization/mouse/|de/dfki/lt/loot/visualization/VisualizationPanel.java|de/dfki/lt/loot/visualization/VisualizationFrame.java|de/dfki/lt/loot/visualization/nodes/GraphNodeFactory.java" kind="src" path="src"/>
+	<classpathentry kind="src" path="tests"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/log4j-1.2.jar"/>
+	<classpathentry kind="lib" path="lib/jgraph.jar"/>
+	<classpathentry kind="output" path="classes"/>
 </classpath>

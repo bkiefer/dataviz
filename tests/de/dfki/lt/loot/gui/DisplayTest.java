@@ -53,14 +53,15 @@ class TestIntersectLayout implements Layout {
             0
         ));
     TextNode c = new TextNode("Center", Style.get("coref"));
-    c.setOrigin(radius, radius);
+    int center = radius/2 + 40;
+    c.setOrigin(center, center);
     node.addNode(c);
     for(double deg = 0; deg < 360; deg += 10) {
       GraphicalNode nextNode =
         new TextNode("MMM", Style.get("coref"));
       double rad = Math.toRadians(deg);
-      nextNode.setOrigin((int)(radius + (radius/2 * Math.sin(rad))),
-          (int)(radius + radius/2 * Math.cos(rad)));
+      nextNode.setOrigin((int)(center + (radius/2 * Math.sin(rad))),
+          (int)(center + radius/2 * Math.cos(rad)));
       node.addNode(nextNode);
 
       node.addConnector(new StraightConnector(c, nextNode));
