@@ -4,10 +4,7 @@ package de.dfki.lt.loot.visualization;
 import java.util.HashMap;
 import java.util.Vector;
 
-import javax.swing.JPanel;
-
 import de.dfki.lt.loot.visualization.edges.DataGraphEdge;
-import de.dfki.lt.loot.visualization.nodes.GraphNode;
 import de.dfki.lt.loot.visualization.nodes.Node;
 
 /**

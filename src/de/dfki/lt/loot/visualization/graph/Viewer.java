@@ -1,7 +1,5 @@
 package de.dfki.lt.loot.visualization.graph;
 
-import java.awt.Component;
-
 import javax.swing.JPanel;
 
 /**

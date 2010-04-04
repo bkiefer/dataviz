@@ -1,10 +1,8 @@
 package de.dfki.lt.loot.gui;
 
-import de.dfki.lt.loot.gui.adapters.ModelAdapter;
-/*
-import org.apache.log4j.*;
-*/
 import java.util.HashMap;
+
+import de.dfki.lt.loot.gui.adapters.ModelAdapter;
 
 public class ModelAdapterFactory {
 
