@@ -4,8 +4,15 @@
 package de.dfki.lt.loot.gui.jgraphviewer;
 
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Rectangle;
 
 import javax.swing.JPanel;
+
+import org.jgraph.graph.AttributeMap;
+import org.jgraph.graph.DefaultGraphCell;
+import org.jgraph.graph.GraphConstants;
+import org.jgraph.graph.VertexView;
 
 import de.dfki.lt.loot.visualization.nodes.Node;
 
@@ -42,8 +49,6 @@ public class JComponentNode<I, D> extends DefaultGraphCell implements Node<I, D>
 		_comp = comp;
 		
 		AttributeMap map = new AttributeMap();
-		
-		ComponentBoundsCreator.setComponentBounds(_comp);
 		
 		GraphConstants.setBounds(map, comp.getBounds());
 		GraphConstants.setGradientColor(map, Color.white.brighter());

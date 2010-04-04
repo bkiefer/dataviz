@@ -1,5 +1,7 @@
 package de.dfki.lt.loot.gui;
 
+import de.dfki.lt.loot.gui.layouts.CompactLayout;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -22,8 +24,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
-
-import de.dfki.lt.loot.gui.layouts.CompactLayout;
 
 /**
  * <code>MainFrame</code> defines the main window of the application.

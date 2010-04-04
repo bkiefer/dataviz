@@ -3,8 +3,8 @@ package de.dfki.lt.loot.gui.nodes;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 

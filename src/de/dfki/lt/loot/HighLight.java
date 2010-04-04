@@ -4,10 +4,12 @@ import java.awt.Color;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.JButton;
 import javax.swing.JTextArea;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Highlighter;
+import javax.swing.text.LayeredHighlighter;
 
 /**
  * HighLight

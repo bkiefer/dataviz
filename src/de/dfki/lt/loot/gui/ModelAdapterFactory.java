@@ -1,16 +1,15 @@
 package de.dfki.lt.loot.gui;
 
-import java.util.HashMap;
-
 import de.dfki.lt.loot.gui.adapters.ModelAdapter;
+
+import org.apache.log4j.*;
+
+import java.util.HashMap;
 
 public class ModelAdapterFactory {
 
-	/*
   private static final Logger logger =
     Logger.getLogger(ModelAdapterFactory.class);
-*/
-
 
   @SuppressWarnings("unchecked")
   private static HashMap<Class, Class> _prototypes =
@@ -28,10 +27,10 @@ public class ModelAdapterFactory {
       return (ModelAdapter) ModelAdapterClass.newInstance();
     }
     catch (InstantiationException iex) {
-      //logger.warn("Could not create Instance for " + ModelAdapterClass);
+      logger.warn("Could not create Instance for " + ModelAdapterClass);
     }
     catch (IllegalAccessException iaex) {
-     // logger.warn("Could not create Instance for " + ModelAdapterClass);
+      logger.warn("Could not create Instance for " + ModelAdapterClass);
     }
     return null;
   }

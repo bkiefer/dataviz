@@ -6,12 +6,17 @@ package de.dfki.lt.loot.gui.jgraphviewer;
 
 import java.awt.Component;
 
+import org.jgraph.JGraph;
+import org.jgraph.graph.CellView;
+import org.jgraph.graph.CellViewRenderer;
+import org.jgraph.graph.VertexRenderer;
+import org.jgraph.graph.VertexView;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class NodeView.
  */
 public class NodeViewer extends VertexView {
-	
 	
 	/** The renderer. */
 	private static CompViewRenderer renderer = new CompViewRenderer();
@@ -39,8 +44,6 @@ public class NodeViewer extends VertexView {
 			
 			//DefaultGraphCell cell = (DefaultGraphCell) cellView.getCell();
 			JComponentNode jcell = (JComponentNode)cellView.getCell();
-			
-			//TODO SELBST T…TEN oder eine FRAME
 			
 			return jcell.getComp();
 		}
