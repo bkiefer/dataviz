@@ -50,6 +50,8 @@ public class JComponentNode<I, D> extends DefaultGraphCell implements Node<I, D>
 		
 		AttributeMap map = new AttributeMap();
 		
+		ComponentBoundsCreator.setComponentBounds(_comp);
+		
 		GraphConstants.setBounds(map, comp.getBounds());
 		GraphConstants.setGradientColor(map, Color.white.brighter());
 		GraphConstants.setBorderColor(map, Color.blue);
