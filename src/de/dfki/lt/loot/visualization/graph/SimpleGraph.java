@@ -9,9 +9,6 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import de.dfki.lt.loot.visualization.edges.DataGraphEdge;
-import de.dfki.lt.loot.visualization.exceptions.GraphEdgeException;
-import de.dfki.lt.loot.visualization.exceptions.GraphNodeException;
-import de.dfki.lt.loot.visualization.nodes.GraphNode;
 import de.dfki.lt.loot.visualization.nodes.Node;
 import edu.uci.ics.jung.graph.DirectedSparseMultigraph;
 
@@ -19,10 +16,10 @@ import edu.uci.ics.jung.graph.DirectedSparseMultigraph;
 /**
  * The Class SimpleGraph.
  */
-public class SimpleGraph<I, D> {
+public class SimpleGraph {
 	
 	/** The _graph. */
-	private DirectedSparseMultigraph<Node<I, D>, DataGraphEdge> _graph;
+	private DirectedSparseMultigraph<Node, DataGraphEdge> _graph;
 	
 	/**
 	 * Instantiates a new simple graph.
@@ -30,9 +27,9 @@ public class SimpleGraph<I, D> {
 	 * @param nodes the nodes
 	 * @param edges the edges
 	 */
-	public SimpleGraph(HashMap<String, Node<I, D>> nodes, Vector<DataGraphEdge> edges )
+	public SimpleGraph(HashMap<String, Node> nodes, Vector<DataGraphEdge> edges )
 	{
-		_graph = new DirectedSparseMultigraph<Node<I, D>, DataGraphEdge>();
+		_graph = new DirectedSparseMultigraph<Node, DataGraphEdge>();
 		initGraph(nodes, edges);
 	}
 	
@@ -42,13 +39,13 @@ public class SimpleGraph<I, D> {
 	 * @param nodes the nodes
 	 * @param edges the edges
 	 */
-	private void initGraph(HashMap<String, Node<I, D>> nodes, Vector<DataGraphEdge> edges)
+	private void initGraph(HashMap<String, Node> nodes, Vector<DataGraphEdge> edges)
 	{
-		Collection<Node<I, D>> nodeCol = nodes.values();
-		Iterator<Node<I, D>> itN = nodeCol.iterator();
+		Collection<Node> nodeCol = nodes.values();
+		Iterator<Node> itN = nodeCol.iterator();
 		while(itN.hasNext())
 		{
-			_graph.addVertex((Node<I, D>) itN.next());
+			_graph.addVertex((Node) itN.next());
 		}
 		
 		Iterator<DataGraphEdge>itE = edges.iterator();
@@ -65,7 +62,7 @@ public class SimpleGraph<I, D> {
 	 * 
 	 * @return the graph
 	 */
-	public DirectedSparseMultigraph<Node<I, D>, DataGraphEdge> getGraph()
+	public DirectedSparseMultigraph<Node, DataGraphEdge> getGraph()
 	{
 		return _graph;
 	}

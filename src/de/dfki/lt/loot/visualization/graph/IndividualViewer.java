@@ -16,6 +16,7 @@ import javax.swing.JTextArea;
 import javax.swing.border.TitledBorder;
 
 import de.dfki.lt.loot.visualization.InformationPanel;
+import de.dfki.lt.loot.visualization.VisualizationAdapter;
 import de.dfki.lt.loot.visualization.nodes.GraphNode;
 import de.dfki.lt.loot.visualization.nodes.Node;
 
@@ -23,7 +24,7 @@ import de.dfki.lt.loot.visualization.nodes.Node;
 /**
  * The Class IndividualViewer.
  */
-public class IndividualViewer<I, D> implements Viewer{
+public class IndividualViewer implements Viewer{
 	
 	/** The name of this visualization. */
 	private String _name; 
@@ -31,16 +32,21 @@ public class IndividualViewer<I, D> implements Viewer{
 	/** The _individual view. */
 	private JPanel _individualView;
 	
+	/** The Adapter */
+	private VisualizationAdapter _adapter;
+	
 	/**
 	 * Instantiates a new individual viewer.
 	 * 
 	 * @param nodes the nodes
 	 * @param informationPanel the information panel
 	 */
-	public IndividualViewer(HashMap<String, Node<I, D>> nodes, InformationPanel informationPanel)
+	public IndividualViewer(VisualizationAdapter adapter, InformationPanel informationPanel)
 	{
+		_adapter = adapter;
+		
 		_individualView = new JPanel(new BorderLayout());
-		JTextArea system = new JTextArea(((GraphNode) nodes.values().toArray()[0]).getData().toString());
+		JTextArea system = new JTextArea(((GraphNode) _adapter.getNodes().values().toArray()[0]).getData().toString());
 		system.setBackground(new Color(237, 237, 237));
 		JScrollPane scroll = new JScrollPane(system);
 		scroll.setBackground(new Color(237, 237, 237));
@@ -110,6 +116,12 @@ public class IndividualViewer<I, D> implements Viewer{
 	public String toString()
 	{
 		return _name;
+	}
+
+	@Override
+	public VisualizationAdapter getAdapter() {
+		
+		return _adapter;
 	}
 
 }

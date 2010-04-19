@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 import org.apache.commons.collections15.Transformer;
 
 import de.dfki.lt.loot.visualization.InformationPanel;
+import de.dfki.lt.loot.visualization.VisualizationAdapter;
 import de.dfki.lt.loot.visualization.edges.DataGraphEdge;
 import de.dfki.lt.loot.visualization.mouse.Mouse;
 import de.dfki.lt.loot.visualization.nodes.GraphNode;
@@ -34,7 +35,7 @@ import edu.uci.ics.jung.visualization.renderers.Renderer.VertexLabel.Position;
 /**
  * The Class SimpleGraphViewer.
  */
-public class SimpleGraphViewer<I, D> implements Viewer{
+public class SimpleGraphViewer implements Viewer{
 	
 	/** The name of this visualization. */
 	private String _name; 
@@ -43,21 +44,13 @@ public class SimpleGraphViewer<I, D> implements Viewer{
 	private SimpleGraph _graph;
 	
 	/** The _layout. */
-	private DAGLayout<Node<I, D>, DataGraphEdge> _layout;
+	private DAGLayout<Node, DataGraphEdge> _layout;
 	
 	/** The _server. */
-	private VisualizationViewer<Node<I, D>, DataGraphEdge> _server;
+	private VisualizationViewer<Node, DataGraphEdge> _server;
 	
-	/** The _nodes. */
-	private HashMap<String, Node<I, D>> _nodes;
-	
-	/** The _edges. */
-	private Vector<DataGraphEdge> _edges;
-	
-	/** The _root. */
-	private String _root;
-	
-	
+	/** The Adapter. */
+	private VisualizationAdapter _adapter;	
 	
 	/**
 	 * Instantiates a new simple graph viewer.
@@ -67,17 +60,17 @@ public class SimpleGraphViewer<I, D> implements Viewer{
 	 * @param edges the edges
 	 * @param informationPanel the information panel
 	 */
-	public SimpleGraphViewer(String root, HashMap<String, Node<I, D>> nodes, Vector<DataGraphEdge> edges, InformationPanel informationPanel)
+	public SimpleGraphViewer(VisualizationAdapter adapter, InformationPanel informationPanel)
 	{
+		
+		_adapter = adapter;
+		
 		_name = "Jung Viewer";
-		_root = root;
-		_nodes = nodes;
-		_edges = edges;
-		_graph = new SimpleGraph<I, D>(_nodes, _edges);
+		_graph = new SimpleGraph(_adapter.getNodes(), _adapter.getEdges());
 		//_forest = new DelegateForest(_graph.getGraph());
-		_layout = new DAGLayout<Node<I, D>, DataGraphEdge>(_graph.getGraph());
+		_layout = new DAGLayout<Node, DataGraphEdge>(_graph.getGraph());
 		_layout.setSize(new Dimension(600, 600));
-		_layout.setRoot(nodes.get(root));
+		_layout.setRoot(_adapter.getNodes().get(_adapter.getRoot()));
 		_layout.setForceMultiplier(200);
 		_layout.setStretch(1.5);
 		_layout.setRepulsionRange(1200);
@@ -85,13 +78,13 @@ public class SimpleGraphViewer<I, D> implements Viewer{
 		 
 		 
 		//_layout.setSize(new Dimension(300, 300));
-		_server = new VisualizationViewer<Node<I, D>, DataGraphEdge>(_layout);
+		_server = new VisualizationViewer<Node, DataGraphEdge>(_layout);
 		
-		_server.getRenderContext().setVertexLabelTransformer(new ToStringLabeller<Node<I, D>>());
+		_server.getRenderContext().setVertexLabelTransformer(new ToStringLabeller<Node>());
 		_server.getRenderContext().setEdgeLabelTransformer(new ToStringLabeller<DataGraphEdge>());
-		_server.getRenderContext().setVertexShapeTransformer(new VertexShapeAspect<Node<I, D>, DataGraphEdge>());
-		_server.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line<Node<I, D>, DataGraphEdge>());
-		_server.getRenderContext().setEdgeLabelClosenessTransformer(new ConstantDirectionalEdgeValueTransformer<Node<I, D>,DataGraphEdge>(.5, .5));
+		_server.getRenderContext().setVertexShapeTransformer(new VertexShapeAspect<Node, DataGraphEdge>());
+		_server.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line<Node, DataGraphEdge>());
+		_server.getRenderContext().setEdgeLabelClosenessTransformer(new ConstantDirectionalEdgeValueTransformer<Node,DataGraphEdge>(.5, .5));
 		_server.getRenderer().getVertexLabelRenderer().setPosition(Position.CNTR);
 		_server.getRenderContext().getEdgeLabelRenderer().setRotateEdgeLabels(false);
 		_server.addKeyListener(new KeyBordListener());
@@ -211,10 +204,10 @@ public class SimpleGraphViewer<I, D> implements Viewer{
 
 			if((e.getKeyCode() == 82) && e.isControlDown())
 			{
-				_layout = new DAGLayout<Node<I, D>, DataGraphEdge>(_graph.getGraph());
+				_layout = new DAGLayout<Node, DataGraphEdge>(_graph.getGraph());
 				_layout.setSize(new Dimension(600, 600));
 				
-				_layout.setRoot(_nodes.get("d1"));
+				_layout.setRoot(_adapter.getNodes().get(_adapter.getRoot()));
 				_layout.setForceMultiplier(200);
 				_layout.setStretch(1.5);
 				_layout.setRepulsionRange(1200);
@@ -223,7 +216,7 @@ public class SimpleGraphViewer<I, D> implements Viewer{
 			}
 			else if ((e.getKeyCode() == 83) && e.isControlDown())
 			{
-				_server.setGraphLayout(new FRLayout2<Node<I, D>, DataGraphEdge>(_graph.getGraph()));
+				_server.setGraphLayout(new FRLayout2<Node, DataGraphEdge>(_graph.getGraph()));
 				_server.repaint();
 			}
 			
@@ -256,6 +249,12 @@ public class SimpleGraphViewer<I, D> implements Viewer{
 	public String toString()
 	{
 		return _name;
+	}
+
+	@Override
+	public VisualizationAdapter getAdapter() {
+		
+		return null;
 	}
 	
 

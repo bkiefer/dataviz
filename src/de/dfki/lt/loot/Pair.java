@@ -40,6 +40,10 @@ implements PairInterface<KEYTYPE, VALUETYPE> {
    */
   public VALUETYPE getSecond() { return (VALUETYPE) _second; }
   
+  public void setFirst(KEYTYPE newFirst){ _first = newFirst;}
+  
+  public void setSecond(VALUETYPE newSecond){ _second = newSecond;}
+  
   /* (non-Javadoc)
    * @see java.lang.Object#toString()
    */

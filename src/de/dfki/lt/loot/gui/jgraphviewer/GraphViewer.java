@@ -56,9 +56,11 @@ import com.jgraph.layout.hierarchical.JGraphHierarchicalLayout;
 
 import de.dfki.lt.loot.HighLight;
 import de.dfki.lt.loot.visualization.InformationPanel;
+import de.dfki.lt.loot.visualization.VisualizationAdapter;
 import de.dfki.lt.loot.visualization.edges.DataGraphEdge;
 import de.dfki.lt.loot.visualization.exceptions.GraphNodeException;
 import de.dfki.lt.loot.visualization.graph.Viewer;
+import de.dfki.lt.loot.visualization.nodes.FeatureView;
 import de.dfki.lt.loot.visualization.nodes.GraphNode;
 import de.dfki.lt.loot.visualization.nodes.Node;
 
@@ -66,10 +68,8 @@ import de.dfki.lt.loot.visualization.nodes.Node;
 /**
  * The Class GraphViewer.
  * 
- * @param <I> the generic type of ID
- * @param <D> the generic type of Data
  */
-public class GraphViewer<I, D> extends JPanel implements Viewer{
+public class GraphViewer extends JPanel implements Viewer{
 	
 	/** The name of this visualization. */
 	protected String name; 
@@ -84,8 +84,16 @@ public class GraphViewer<I, D> extends JPanel implements Viewer{
 	protected DefaultGraphModel jGraphModel = null;
 	
 	/** The all cell list. */
-	private HashMap<String, JComponentNode<I, D>> allCellList = new HashMap<String, JComponentNode<I, D>>();
+	private HashMap<String, JComponentNode> allCellList = new HashMap<String, JComponentNode>();
 	
+	/** The adapter */
+	private VisualizationAdapter _adapter;
+	
+	@Override
+	public VisualizationAdapter getAdapter() {
+		return _adapter;
+	}
+
 	/**
 	 * Instantiates a new graph viewer.
 	 * 
@@ -94,9 +102,14 @@ public class GraphViewer<I, D> extends JPanel implements Viewer{
 	 * @param edges the edges
 	 * @param info the info
 	 */
-	public GraphViewer(String root, HashMap<String, Node<I, D>> nodes, Vector<DataGraphEdge> edges, InformationPanel info)
+	public GraphViewer(VisualizationAdapter adapter, InformationPanel info)
 	{
 		name = "JGraph Viewer";
+		String root = adapter.getRoot();
+		HashMap<String, Node> nodes = adapter.getNodes();
+		Vector<DataGraphEdge> edges = adapter.getEdges();
+		
+		_adapter = adapter;
 		
 		//super("JGraph");
 		try {
@@ -124,7 +137,7 @@ public class GraphViewer<I, D> extends JPanel implements Viewer{
 	 * @param edges the edges
 	 * @param info the info
 	 */
-	private void initGraph(String root, HashMap<String, Node<I, D>> nodes, Vector<DataGraphEdge> edges, InformationPanel info)
+	private void initGraph(String root, HashMap<String, Node> nodes, Vector<DataGraphEdge> edges, InformationPanel info)
 	{
 		//TODO WHAT is a model ?
 		jGraphModel = new DefaultGraphModel();
@@ -170,7 +183,7 @@ public class GraphViewer<I, D> extends JPanel implements Viewer{
 	 * @param nodes the nodes
 	 * @param edges the edges
 	 */
-	private void addGraphLayout(String root, HashMap<String, Node<I, D>> nodes, Vector<DataGraphEdge> edges)
+	private void addGraphLayout(String root, HashMap<String, Node> nodes, Vector<DataGraphEdge> edges)
 	{
 		jGraphModel.addGraphModelListener(new GraphMode());
 		jGraph.getGraphLayoutCache().setFactory( new JComponentCellViewFactory());
@@ -184,10 +197,10 @@ public class GraphViewer<I, D> extends JPanel implements Viewer{
 		JGraphFacade facade = new JGraphFacade(jGraph, roots); // Pass the facade the JGraph instance
 		JGraphLayout layout = new JGraphHierarchicalLayout(); // Create an instance of the appropriate layout
 		layout.run(facade); // Run the layout on the facade. Note that layouts do not implement the Runnable interface, to avoid confusion
-		Map nested = facade.createNestedMap(true, true); // Obtain a map of the resulting attribute changes from the facade
+		Map nested = facade.createNestedMap(true, true); // Obtain a map of the resulting attribute changes from the facade		
 		jGraph.getGraphLayoutCache().edit(nested); // Apply the results to the actual graph
-		
 		add(jGraph, BorderLayout.CENTER);
+		
 	}
 	
 	/**
@@ -196,37 +209,44 @@ public class GraphViewer<I, D> extends JPanel implements Viewer{
 	 * @param nodes the nodes
 	 * @param edges the edges
 	 */
-	private void insertElements(HashMap<String, Node<I, D>> nodes, Vector<DataGraphEdge> edges)
+	private void insertElements(HashMap<String, Node> nodes, Vector<DataGraphEdge> edges)
 	{
-		Iterator<Node<I, D>> it = nodes.values().iterator();
+		Iterator<Node> it = nodes.values().iterator();
 		Iterator<String> itS = nodes.keySet().iterator();
 		
 		while(it.hasNext())
 		{
-			Node<I, D> node = it.next();
-			JComponentNode<I, D> jc = null;
-			jc = new JComponentNode<I, D>(node, new ClassicNodeView(node));
+			Node node = it.next();
+			JComponentNode jc = null;
+			jc = new JComponentNode(node);
+			//jc = new JComponentNode(node, new ClassicNodeView(node));
 			jc.add(new DefaultPort());
 			jGraph.getGraphLayoutCache().insert(jc);
 			String id = itS.next();
 			allCellList.put(id, jc);
 		}
 		
-		
 		for(DataGraphEdge edgeI : edges)
 		{
 			DefaultEdge edge = new DefaultEdge();
 			edge.setSource((allCellList.get(edgeI.getIn())).getChildAt(0));
 			edge.setTarget((allCellList.get(edgeI.getOut())).getChildAt(0));
-			
 			int arrow = GraphConstants.ARROW_CLASSIC;
 			GraphConstants.setLineEnd(edge.getAttributes(), arrow);
 			GraphConstants.setEndFill(edge.getAttributes(), true);
+			GraphConstants.setDisconnectable(edge.getAttributes(), false);
+			GraphConstants.setSelectable(edge.getAttributes(), false);
 			jGraph.getGraphLayoutCache().insert(edge);
 			
+			Object[] label = {edgeI.getData()};
 			
+			Point2D[] labelPosition = {new Point2D.Double(GraphConstants.PERMILLE/2, 0)};
+			GraphConstants.setForeground(edge.getAttributes(), Color.BLUE);
+			GraphConstants.setExtraLabelPositions(edge.getAttributes(),labelPosition);
+			GraphConstants.setExtraLabels(edge.getAttributes(), label);
+			GraphConstants.setLabelAlongEdge(edge.getAttributes(), true);
+
 		}
-		
 	}
 	
 	
@@ -341,10 +361,10 @@ public class GraphViewer<I, D> extends JPanel implements Viewer{
 		 */
 		@Override
 		public void valueChanged(GraphSelectionEvent e) {
-			if(e.getCell() instanceof JComponentNode<?, ?>)
+			if(e.getCell() instanceof JComponentNode)
 			{	
-				JComponentNode<I, D> node = (JComponentNode<I, D>) e.getCell();
-				_info.changeInfo(new JTextArea(node.getId() + "\n\n" + node.getData(), 20, 20));
+				JComponentNode node = (JComponentNode) e.getCell();
+				_info.changeInfo(new JTextArea(node.getName() + "\n\n" + node.getData(), 20, 20));
 				
 			}
 			
@@ -357,11 +377,11 @@ public class GraphViewer<I, D> extends JPanel implements Viewer{
 	@Override
 	public int setHightLight(String[] toLight) {
 		
-		Collection<JComponentNode<I, D>> cells = allCellList.values();
-		Iterator<JComponentNode<I, D>> it = cells.iterator();
+		Collection<JComponentNode> cells = allCellList.values();
+		Iterator<JComponentNode> it = cells.iterator();
 		while(it.hasNext())
 		{
-			Component[] comps = it.next().getComp().getComponents();
+			Component[] comps = it.next().getNodeView().getComponents();
 			for (int i = 0; i < comps.length; i++)
 			{
 				if( comps[i] instanceof JTextArea)

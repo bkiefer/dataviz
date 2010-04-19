@@ -45,7 +45,7 @@ public class NodeViewer extends VertexView {
 			//DefaultGraphCell cell = (DefaultGraphCell) cellView.getCell();
 			JComponentNode jcell = (JComponentNode)cellView.getCell();
 			
-			return jcell.getComp();
+			return jcell.getNodeView();
 		}
 		
 	}

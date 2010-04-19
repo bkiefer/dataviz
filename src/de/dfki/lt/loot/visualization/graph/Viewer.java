@@ -4,6 +4,8 @@ import java.awt.Component;
 
 import javax.swing.JPanel;
 
+import de.dfki.lt.loot.visualization.VisualizationAdapter;
+
 /**
  * Viewer Interface, for the graph JPanels.
  * 
@@ -40,5 +42,14 @@ public interface Viewer {
 	 * @return int the number of match or 0 if none
 	 */
 	public int setHightLight(String[] toLight);
+	
+	/**
+	 * To get the adapter used to construct this viewer.
+	 * The adapter hold all the data material.
+	 * 
+	 * @return VisualizationAdapter the adapter for this viewer
+	 * @return
+	 */
+	public VisualizationAdapter getAdapter();
 	
 }

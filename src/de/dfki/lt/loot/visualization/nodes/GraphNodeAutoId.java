@@ -20,9 +20,9 @@ public class GraphNodeAutoId extends GraphNode{
 	 * @param data the data
 	 * @throws GraphNodeException the graph node exception
 	 */
-	public GraphNodeAutoId(Object data) throws GraphNodeException
+	public GraphNodeAutoId(Object name, Object data) throws GraphNodeException
 	{
-		super(getNextFreeId(), data);
+		super(getNextFreeId(), name, data);
 	}
 	
 	/**

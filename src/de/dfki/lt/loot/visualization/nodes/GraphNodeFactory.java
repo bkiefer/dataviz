@@ -25,7 +25,7 @@ public class GraphNodeFactory implements Factory<GraphNode> {
 	@Override
 	public GraphNode create() {
 		try {
-			_node = new GraphNodeAutoId(null);
+			_node = new GraphNodeAutoId(null, null);
 			return _node;
 		} catch (GraphNodeException e) {
 			// TODO Auto-generated catch block

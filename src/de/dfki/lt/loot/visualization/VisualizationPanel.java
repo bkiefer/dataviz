@@ -36,7 +36,7 @@ import de.dfki.lt.loot.visualization.nodes.GraphNode;
  * This <i>should be</i> the Class used by the adapter classes. But can be bypassed by using directly a Viewer class.
  * @autor chris
  */
-public class VisualizationPanel<I, D> extends JFrame {
+public class VisualizationPanel extends JFrame {
 	
 	
 	/** The main JPanel */
@@ -67,7 +67,7 @@ public class VisualizationPanel<I, D> extends JFrame {
 	 * @param type the type of Graph
 	 * @throws HandlerException the handler exception
 	 */
-	public VisualizationPanel(VisualizationAdapter<I, D> adapter)
+	public VisualizationPanel(VisualizationAdapter adapter)
 	{
 		super();
 		_allViewer = new Vector<Viewer>();
@@ -134,20 +134,20 @@ public class VisualizationPanel<I, D> extends JFrame {
 	 * @return the j panel for the Graph visualization
 	 * @throws HandlerException the handler exception
 	 */
-	private Viewer viewHandler(VisualizationAdapter<I, D> adapter, Type type) throws HandlerException
+	private Viewer viewHandler(VisualizationAdapter adapter, Type type) throws HandlerException
 	{
 		switch(type){
 			case DAGGRAPH:
 				if(adapter.getRoot() != null && adapter.getNodes() != null && adapter.getEdges() != null)
-					return (new SimpleGraphViewer<I, D>(adapter.getRoot(), adapter.getNodes(), adapter.getEdges(), _informations));
+					return (new SimpleGraphViewer(adapter, _informations));
 				break;
 			case INDIVIDUAL:
 				if(adapter.getNodes() != null)
-					return (new IndividualViewer<I, D>(adapter.getNodes(), _informations));
+					return (new IndividualViewer(adapter, _informations));
 				break;
 			case JGRAPH:
 				if(adapter.getRoot() != null && adapter.getNodes() != null && adapter.getEdges() != null)
-					return(new GraphViewer<I , D>(adapter.getRoot(), adapter.getNodes(), adapter.getEdges(), _informations));
+					return(new GraphViewer(adapter, _informations));
 				break;
 			default:
 				throw new HandlerException("There is no representation for these parameters");

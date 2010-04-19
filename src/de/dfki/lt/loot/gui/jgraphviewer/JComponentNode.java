@@ -4,8 +4,7 @@
 package de.dfki.lt.loot.gui.jgraphviewer;
 
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.Rectangle;
+
 
 import javax.swing.JPanel;
 
@@ -23,7 +22,7 @@ import de.dfki.lt.loot.visualization.nodes.Node;
  * @param <I> the generic type
  * @param <D> the generic type
  */
-public class JComponentNode<I, D> extends DefaultGraphCell implements Node<I, D> 
+public class JComponentNode extends DefaultGraphCell implements Node
 {
 	
 	/** The _view. */
@@ -31,10 +30,7 @@ public class JComponentNode<I, D> extends DefaultGraphCell implements Node<I, D>
 	private NodeViewer _view;
 	*/
 	/** The _node. */
-	private Node<I, D> _node;
-	
-	/** The _comp. */
-	private JPanel _comp = null;
+	private Node _node;
 
 	/**
 	 * Instantiates a new j component node.
@@ -42,15 +38,16 @@ public class JComponentNode<I, D> extends DefaultGraphCell implements Node<I, D>
 	 * @param node the node
 	 * @param view the view
 	 */
-	public JComponentNode(Node<I, D> node, VertexView view, JPanel comp)
+	public JComponentNode(Node node, VertexView view)
 	{
 		//_view = (NodeViewer) view;
 		_node = node;
-		_comp = comp;
 		
 		AttributeMap map = new AttributeMap();
 		
-		GraphConstants.setBounds(map, comp.getBounds());
+		ComponentBoundsCreator.setComponentBounds(node.getNodeView());
+		
+		GraphConstants.setBounds(map, node.getNodeView().getBounds());
 		GraphConstants.setGradientColor(map, Color.white.brighter());
 		GraphConstants.setBorderColor(map, Color.blue);
 		GraphConstants.setBackground(map, Color.RED);
@@ -65,15 +62,15 @@ public class JComponentNode<I, D> extends DefaultGraphCell implements Node<I, D>
 	 * 
 	 * @param node the node
 	 */
-	public JComponentNode(Node<I, D> node, JPanel comp)
+	public JComponentNode(Node node)
 	{
-		this(node, new NodeViewer(node), comp);
+		this(node, new NodeViewer(node));
 	}
 	
 	/* (non-Javadoc)
 	 * @see de.dfki.lt.loot.visualization.nodes.Node#setData(java.lang.Object)
 	 */
-	public void setData(D data) {
+	public void setData(Object data) {
 		
 		_node.setData(data);
 		
@@ -83,7 +80,7 @@ public class JComponentNode<I, D> extends DefaultGraphCell implements Node<I, D>
 	 * @see de.dfki.lt.loot.visualization.nodes.Node#getData()
 	 */
 	@Override
-	public D getData() {
+	public Object getData() {
 		return _node.getData();
 	}
 
@@ -91,7 +88,7 @@ public class JComponentNode<I, D> extends DefaultGraphCell implements Node<I, D>
 	 * @see de.dfki.lt.loot.visualization.nodes.Node#getId()
 	 */
 	@Override
-	public I getId() {
+	public Object getId() {
 		return _node.getId();
 	}
 	
@@ -100,7 +97,7 @@ public class JComponentNode<I, D> extends DefaultGraphCell implements Node<I, D>
 	 * 
 	 * @return the node
 	 */
-	public Node<I, D> getNode() {
+	public Node getNode() {
 		return _node;
 	}
 	
@@ -109,7 +106,7 @@ public class JComponentNode<I, D> extends DefaultGraphCell implements Node<I, D>
 	 * 
 	 * @param node the node
 	 */
-	public void setNode(Node<I, D> node) {
+	public void setNode(Node node) {
 		_node = node;
 		//_view.setCell(node);
 	}
@@ -124,21 +121,27 @@ public class JComponentNode<I, D> extends DefaultGraphCell implements Node<I, D>
 		return _view;
 	}
 	*/
-	/**
-	 * Gets the component ( the graphical visualization of the node )
-	 * 
-	 * @return JPanel the graphical visualization of the node
-	 */
-	public JPanel getComp(){
-		return _comp;
+
+	@Override
+	public Object getName() {
+		
+		return _node.getName();
 	}
-	
-	/**
-	 * Sets the component ( the graphical visualization of the node )
-	 * 
-	 * @param comp  the graphical visualization of the node
-	 */
-	public void setComp(JPanel comp){
-		_comp = comp;
+
+	@Override
+	public void setName(Object name) {
+		_node.setName(name);
+		
+	}
+
+	@Override
+	public JPanel getNodeView() {
+		return _node.getNodeView();
+	}
+
+	@Override
+	public void setNodeView(JPanel view) {
+		_node.setNodeView(view);
+		
 	}
 }

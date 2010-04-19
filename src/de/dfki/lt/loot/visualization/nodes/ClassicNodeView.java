@@ -1,4 +1,4 @@
-package de.dfki.lt.loot.gui.jgraphviewer;
+package de.dfki.lt.loot.visualization.nodes;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -8,27 +8,22 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.border.TitledBorder;
 
-import de.dfki.lt.loot.visualization.nodes.Node;
 
 public class ClassicNodeView extends JPanel {
 
-	public ClassicNodeView(Node<?, ?> node){
+	public ClassicNodeView(Object name, Object data){
 		
 		//TODO Statisch
 		
 		Rectangle rec = new Rectangle(20, 20, 300, 300);
 		
 		
-		this.setBorder(new TitledBorder(node.getId().toString()));
+		this.setBorder(new TitledBorder(name.toString()));
 		this.setBackground(new Color(237, 237, 237));
 		this.setLayout(new BorderLayout());
-		JTextArea txtArea = new JTextArea(node.getData().toString());
+		JTextArea txtArea = new JTextArea(data.toString());
 		txtArea.setBackground(Color.GREEN);
 		this.add(txtArea, BorderLayout.CENTER);
-		this.setBounds(rec.getBounds());
-		
-		
-		
-		
+		this.setBounds(rec.getBounds());	
 	}
 }

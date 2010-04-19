@@ -6,6 +6,7 @@ import java.util.Vector;
 
 import javax.swing.JPanel;
 
+import de.dfki.lt.loot.HighLighter;
 import de.dfki.lt.loot.visualization.edges.DataGraphEdge;
 import de.dfki.lt.loot.visualization.nodes.GraphNode;
 import de.dfki.lt.loot.visualization.nodes.Node;
@@ -14,7 +15,7 @@ import de.dfki.lt.loot.visualization.nodes.Node;
  * The Interface VisualizationAdapter.
  * @author chris
  */
-public interface VisualizationAdapter<I, D> {
+public interface VisualizationAdapter {
 
 	
 	/**
@@ -29,7 +30,7 @@ public interface VisualizationAdapter<I, D> {
 	 * 
 	 * @return nodes, null if none
 	 */
-	public HashMap<String, Node<I, D>> getNodes();
+	public HashMap<String, Node> getNodes();
 	
 	/**
 	 * Edges getter
@@ -44,5 +45,19 @@ public interface VisualizationAdapter<I, D> {
 	 * @return types : the Type array, null if none
 	 */
 	public Type[] getTypes();
+	
+	/**
+	 * HighLighter Getter
+	 * 
+	 * @return HighLighter<?>
+	 */
+	public HighLighter getHighLighter();
+	
+	/**
+	 * HighLighter Setter
+	 * 
+	 * @param high, HighLighter;
+	 */
+	public void setHighLighter(HighLighter high);
 	
 }
