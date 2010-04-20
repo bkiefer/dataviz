@@ -18,16 +18,16 @@
   <property name="classes.dir"  value="classes"/>
   <property name="source.dir"   value="src"/>
 
-  <fileset id="sources" dir="${source.dir}" casesensitive="yes">
+  <patternset id="sources">
     <include name="**/*.java"/>
-    <!--<exclude name="de/dfki/lt/loot/tfs/idx2/*"/>-->
-  </fileset>
+    <exclude name="de/dfki/lt/loot/visualization/**"/>
+  </patternset>
 
   <target name="compile" description="compile all">
     <mkdir dir="${classes.dir}"/>
     <javac debug="yes" deprecation="yes"
            srcdir="${source.dir}" destdir="${classes.dir}">
-      <!--<exclude name="de/dfki/lt/loot/tfs/idx2/**"/>-->
+      <patternset refid="sources"/>
       <classpath><fileset dir="${lib.dir}"/></classpath>
       <compilerarg value="-Xlint"/>
     </javac>
