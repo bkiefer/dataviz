@@ -55,9 +55,10 @@ public class TabularNode extends GraphicalNode {
         specs.get(row).charAt(col) : specs.get(col).charAt(row));
   }
 
-  public TabularNode(boolean rows, String defSpec, int size) {
+  public TabularNode(boolean rows, String defSpec, int initialCapacity) {
     defaultSpec = defSpec;
-    nodeTable = new ArrayList<GraphicalNode>(defaultSpec.length() * size);
+    nodeTable =
+      new ArrayList<GraphicalNode>(defaultSpec.length() * initialCapacity);
     rowOriented = rows;
     if (rowOriented) {
       colCount = this.defaultSpec.length();
@@ -66,7 +67,7 @@ public class TabularNode extends GraphicalNode {
       colCount = 0;
       rowCount = this.defaultSpec.length();
     }
-    this.specs = new ArrayList<String>(size);
+    this.specs = new ArrayList<String>(initialCapacity);
   }
 
   public TabularNode(boolean rows, String defSpec) {

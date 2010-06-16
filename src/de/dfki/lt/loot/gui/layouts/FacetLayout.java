@@ -11,9 +11,9 @@ public abstract class FacetLayout {
 
   protected Layout _metaLayout;
 
-  abstract int facet();
+  abstract public int facet();
 
-  abstract GraphicalNode
+  abstract public GraphicalNode
   transform(Object model, ViewContext context, int facetMask);
 
   void register(Layout metaLayout) {

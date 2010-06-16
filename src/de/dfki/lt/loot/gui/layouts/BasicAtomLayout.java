@@ -9,11 +9,13 @@ import de.dfki.lt.loot.gui.nodes.TextNode;
 public class BasicAtomLayout extends FacetLayout {
 
   @Override
+  public
   int facet() {
     return ModelAdapter.ATOM;
   }
 
   @Override
+  public
   GraphicalNode transform(Object model, ViewContext context, int facetMask) {
     return new TextNode(
         (model == null ? "<NULL>" : model.toString()), Style.get("default"));

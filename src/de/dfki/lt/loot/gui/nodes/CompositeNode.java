@@ -30,9 +30,13 @@ public class CompositeNode extends GraphicalNode {
   public CompositeNode(char alignment, Style aStyle) {
     super(aStyle);
     align = alignment;
+    this.subNodes = new LinkedList<GraphicalNode>();
   }
 
-  public CompositeNode(char alignment) { align = alignment; }
+  public CompositeNode(char alignment) {
+    align = alignment;
+    this.subNodes = new LinkedList<GraphicalNode>();
+  }
 
   /** Adds another <code>GraphicalNode</code> to this
    * <code>CompositeNode</code>'s list of subNodes.
@@ -41,10 +45,6 @@ public class CompositeNode extends GraphicalNode {
    */
   @Override
   public void addNode(GraphicalNode subNode) {
-    // initialize the subNode list if needed
-    if (null == this.subNodes)
-      this.subNodes = new LinkedList<GraphicalNode>();
-
     this.subNodes.add(subNode);
     // set the new subnode's parentNode
     subNode.setParentNode(this);

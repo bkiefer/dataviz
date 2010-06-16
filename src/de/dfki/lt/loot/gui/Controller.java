@@ -28,7 +28,7 @@ public class Controller implements MouseMotionListener {
     // TODO Auto-generated method stub
     Point p = e.getPoint();
     boolean invalidate = false;
-    if (view.getVisibleRect().contains(p)) {
+    if (view.getVisibleRect().contains(p) && view.getRoot() != null) {
       GraphicalNode nowPointsTo =
         ((underMouse == null) ? view.getRoot() : underMouse)
         .getDeepestIncludingPoint(p);

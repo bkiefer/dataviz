@@ -6,34 +6,20 @@ package de.dfki.lt.loot.gui.jgraphviewer;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.ScrollPane;
-import java.awt.TextArea;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
 
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.border.TitledBorder;
-import javax.swing.text.Highlighter;
 
 import org.jgraph.JGraph;
 import org.jgraph.event.GraphModelEvent;
@@ -56,10 +42,7 @@ import de.dfki.lt.loot.HighLight;
 import de.dfki.lt.loot.visualization.InformationPanel;
 import de.dfki.lt.loot.visualization.VisualizationAdapter;
 import de.dfki.lt.loot.visualization.edges.DataGraphEdge;
-import de.dfki.lt.loot.visualization.exceptions.GraphNodeException;
 import de.dfki.lt.loot.visualization.graph.Viewer;
-import de.dfki.lt.loot.visualization.nodes.FeatureView;
-import de.dfki.lt.loot.visualization.nodes.GraphNode;
 import de.dfki.lt.loot.visualization.nodes.Node;
 
 // TODO: Auto-generated Javadoc

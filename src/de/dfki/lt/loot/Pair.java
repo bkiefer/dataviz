@@ -33,11 +33,13 @@ implements PairInterface<KEYTYPE, VALUETYPE> {
   /* (non-Javadoc)
    * @see de.dfki.lt.loot.PairInterface#getFirst()
    */
+  @SuppressWarnings("unchecked")
   public KEYTYPE getFirst() { return (KEYTYPE) _first; }
   
   /* (non-Javadoc)
    * @see de.dfki.lt.loot.PairInterface#getSecond()
    */
+  @SuppressWarnings("unchecked")
   public VALUETYPE getSecond() { return (VALUETYPE) _second; }
   
   public void setFirst(KEYTYPE newFirst){ _first = newFirst;}

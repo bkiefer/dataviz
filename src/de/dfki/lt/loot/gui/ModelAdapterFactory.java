@@ -22,6 +22,17 @@ public class ModelAdapterFactory {
 
   @SuppressWarnings("unchecked")
   public static ModelAdapter getAdapter(Object o) {
+    if (o == null) {
+      return new ModelAdapter() {
+        
+        @Override
+        public int facets(Object model) {
+          // TODO Auto-generated method stub
+          return ModelAdapter.NULL;
+        }
+      };
+    }
+    
     Class ModelAdapterClass = _prototypes.get(o.getClass());
     try {
       return (ModelAdapter) ModelAdapterClass.newInstance();

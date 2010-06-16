@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 
 import de.dfki.lt.loot.gui.adapters.ModelAdapter;
 import de.dfki.lt.loot.gui.layouts.Layout;
+import de.dfki.lt.loot.gui.nodes.EmptyNode;
 import de.dfki.lt.loot.gui.nodes.GraphicalNode;
 
 /**
@@ -63,10 +64,16 @@ public class DrawingPanel extends JPanel {
    *          The Typed Feature Structure in question.
    */
   public void setModel(Object aModel) {
-    this._model = aModel;
-    _adapter.setTopModel(this._model);
-    this.root = this._layout.computeLayout(this._model, _adapter);
-    this.setSize(this.root.getRect().height, this.root.getRect().width);
+    if (aModel != null) {
+      this._model = aModel;
+      _adapter.setTopModel(this._model);
+      this.root = this._layout.computeLayout(this._model, _adapter);
+      this.setSize(this.root.getRect().height, this.root.getRect().width);
+    }
+    else {
+      this.root = new EmptyNode();
+      this.setSize(0,0);
+    }
     this._unadjusted = true;
   }
 
@@ -88,7 +95,7 @@ public class DrawingPanel extends JPanel {
     // Dimension
     if (null == this.root || this.root.getRect().width == 0 ||
         this.root.getRect().height == 0) {
-      return new Dimension(800, 600);
+      return new Dimension(100, 100);
     }
     // else return the root node's new size
     return new Dimension(this.root.getRect().width, this.root.getRect().height);

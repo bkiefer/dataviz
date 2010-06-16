@@ -1,7 +1,7 @@
 package de.dfki.lt.loot.gui;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -13,24 +13,24 @@ public class ViewContext {
   private int _nextCoref;
 
   // a mapping of nodes with indegree > 0 to integers
-  private HashMap<Object, Integer> _visited;
+  private IdentityHashMap<Object, Integer> _visited;
 
   // The equivalence classes of GUI nodes representing the same model node
   private List<List<GraphicalNode>> _equivs;
 
   // links from the Model to the GUI for all nodes not represented in equivs
-  private HashMap<Object, GraphicalNode> _backPointer;
+  private IdentityHashMap<Object, GraphicalNode> _backPointer;
 
   // Mediator/Adapter between the actual data structure and the view
   public ModelAdapter _adapt;
 
   public ViewContext(Object model, ModelAdapter adapt) {
     _adapt = adapt;
-    _visited = new HashMap<Object, Integer>();
+    _visited = new IdentityHashMap<Object, Integer>();
     _nextCoref = 0;
     _equivs = new ArrayList<List<GraphicalNode>>();
     _equivs.add(null);
-    _backPointer = new HashMap<Object, GraphicalNode>();
+    _backPointer = new IdentityHashMap<Object, GraphicalNode>();
   }
 
   public int equivalenceClassNo(Object model) {
