@@ -7,12 +7,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.dfki.lt.loot.gui.connectors.Connector;
+import de.dfki.lt.loot.gui.layouts.LayoutAlgorithm;
 
 public class GraphNode extends GraphicalNode {
-
-  public abstract class LayoutAlgorithm {
-    public abstract Rectangle execute();
-  }
 
   // This node's list of subNodes
   private List<GraphicalNode> _subNodes;
@@ -40,7 +37,7 @@ public class GraphNode extends GraphicalNode {
     // no meaningful size to call it with.
 
     // call the associated layout algorithm for the nodes
-    this.area = _algorithm.execute();
+    this.area = _algorithm.execute(this, g);
 
     if (this._connectors != null) {
       // Adjust the connectors

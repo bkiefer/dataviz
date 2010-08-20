@@ -11,7 +11,7 @@ import de.dfki.lt.loot.gui.nodes.SquareBracketNode;
 import de.dfki.lt.loot.gui.nodes.TextNode;
 import de.dfki.lt.loot.gui.nodes.BracketNode.Orientation;
 
-public class CompactMapLayout extends FacetLayout {
+public class CompactMapLayout extends FacetLayoutBase {
 
   @Override
   public int facet() {
@@ -38,8 +38,8 @@ public class CompactMapLayout extends FacetLayout {
         Pair<String, Object> fvp = fvpList.next();
         CompositeNode fvpNode = new CompositeNode('n');
         fvpNode.addNode(new TextNode(fvp.getFirst(), Style.get("feature")));
-        fvpNode.addNode(_metaLayout.transform(fvp.getSecond(), context,
-                                              facetMask));
+        fvpNode.addNode(_meta.transform(fvp.getSecond(), context,
+                                                facetMask));
         fvlistNode.addNode(fvpNode);
       }
 

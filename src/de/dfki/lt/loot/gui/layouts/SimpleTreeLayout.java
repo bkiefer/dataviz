@@ -1,7 +1,5 @@
 package de.dfki.lt.loot.gui.layouts;
 
-import java.util.Iterator;
-
 import de.dfki.lt.loot.gui.ViewContext;
 import de.dfki.lt.loot.gui.adapters.ModelAdapter;
 import de.dfki.lt.loot.gui.connectors.StraightConnector;
@@ -9,7 +7,7 @@ import de.dfki.lt.loot.gui.nodes.GraphNode;
 import de.dfki.lt.loot.gui.nodes.GraphicalNode;
 import de.dfki.lt.loot.gui.nodes.SimpleTreeLayoutAlgorithm;
 
-public class SimpleTreeLayout extends FacetLayout {
+public class SimpleTreeLayout extends FacetLayoutBase {
 
   @Override
   public int facet() {
@@ -22,7 +20,7 @@ public class SimpleTreeLayout extends FacetLayout {
     GraphNode result = new GraphNode(model);
     GraphicalNode root = transformTreeInner(model, context, result, facetMask);
     result.setLayoutAlgorithm(
-        new SimpleTreeLayoutAlgorithm(result, root, 5, 20));
+        new SimpleTreeLayoutAlgorithm(root, 5, 20));
     return result;
   }
 
@@ -31,21 +29,23 @@ public class SimpleTreeLayout extends FacetLayout {
   transformTreeInner(Object model, ViewContext context,
                      GraphNode graphNode, int facetMask) {
     GraphicalNode parentNode =
-      _metaLayout.transform(context._adapt.getRootNode(model), context,
+      _meta.transform(context._adapt.getRootNode(model), context,
           facetMask & ~ ModelAdapter.TREE);
     graphNode.addNode(parentNode);
 
-    Iterator dtrs = context._adapt.getTreeDaughters(model);
+    Iterable dtrs = context._adapt.getTreeDaughters(model);
     // first layout the daughters to get the references in the parent node,
     // if desired
-    while (dtrs != null && dtrs.hasNext()) {
-      Object dtr = dtrs.next();
-      GraphicalNode nextDaughter =
-        ((context._adapt.facets(dtr) & ModelAdapter.TREE) != 0)
-        ? transformTreeInner(dtr, context, graphNode, facetMask)
-        : _metaLayout.transform(dtr, context, ModelAdapter.ALL);
-        graphNode.addNode(nextDaughter);
-      graphNode.addConnector(new StraightConnector(parentNode, nextDaughter));
+    if (dtrs != null) {
+      for (Object dtr : dtrs) {
+        GraphicalNode nextDaughter =
+          ((context._adapt.facets(dtr) & ModelAdapter.TREE) != 0)
+          ? transformTreeInner(dtr, context, graphNode, facetMask)
+          : _meta.transform(dtr, context, ModelAdapter.ALL);
+          graphNode.addNode(nextDaughter);
+          graphNode.addConnector(new StraightConnector(parentNode,
+                                                       nextDaughter));
+      }
     }
     return parentNode;
   }

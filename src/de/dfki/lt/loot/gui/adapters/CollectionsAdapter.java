@@ -3,45 +3,58 @@ package de.dfki.lt.loot.gui.adapters;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 import de.dfki.lt.loot.Pair;
 
+@SuppressWarnings("unchecked")
 public class CollectionsAdapter extends ModelAdapter {
 
-  Iterator _currentListIterator;
+  public static void init() {
+    ModelAdapterFactory.register(List.class, CollectionsAdapter.class);
+    ModelAdapterFactory.register(Map.class, CollectionsAdapter.class);
+    ModelAdapterFactory.register(Iterator.class, CollectionsAdapter.class);
+  }
+
+  // Has to be a stack of iterators to handle nested lists.
+  Stack<Iterator> _activeIterators = new Stack<Iterator>();
 
   @Override
   public int facets(Object model) {
     if (model instanceof Map) {
-      return ModelAdapter.MAP;
+      return MAP;
     }
     if (model instanceof List) {
-      _currentListIterator = null;
-      return (((List)model).isEmpty() ? ModelAdapter.NULL : ModelAdapter.CONS);
+      return (((List) model).isEmpty() ? NULL : CONS);
     }
     if (model instanceof Iterator) {
-      return (((Iterator)model).hasNext()
-          ? ModelAdapter.NULL
-          : ModelAdapter.CONS);
+      return (((Iterator)model).hasNext() ? CONS : NULL);
     }
-    return ModelAdapter.ATOM;
+    return ATOM;
   }
 
   /* -- ConsFacet -- */
 
   @Override
-  public Object getFirst(Object model){
-    if (_currentListIterator == null) {
-      _currentListIterator = ((List)model).iterator();
-    }
-    return (_currentListIterator.hasNext()
-        ? _currentListIterator.next()
-        : null);  // null should never have to be returned
+  public Object getFirst(Object model) {
+    if (model instanceof List)
+      _activeIterators.push(((List) model).iterator());
+    if (model instanceof Iterator &&
+        (_activeIterators.isEmpty() || _activeIterators.peek() != model))
+      _activeIterators.push((Iterator) model);
+
+    assert(! _activeIterators.isEmpty() && _activeIterators.peek().hasNext());
+    return _activeIterators.peek().next();
   };
 
   @Override
-  public Object getRest(Object model){
-    return _currentListIterator;
+  public Object getRest(Object model) {
+    assert(! _activeIterators.isEmpty() &&
+        ((model instanceof List) || model == _activeIterators.peek()));
+    Iterator result = _activeIterators.peek();
+    if (!result.hasNext())
+      _activeIterators.pop();
+    return result;
   };
 
   /* -- MapFacet -- */

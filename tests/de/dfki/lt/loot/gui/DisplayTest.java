@@ -3,15 +3,22 @@ package de.dfki.lt.loot.gui;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import de.dfki.lt.loot.gui.adapters.CollectionsAdapter;
+import de.dfki.lt.loot.gui.adapters.DOMAdapter;
 import de.dfki.lt.loot.gui.adapters.EmptyModelAdapter;
 import de.dfki.lt.loot.gui.adapters.ModelAdapter;
+import de.dfki.lt.loot.gui.adapters.ModelAdapterFactory;
+import de.dfki.lt.loot.gui.connectors.SquareBendConnector;
 import de.dfki.lt.loot.gui.connectors.StraightConnector;
 import de.dfki.lt.loot.gui.layouts.CompactLayout;
 import de.dfki.lt.loot.gui.layouts.Layout;
+import de.dfki.lt.loot.gui.layouts.LayoutAlgorithm;
 import de.dfki.lt.loot.gui.nodes.AngleBracketNode;
 import de.dfki.lt.loot.gui.nodes.BraceBracketNode;
 import de.dfki.lt.loot.gui.nodes.CompositeNode;
@@ -153,27 +160,15 @@ class TestNodesLayout implements Layout {
     vcompo.addNode(new TextNode("west", Style.get("type")));
     return vcompo;
   }
-  @Override
-  public GraphicalNode transform(Object model, ViewContext context,
-      int facetMask) {
-    // TODO Auto-generated method stub
-    return null;
-  }
 }
 
 class TestIntersectLayout implements Layout {
-  public class NoLayoutAlgorithm extends GraphNode.LayoutAlgorithm {
-    GraphNode _root;
-
-    NoLayoutAlgorithm(GraphNode node) {
-      node.super();
-      _root = node;
-    }
+  public class NoLayoutAlgorithm implements LayoutAlgorithm {
 
     @Override
-    public Rectangle execute() {
+    public Rectangle execute(GraphNode root, Graphics g) {
       int width = 0 , height = 0;
-      for (GraphicalNode node : _root.getNodes()) {
+      for (GraphicalNode node : root.getNodes()) {
         node.setOrigin(node.getRect().x - node.getRect().width / 2,
             node.getRect().y);
         width = Math.max(width, node.getRect().x + node.getRect().width);
@@ -187,7 +182,7 @@ class TestIntersectLayout implements Layout {
   public GraphicalNode computeLayout(Object model, ModelAdapter adapt) {
     int radius = 400;
     GraphNode node = new GraphNode(null);
-    node.setLayoutAlgorithm(new NoLayoutAlgorithm(node));
+    node.setLayoutAlgorithm(new NoLayoutAlgorithm());
     Style.add("dashed",
         new Font("DejaVu Sans", Font.BOLD, 14), null, null, null,
         new BasicStroke(
@@ -214,14 +209,55 @@ class TestIntersectLayout implements Layout {
     }
   return node;
   }
-
-  @Override
-  public GraphicalNode transform(Object model, ViewContext context,
-      int facetMask) {
-    return null;
-  }
 }
 
+class TestBendConnectors implements Layout {
+
+  class NoLayoutAlgorithm implements LayoutAlgorithm {
+
+    @Override
+    public Rectangle execute(GraphNode result, Graphics g) {
+      return new Rectangle(0,0,340,340);
+    }
+  }
+
+  @Override
+  public GraphicalNode computeLayout(Object model, ModelAdapter adapt) {
+    GraphNode result = new GraphNode(model);
+    result.setLayoutAlgorithm(new NoLayoutAlgorithm());
+    int[] xCoord = {40, 140, 240};
+    int[] yCoord = {40, 140, 240};
+    GraphicalNode[][] grid = new GraphicalNode[3][];
+    int i = 0;
+    for (int x : xCoord) {
+      grid[i] = new GraphicalNode[3];
+      int j = 0;
+      for (int y : yCoord) {
+        if (i != 1 && j != 1) {
+          GraphicalNode c = new TextNode("" + i + "x" + j);
+          grid[i][j] = c;
+          c.setOrigin(x, y);
+          result.addNode(c);
+        }
+        ++j;
+      }
+      ++i;
+    }
+    grid[1][1] = new TextNode("CENTER");
+    grid[1][1].setOrigin(xCoord[1], yCoord[1]);
+    result.addNode(grid[1][1]);
+
+    for (i = 0; i < 3; ++i) {
+      for (int j = 0; j < 3; ++j) {
+        if (i != 1 && j != 1) {
+          result.addConnector(new SquareBendConnector(grid[1][1], grid[i][j], 'H'));
+          result.addConnector(new SquareBendConnector(grid[i][j], grid[1][1], 'H'));
+        }
+      }
+    }
+    return result;
+  }
+}
 
 public class DisplayTest {
 
@@ -232,6 +268,8 @@ public class DisplayTest {
     "[ rule ARGS [ *cons* FIRST [rule] REST [ *cons* FIRST [j] REST [*null*] ] ] ] ";
 
   public static void main(String[] args) throws Exception {
+    CollectionsAdapter.init();
+    DOMAdapter.init();
     for (int which = 0; which < 5; ++which)
     { //int which = 2;
       switch(which) {
@@ -245,17 +283,26 @@ public class DisplayTest {
         break;
       }
       case 2: {
-        DrawingPanel dp =
-          new DrawingPanel(new CompactLayout(), new CollectionsAdapter());
-        MainFrame mf = new MainFrame("CollectionsTest", dp);
         HashMap<String, Object> tfs1 = new HashMap<String, Object>() ;
         HashMap<String, Object> tfs2 = new HashMap<String, Object>() ;
         HashMap<String, Object> tfs3 = new HashMap<String, Object>() ;
+        List<Object> li1 = new ArrayList<Object>();
+        List<Object> li2 = new ArrayList<Object>();
+        li1.add("first");
+        li1.add("second");
+        li2.add("third");
+        li2.add("fourth");
+        li1.add(li2);
         tfs1.put("feat1", tfs2);
         tfs1.put("feat2", tfs3);
         tfs2.put("feat3", tfs3);
         tfs3.put("feat4", "Val1");
-        mf.setModel(tfs1);
+        tfs3.put("feat5", li1);
+        // tfs3.put("feat6", li2.iterator());
+        ModelAdapter ma = ModelAdapterFactory.getAdapter(tfs1);
+        DrawingPanel dp = new DrawingPanel(new CompactLayout(), ma);
+        MainFrame mf = new MainFrame("CollectionsTest", dp);
+        mf.setModel(li1.iterator());
         break;
       }
       case 3: {
@@ -263,6 +310,15 @@ public class DisplayTest {
           new DrawingPanel(new TestNodesLayout(), new EmptyModelAdapter());
         MainFrame mf = new MainFrame("NodeTest", contentArea);
         mf.setModel("Test");
+        break;
+      }
+      case 4: {
+        DrawingPanel contentArea =
+          new DrawingPanel(
+              new TestBendConnectors(),
+              new EmptyModelAdapter());
+        MainFrame mf = new MainFrame("SquareBendTest", contentArea);
+        mf.setModel("SquareBendTest");
         break;
       }
       /*

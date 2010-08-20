@@ -7,17 +7,13 @@ import de.dfki.lt.loot.gui.nodes.GraphicalNode;
  *  A facet represents the data structure view on an object, such as list,
  *  map, set, atom, tree, graph
  */
-public abstract class FacetLayout {
-
-  protected Layout _metaLayout;
+public interface FacetLayout {
 
   abstract public int facet();
 
   abstract public GraphicalNode
   transform(Object model, ViewContext context, int facetMask);
 
-  void register(Layout metaLayout) {
-    _metaLayout = metaLayout;
-  }
+  abstract public void register(FacetLayout metaLayout);
 
 }

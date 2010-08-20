@@ -1,7 +1,5 @@
 package de.dfki.lt.loot.gui;
 
-import de.dfki.lt.loot.gui.layouts.CompactLayout;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -12,7 +10,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
@@ -21,9 +21,23 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+
+import de.dfki.lt.loot.gui.adapters.CollectionsAdapter;
+import de.dfki.lt.loot.gui.adapters.DOMAdapter;
+import de.dfki.lt.loot.gui.adapters.EmptyModelAdapter;
+import de.dfki.lt.loot.gui.adapters.ModelAdapter;
+import de.dfki.lt.loot.gui.adapters.ModelAdapterFactory;
+import de.dfki.lt.loot.gui.layouts.CompactLayout;
 
 /**
  * <code>MainFrame</code> defines the main window of the application.
@@ -35,6 +49,17 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  */
 @SuppressWarnings("serial")
 public class MainFrame extends JFrame {
+
+  /** This contains the currently open frames. */
+  private static List<MainFrame> openFrames = new ArrayList<MainFrame>();
+  /** This Listener is called when the last Frame has been closed */
+  private static CloseAllListener clAll = null;
+  /** This contains the content area. */
+  private DrawingPanel contentArea;
+  /** This contains the current directory. */
+  private File currentDir;
+
+  FontChooser f;
 
   public interface CloseAllListener {
     public abstract void allClosed();
@@ -100,20 +125,6 @@ public class MainFrame extends JFrame {
     }
   }
 
-  /** This contains the currently open frames. */
-  private static List<MainFrame> openFrames = new ArrayList<MainFrame>();
-
-  /** This Listener is called when the last Frame has been closed */
-  private static CloseAllListener clAll = null;
-
-  /** This contains the content area. */
-  private DrawingPanel contentArea;
-
-  /** This contains the current directory. */
-  private File currentDir;
-
-  FontChooser f;
-
   private void init(DrawingPanel dp) {
     // create content panel and add it to the frame
     JPanel contentPane = new JPanel(new BorderLayout());
@@ -178,6 +189,40 @@ public class MainFrame extends JFrame {
         new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
   }
 
+  public void openFile() {
+    // create file chooser for txt files
+    JFileChooser fc = new JFileChooser();
+    fc.addChoosableFileFilter(
+        new FileNameExtensionFilter("txt/xml files only", "txt", "xml"));
+    fc.setCurrentDirectory(MainFrame.this.currentDir);
+    int returnVal = fc.showOpenDialog(MainFrame.this);
+    Object fileContent = null;
+    do {
+      if (returnVal == JFileChooser.APPROVE_OPTION) {
+        // update current directory
+        MainFrame.this.currentDir = fc.getSelectedFile().getParentFile();
+        // get the object read from this file
+        File toRead = fc.getSelectedFile();
+        fileContent = MainFrame.this.openFile(fc.getSelectedFile());
+        if (fileContent != null) {
+          ModelAdapter adapt = ModelAdapterFactory.getAdapter(fileContent);
+          if (adapt != null) {
+            MainFrame newFrame = new MainFrame(toRead.getName(), toRead
+                .getParentFile(), new DrawingPanel(new CompactLayout(), adapt));
+            newFrame.setModel(fileContent);
+          }
+          else {
+            errorDialog("No Adapter found for object of class "
+                + fileContent.getClass());
+          }
+        }
+        else {
+          errorDialog("File content of " + toRead + " could not be read");
+        }
+      }
+    } while (fileContent == null && returnVal != JFileChooser.CANCEL_OPTION);
+  }
+
   /**
    * This initializes the menu bar.
    */
@@ -206,25 +251,7 @@ public class MainFrame extends JFrame {
     JMenuItem openMenuItem = new JMenuItem("Open", KeyEvent.VK_O);
     openMenuItem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent ae) {
-        // create file chooser for txt files
-        JFileChooser fc = new JFileChooser();
-        fc.addChoosableFileFilter(
-          new FileNameExtensionFilter("txt/xml files only", "txt", "xml"));
-        fc.setCurrentDirectory(MainFrame.this.currentDir);
-        int returnVal = fc.showOpenDialog(MainFrame.this);
-        Object tfs = null;
-        do {
-          if (returnVal == JFileChooser.APPROVE_OPTION) {
-            // update current directory
-            MainFrame.this.currentDir = fc.getSelectedFile().getParentFile();
-            // parse the TFS
-            tfs = MainFrame.this.openFile(fc.getSelectedFile());
-            if (tfs != null) {
-              MainFrame.this.setModel(tfs);
-            }
-          }
-        }
-        while (tfs == null && returnVal != JFileChooser.CANCEL_OPTION);
+        openFile();
       }
     });
     menu.add(openMenuItem);
@@ -277,9 +304,49 @@ public class MainFrame extends JFrame {
     this.contentArea.repaint();
   }
 
+  public static Document readXmlFile(File xmlFile) {
+    try {
+      DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+      DocumentBuilder db = dbf.newDocumentBuilder();
+      Document doc = db.parse(xmlFile);
+      doc.getDocumentElement().normalize();
+      return doc;
+    }
+    catch (ParserConfigurationException e2) {
+      e2.printStackTrace();
+    }
+    catch (SAXException e1) {
+      e1.printStackTrace();
+    }
+    catch (IOException e1) {
+      e1.printStackTrace();
+    }
+    return null;
+  }
+
   public Object openFile(File fileToOpen) {
     // add some smart code to assess the file type and call the right `open'
     // method
+    if (! fileToOpen.exists()) {
+      errorDialog("No such File: " + fileToOpen);
+      return null;
+    }
+    if (fileToOpen.getName().endsWith(".xml")) {
+      return readXmlFile(fileToOpen);
+    }
     return null;
+  }
+
+  private void errorDialog(String string) {
+    JOptionPane dialog =
+      new JOptionPane(string, JOptionPane.ERROR_MESSAGE, JOptionPane.OK_OPTION);
+    dialog.setEnabled(true);
+  }
+
+  public static void main(String args[]) {
+    DOMAdapter.init();
+    CollectionsAdapter.init();
+    MainFrame mf = new MainFrame("Main Window", new java.io.File("."),
+        new DrawingPanel(new CompactLayout(), new EmptyModelAdapter()));
   }
 }

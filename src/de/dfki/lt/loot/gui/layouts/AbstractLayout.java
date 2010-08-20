@@ -13,20 +13,31 @@ import de.dfki.lt.loot.gui.nodes.TextNode;
 /** This implements a quite generic `meta layout', which delegates the true
  *  layout to the facet layouts.
  */
-public abstract class AbstractLayout implements Layout {
+public abstract class AbstractLayout implements Layout, FacetLayout {
 
   private List<FacetLayout> _facetLayouts = new ArrayList<FacetLayout>(10);
 
+  private int _facets;
+
   public void addLayout(FacetLayout layout) {
     _facetLayouts.add(layout);
+    _facets |= layout.facet();
     layout.register(this);
   }
+
+  public int facet() {
+    return _facets;
+  }
+
+  /** A do-noting. This is a meta layout that does not use others. */
+  public void register(FacetLayout metaLayout) {}
 
   /**
    * @param model   an object to transform into a graphical representation
    * @return a GraphicalNode representation of the model
    *         You will need to call adjustSize(Graphics g) on the return value.
    */
+  @Override
   public GraphicalNode computeLayout(Object model, ModelAdapter adapt) {
     ViewContext context = new ViewContext(model, adapt);
 
@@ -55,7 +66,6 @@ public abstract class AbstractLayout implements Layout {
   /** dispatch between the different types of fs nodes. The model has to
    * provide the distinction between the nodes by fulfilling facets
    */
-  @Override
   public GraphicalNode
   transform(Object model, ViewContext context, int facetMask) {
     GraphicalNode node = context.getRepresentative(model);

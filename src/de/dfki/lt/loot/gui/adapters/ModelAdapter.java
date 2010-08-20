@@ -1,8 +1,4 @@
-
-
 package de.dfki.lt.loot.gui.adapters;
-
-import java.util.Iterator;
 
 public abstract class ModelAdapter {
 
@@ -41,31 +37,29 @@ public abstract class ModelAdapter {
     throw new UnsupportedOperationException();
   };
 
-  public Iterator getTreeDaughters(Object model){
+  @SuppressWarnings("unchecked")
+  public Iterable getTreeDaughters(Object model){
     throw new UnsupportedOperationException();
   };
 
   /* -- Graph -- */
 
   /** Get all the vertices in this graph */
-  public Iterator getVertices() {
-    throw new UnsupportedOperationException();
-  }
-
-  /** Get the content of a vertex */
-  public Object getNode() {
+  @SuppressWarnings("unchecked")
+  public Iterable getVertices(Object model) {
     throw new UnsupportedOperationException();
   }
 
   /** Get the list of edges out of a vertex. An edge is an object of its own,
    * but besides the target vertex, it can only contain attribute information.
    */
-  public Iterator outEdges(Object vertex) {
+  @SuppressWarnings("unchecked")
+  public Iterable outEdges(Object edge) {
     throw new UnsupportedOperationException();
   }
 
   /** The target vertex of an edge. May only be applied to edges */
-  public Object target() {
+  public Object target(Object edge) {
     throw new UnsupportedOperationException();
   }
 

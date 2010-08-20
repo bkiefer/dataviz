@@ -41,7 +41,6 @@ public class ViewContext {
 
   public int setRepresentative(Object model, GraphicalNode node) {
     _visited.put(model, ++_nextCoref);
-    _equivs.add(new LinkedList<GraphicalNode>());
     return _nextCoref;
   }
 
@@ -54,7 +53,14 @@ public class ViewContext {
       _backPointer.put(model, node);
     } else {
       int corefNo = corefNoInteger.intValue();
+      while (_equivs.size() <= corefNo) {
+        _equivs.add(null);
+      }
       List equiv = _equivs.get(corefNo);
+      if (equiv == null) {
+        equiv = new LinkedList<GraphicalNode>();
+        _equivs.set(corefNo, equiv);
+      }
       equiv.add(node);
     }
   }

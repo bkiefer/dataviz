@@ -8,7 +8,6 @@ import java.awt.Rectangle;
 import java.awt.Graphics2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,6 +16,9 @@ import de.dfki.lt.loot.gui.Style;
 import de.dfki.lt.loot.gui.connectors.Connector;
 
 public abstract class GraphicalNode {
+
+  private static final List<Connector> _emptyConnectors =
+    new LinkedList<Connector>();
 
   protected Object model;
   protected Rectangle area;
@@ -213,9 +215,8 @@ public abstract class GraphicalNode {
     _out.add(conn);
   }
 
-  public Iterator<Connector> outConnectors() {
-    return _out != null ? _out.iterator()
-                        : new LinkedList<Connector>().iterator();
+  public Iterable<Connector> outConnectors() {
+    return _out != null ? _out : _emptyConnectors;
   }
 
   public void addInConnector(Connector conn) {
@@ -225,9 +226,8 @@ public abstract class GraphicalNode {
     _in.add(conn);
   }
 
-  public Iterator<Connector> inConnectors() {
-    return _in != null ? _in.iterator()
-                       : new LinkedList<Connector>().iterator();
+  public Iterable<Connector> inConnectors() {
+    return _in != null ? _in : _emptyConnectors;
   }
 
   public Point2D pointOnRim(double dx, double dy) {

@@ -9,7 +9,7 @@ import de.dfki.lt.loot.gui.nodes.GraphicalNode;
 import de.dfki.lt.loot.gui.nodes.TextNode;
 import de.dfki.lt.loot.gui.nodes.BracketNode.Orientation;
 
-public class CompactConsLayout extends FacetLayout {
+public class CompactConsLayout extends FacetLayoutBase {
 
   @Override
   public int facet() {
@@ -25,7 +25,8 @@ public class CompactConsLayout extends FacetLayout {
     Object first, rest;
     boolean firstElement = true;
     while (model != null) {
-      first = context._adapt.getFirst(model); rest = context._adapt.getRest(model);
+      first = context._adapt.getFirst(model);
+      rest = context._adapt.getRest(model);
       if (first != null) {
         if (firstElement) {
           node.addNode(new TextNode(" ", Style.get("symbol")));
@@ -33,7 +34,8 @@ public class CompactConsLayout extends FacetLayout {
         } else {
           node.addNode(new TextNode(" , ", Style.get("symbol")));
         }
-        GraphicalNode firstNode = _metaLayout.transform(first, context, facetMask);
+        GraphicalNode firstNode =
+          _meta.transform(first, context, facetMask);
         // firstNode.getStyle().getPadding().margin += 2;
         node.addNode(firstNode);
       }
@@ -41,7 +43,8 @@ public class CompactConsLayout extends FacetLayout {
         if ((context._adapt.facets(rest) & ModelAdapter.CONS) != 0
             && (context._adapt.facets(rest) & ModelAdapter.NULL) != 0) {
           node.addNode(new TextNode(" \u2295 ", Style.get("symbol")));
-          GraphicalNode thisNode = _metaLayout.transform(rest, context, facetMask);
+          GraphicalNode thisNode =
+            _meta.transform(rest, context, facetMask);
           // firstNode.getStyle().getPadding().margin += 2;
           node.addNode(thisNode);
           rest = null;
