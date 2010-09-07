@@ -29,7 +29,7 @@ public class SimpleTreeLayout extends FacetLayoutBase {
   transformTreeInner(Object model, ViewContext context,
                      GraphNode graphNode, int facetMask) {
     GraphicalNode parentNode =
-      _meta.transform(context._adapt.getRootNode(model), context,
+      _meta.transform(context._adapt.getNodeContent(model), context,
           facetMask & ~ ModelAdapter.TREE);
     graphNode.addNode(parentNode);
 

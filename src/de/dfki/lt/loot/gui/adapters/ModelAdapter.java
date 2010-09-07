@@ -33,7 +33,14 @@ public abstract class ModelAdapter {
 
   /* -- TreeFacet -- */
 
-  public Object getRootNode(Object model){
+  /** This method should return an object that is to be displayed as node
+   *  content, contrasting the model's role as tree node with children.
+   *  If the node content is, e.g., a feature structure, the returned object
+   *  should fulfill the map facet. In general, it is not a good idea if the
+   *  returned object fulfills the tree facet, because that can lead to infinite
+   *  recursion.
+   */
+  public Object getNodeContent(Object model){
     throw new UnsupportedOperationException();
   };
 

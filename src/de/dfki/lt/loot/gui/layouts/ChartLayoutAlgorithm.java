@@ -11,6 +11,10 @@ import de.dfki.lt.loot.gui.nodes.GraphicalNode;
 
 public class ChartLayoutAlgorithm implements LayoutAlgorithm {
 
+  private boolean _bottomToTop = true;
+
+  private double _relativeGap = 0;// 1.0/3.0 ;
+
   private List<GraphicalNode> _verticesTopSort;
   private IdentityHashMap<GraphicalNode, Integer> _edgeLevel;
 
@@ -39,13 +43,11 @@ public class ChartLayoutAlgorithm implements LayoutAlgorithm {
       for (Connector conn : vertexNode.outConnectors()) {
         GraphicalNode edgeNode = conn.toNode();
         assert(_edgeLevel.containsKey(edgeNode));
-        if (_edgeLevel.get(edgeNode) == 1) {
-          Rectangle r = edgeNode.getRect();
-          if (r.width > maxWidth)
-            maxWidth = r.width;
-          if (r.height > maxEdgeHeight)
-            maxEdgeHeight = r.height;
-        }
+        Rectangle r = edgeNode.getRect();
+        if (r.width > maxWidth)
+          maxWidth = r.width;
+        if (r.height > maxEdgeHeight)
+          maxEdgeHeight = r.height;
       }
       x += maxWidth + height;
     }
@@ -54,9 +56,9 @@ public class ChartLayoutAlgorithm implements LayoutAlgorithm {
     height /= 2;
     y += height;
     // This becomes the gap between edges
-    height /= 2;
+    height *= _relativeGap;
     // base edge level
-    y += height;
+    // y += height;
     // distance per level
     maxEdgeHeight += height;
 
@@ -81,6 +83,19 @@ public class ChartLayoutAlgorithm implements LayoutAlgorithm {
     }
 
     height += maxEdgeHeight + node.getStyle().getPadding().getOffset();
+
+    if (_bottomToTop) {
+      int h = height - maxEdgeHeight;
+      // turn the visualization upside down
+      for (GraphicalNode vertexNode : _verticesTopSort) {
+        Rectangle area = vertexNode.getRect();
+        vertexNode.setOrigin(area.x, h - area.y);
+      }
+      for (GraphicalNode edgeNode : _edgeLevel.keySet()) {
+        Rectangle area = edgeNode.getRect();
+        edgeNode.setOrigin(area.x, h - area.y);
+      }
+    }
 
     return new Rectangle(0, 0, x, height);
   }

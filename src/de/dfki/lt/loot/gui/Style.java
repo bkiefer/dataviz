@@ -52,7 +52,7 @@ public class Style {
    * the default <code>Style</code> object.
    */
   private Style() {
-    this.font = new Font("Monospaced", Font.PLAIN, 12);
+    this.font = new Font("Monospaced", Font.PLAIN, 10);
     this.fgCol = Color.BLACK;
     this.bgCol = Color.WHITE;
     this.padding = new Padding();

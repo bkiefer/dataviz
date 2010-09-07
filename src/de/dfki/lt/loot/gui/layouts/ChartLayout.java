@@ -3,6 +3,7 @@ package de.dfki.lt.loot.gui.layouts;
 import java.util.IdentityHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.PriorityQueue;
 
 import de.dfki.lt.loot.gui.Style;
 import de.dfki.lt.loot.gui.ViewContext;
@@ -58,28 +59,49 @@ public class ChartLayout implements Layout {
     return result;
   }
 
-
-  @SuppressWarnings("unchecked")
-  private int computeMinLevel(Object edge,
-      IdentityHashMap<GraphicalNode, Integer> edgeLevel) {
-    GraphicalNode edgeNode = _context.getRepresentative(edge);
-    assert(edgeNode != null);
-    if (edgeLevel.containsKey(edgeNode)) {
-      return edgeLevel.get(edgeNode);
+  private class ChartEdge implements Comparable<ChartEdge> {
+    int start;
+    int end;
+    int level;
+    Object modelEdge;
+   
+    
+    public ChartEdge(int s, int e, Object edge){
+      start = s; end = e; modelEdge = edge;
+      level = -1;
     }
-    int level = 0;
-    Iterable children = _context._adapt.getTreeDaughters(edge);
-    if (children != null) {
-      for (Object child : children) {
-        int sublevel = computeMinLevel(child, edgeLevel);
-        level = Math.max(level, sublevel);
+    
+    @SuppressWarnings("unchecked")
+    private int computeMinLevel(IdentityHashMap<Object, ChartEdge> edgeLevel) {
+      if (level >= 0) {
+        return level;
       }
-      ++level;
+      
+      Iterable children = _context._adapt.getTreeDaughters(modelEdge);
+      if (children != null) {
+        for (Object child : children) {
+          if (child != null) {
+            int sublevel = edgeLevel.get(child).computeMinLevel(edgeLevel);
+            level = Math.max(level, sublevel);
+          }
+        }
+        ++level;
+      }
+    
+      return level;
     }
-    edgeLevel.put(edgeNode, level);
-    return level;
+    
+    public int compareTo(ChartEdge e2) {
+      int diff = ((end - start) - (e2.end - e2.start));
+      if (diff == 0) {
+        diff = level - e2.level;
+      }
+      if (diff == 0) {
+        diff = start - e2.start;
+      }
+      return diff;
+    }
   }
-
 
   /** In general, this method should create all the necessary GraphicalNodes
    *  and Connectors, while the algorithm puts them into their final places,
@@ -116,16 +138,49 @@ public class ChartLayout implements Layout {
       }
     }
 
-    // the edges are sorted according to the graph that is established by the
-    // children relation
-    IdentityHashMap<GraphicalNode, Integer> edgeLevel =
-      new IdentityHashMap<GraphicalNode, Integer>();
+    
+    // the edges are sorted according to span first, then start vertex
+    IdentityHashMap<Object, Integer> vertexPos =
+      new IdentityHashMap<Object, Integer>();
+    int i = 0;
+    for (GraphicalNode node : vertices) {
+      vertexPos.put(node.getModel(), i++);
+    }
+    IdentityHashMap<Object, ChartEdge> edgeSet =
+      new IdentityHashMap<Object, ChartEdge>();
     for (GraphicalNode sourceNode : vertices) {
+      int startPos = vertexPos.get(sourceNode.getModel());
       Iterable edges = adapt.outEdges(sourceNode.getModel());
       if (edges != null) {
         for (Object edge : edges) {
-          computeMinLevel(edge, edgeLevel);
+          edgeSet.put(edge,
+              new ChartEdge(startPos, vertexPos.get(adapt.target(edge)), edge));
         }
+      }
+    }
+    
+    for (ChartEdge cEdge : edgeSet.values()) {
+      cEdge.computeMinLevel(edgeSet);
+    }
+    
+    System.out.print(edgeSet.size());
+    int[] minHeight = new int[i];
+    for (int j = 0; j < i; ++j) {
+      minHeight[j] = 0;
+    }
+    IdentityHashMap<GraphicalNode, Integer> edgeLevel =
+      new IdentityHashMap<GraphicalNode, Integer>();
+    PriorityQueue<ChartEdge> edgeQueue = new PriorityQueue(edgeSet.values());
+    while (! edgeQueue.isEmpty()) {
+      ChartEdge cEdge = edgeQueue.poll();
+      int edgeHeight = 0;
+      for (int j = cEdge.start; j < cEdge.end; ++j) {
+        edgeHeight = Math.max(edgeHeight, minHeight[j]);
+      }
+      ++edgeHeight;
+      edgeLevel.put(_context.getRepresentative(cEdge.modelEdge), edgeHeight);
+      for (int j = cEdge.start; j < cEdge.end; ++j) {
+        minHeight[j] = Math.max(edgeHeight, minHeight[j]);
       }
     }
 

@@ -82,7 +82,7 @@ public class DOMAdapter extends ModelAdapter {
   }
 
   @Override
-  public Object getRootNode(Object model){
+  public Object getNodeContent(Object model){
     if (model instanceof Document) {
       return new MapMarker(((Document) model).getDocumentElement());
     }
