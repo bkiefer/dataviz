@@ -77,18 +77,20 @@ public class SquareBendConnector extends Connector {
 
   @Override
   public void paintAbsolute(Rectangle absRect, Graphics g) {
+    int xsgn = (_to.x < _from.x ? -1 : 1);
+    int ysgn = (_to.y < _from.y ? -1 : 1);
     switch (_out) {
     case 'H' :
     case 'h' : {
       int[] xPoints = {
           absRect.x + _from.x,
           absRect.x + _from.x,
-          (int) (absRect.x + _from.x + Math.signum(_to.x - _from.x) * _bendSize),
+          (absRect.x + _from.x + xsgn * _bendSize),
           absRect.x + _to.x
       };
       int[] yPoints = {
           absRect.y + _from.y,
-          (int) (absRect.y + _to.y + Math.signum(_from.y - _to.y) * _bendSize),
+          (absRect.y + _to.y - ysgn * _bendSize),
           absRect.y + _to.y,
           absRect.y + _to.y
       };
@@ -99,14 +101,14 @@ public class SquareBendConnector extends Connector {
     case 'v' : {
       int[] xPoints = {
           absRect.x + _from.x,
-          (int) (absRect.x + _to.x + Math.signum(_from.x - _to.x) * _bendSize),
+          (absRect.x + _to.x - xsgn * _bendSize),
           absRect.x + _to.x,
           absRect.x + _to.x
       };
       int[] yPoints = {
           absRect.y + _from.y,
           absRect.y + _from.y,
-          (int) (absRect.y + _from.y + Math.signum(_to.y - _from.y) * _bendSize),
+          (absRect.y + _from.y + ysgn * _bendSize),
           absRect.y + _to.y
       };
       g.drawPolyline(xPoints, yPoints, xPoints.length);

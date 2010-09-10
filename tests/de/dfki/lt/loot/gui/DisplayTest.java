@@ -270,7 +270,7 @@ public class DisplayTest {
   public static void main(String[] args) throws Exception {
     CollectionsAdapter.init();
     DOMAdapter.init();
-    for (int which = 0; which < 5; ++which)
+    for (int which = 4; which < 5; ++which)
     { //int which = 2;
       switch(which) {
       case 0: {

@@ -8,6 +8,7 @@ import java.util.List;
 
 import de.dfki.lt.loot.gui.connectors.Connector;
 import de.dfki.lt.loot.gui.layouts.LayoutAlgorithm;
+import de.dfki.lt.loot.gui.quadtree.Quadtree;
 
 public class GraphNode extends GraphicalNode {
 
@@ -17,6 +18,8 @@ public class GraphNode extends GraphicalNode {
   private List<Connector> _connectors;
 
   private LayoutAlgorithm _algorithm;
+
+  private Quadtree<GraphicalNode> _quadtree;
 
   public GraphNode(Object aModel) {
     this.model = aModel;
@@ -45,11 +48,28 @@ public class GraphNode extends GraphicalNode {
         conn.adjust(g);
       }
     }
+
+    // build an efficient search data structure to find content nodes quickly
+    if (_subNodes != null) {
+      _quadtree = new Quadtree<GraphicalNode>(this.area);
+      for (GraphicalNode subnode : this._subNodes) {
+        _quadtree.insert(subnode.area, subnode);
+      }
+    }
+    // System.out.println(_quadtree.getStats());
   }
 
   @Override
   protected GraphicalNode getChildContainingPoint(Point p) {
-    // TODO Auto-generated method stub
+    if (_quadtree == null)
+      return null;
+
+    List<GraphicalNode> hits = _quadtree.query(p);
+    for (GraphicalNode hit : hits) {
+      GraphicalNode inner = hit.getChildContainingPoint(p);
+      if (inner != null)
+        return inner;
+    }
     return null;
   }
 

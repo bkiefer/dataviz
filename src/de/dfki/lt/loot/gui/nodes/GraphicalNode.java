@@ -1,7 +1,6 @@
 package de.dfki.lt.loot.gui.nodes;
 
 import java.awt.BasicStroke;
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -15,6 +14,14 @@ import de.dfki.lt.loot.gui.Padding;
 import de.dfki.lt.loot.gui.Style;
 import de.dfki.lt.loot.gui.connectors.Connector;
 
+/** The abstract top-level class of nodes that are used in a DrawingPanel.
+ *  subclasses either combine other nodes to more complex graphics (complex
+ *  nodes, such as CompositNode, TabularNode and GraphNode) or are able to
+ *  draw themselves (subclasses of BasicNode).
+ *
+ *  TODO a GraphicalNode must be able to render itself invalid, e.g., in case
+ *       of state change. It will likely need access to its Panel for that.
+ */
 public abstract class GraphicalNode {
 
   private static final List<Connector> _emptyConnectors =
@@ -25,8 +32,7 @@ public abstract class GraphicalNode {
   protected GraphicalNode parentNode;
   protected List<Connector> _in, _out;
   protected Style style;
-
-  protected boolean active = false;
+  protected boolean inverted = false;
 
   /** Creates a new instance of <code>GraphicalNode</code> with default style
    */
@@ -75,33 +81,6 @@ public abstract class GraphicalNode {
   public void setStyle(Style aStyle) { this.style = aStyle; }
   // END Getters and Setters
 
-
-  private static int showActiveRect = 0;
-
-  /** code to test the paint and computeLayout method
-   * @param absArea the total area of the node
-   * @param g
-   *
-   * TODO we need a proper handling of inversion: XOR does not work for rendered
-   * fonts. It must be stored somewhere that some nodes are to be drawn inverted,
-   * this can not be stored in the style, because the style has to be used
-   * to determine how the inversion has to be drawn, and seems not to be the
-   * right place to have such dynamic information.
-   */
-  protected void showEnclosingRect(Rectangle absArea, Graphics g) {
-    if (active && showActiveRect > 0) {
-      Color current = g.getColor();
-      if (showActiveRect == 1) {
-        g.setColor(Color.red);
-        g.drawRect(absArea.x, absArea.y, absArea.width, absArea.height);
-        g.setColor(current);
-      } else {
-        g.setXORMode(Color.white);
-        g.fillRect(absArea.x, absArea.y, absArea.width, absArea.height);
-      }
-    }
-  }
-
   /** paints the node with regard to the given offset
    * @param parentArea the parent's absolute area
    * @param g Graphics object
@@ -111,9 +90,22 @@ public abstract class GraphicalNode {
     // translate (relative) area by origin to get absolute coordinates
     absoluteArea.translate(parentArea.x, parentArea.y);
     // determine if the current node must be repainted
-    if (! absoluteArea.intersects(g.getClipBounds())) return;
-    showEnclosingRect(absoluteArea, g);
-    if (this.style != null) this.style.setStyle(g);
+    if (! absoluteArea.intersects(g.getClipBounds()))
+      return;
+
+    this.style.setStyle(g, inverted);
+
+    // TODO this works, but is preliminary. It has to be merged with the above
+    // code, and inverted styles must be specified (or computed, if possible)
+    if (inverted) {
+      Graphics2D g2d = (Graphics2D) g;
+      g2d.setColor(this.style.getForegroundColour());
+      //g2d.setComposite(AlphaComposite.DstOver);
+      g2d.fillRect(absoluteArea.x, absoluteArea.y,
+          absoluteArea.width, absoluteArea .height);
+      //g2d.setPaintMode();
+      g2d.setColor(this.style.getBackgroundColour());
+    }
 
     // now handle padding
     Padding padding = this.style.getPadding();
@@ -185,24 +177,35 @@ public abstract class GraphicalNode {
       }
     }
     p.x -= currentRect.x;
-    p.y -= currentRect.y;    return current.getChildContainingPoint(p);
+    p.y -= currentRect.y;
+    return current.getChildContainingPoint(p);
   }
 
   public void mouseLeaves() {
-    active = false;
+    //setInverted(false);
+    //System.out.print(">");
     return;
   }
 
   public void mouseEnters() {
-    active = true;
+    //setInverted(true);
+    //System.out.print("<");
     return;
   }
 
+  /** Returns the area that is covered by this GraphicalNode on the drawing
+   *  area, including all padding elements.
+   */
   public Rectangle getAbsRect() {
-    Rectangle absoluteArea = new Rectangle(area);
+    int off = this.style.getPadding().getOffset();
+    int twotimesoff = off << 1;
+    Rectangle absoluteArea =
+      new Rectangle(area.x - off, area.y - off,
+          area.width + twotimesoff, area.height + twotimesoff);
     GraphicalNode current = this, parent;
     while ((parent = current.parentNode) != null) {
-      absoluteArea.translate(parent.area.x, parent.area.y);
+      absoluteArea.x += parent.area.x;
+      absoluteArea.y += parent.area.y;
       current = parent;
     }
     return absoluteArea;
@@ -251,6 +254,10 @@ public abstract class GraphicalNode {
 
   public Point2D intersect(Point2D in, Point2D out) {
     return pointOnRim(out.getX() - in.getX(), out.getY() - in.getY());
+  }
+
+  public void setInverted(boolean inverted) {
+    this.inverted = inverted;
   }
 
 }

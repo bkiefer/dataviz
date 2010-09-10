@@ -18,7 +18,6 @@ public class CircleNode extends BasicNode {
 
   @Override
   public void paintAbsolute(Rectangle area, Graphics g) {
-    // TODO Auto-generated method stub
     g.drawArc(area.x, area.y, area.width - 1 , area.height - 1, 0, 360);
   }
 

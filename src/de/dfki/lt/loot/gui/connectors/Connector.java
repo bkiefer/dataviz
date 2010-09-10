@@ -35,7 +35,7 @@ public abstract class Connector {
     // determine if the current node must be repainted
     //if (! absoluteArea.intersects(g.getClipBounds())) return;
     //showEnclosingRect(absoluteArea, g);
-    if (this._style != null) this._style.setStyle(g);
+    if (this._style != null) this._style.setStyle(g, false);
     /*
     // now handle padding
     Padding padding = this.style.getPadding();

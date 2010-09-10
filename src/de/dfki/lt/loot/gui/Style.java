@@ -5,13 +5,14 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Paint;
 import java.awt.Stroke;
 import java.util.HashMap;
 
 /**
  * This is the <code>Style</code> class. There are four different Styles:
  * 'type', 'feature' and 'bracket' and the default style.
- * 
+ *
  */
 public class Style {
 
@@ -28,11 +29,11 @@ public class Style {
   static {
     styleMap = new HashMap<String, Style>();
     styleMap.put("type", new Style(new Font("DejaVu Sans", Font.BOLD, 11),
-        Color.BLUE, null, new Padding(0, 0, 1), null));
+        Color.BLUE, Color.LIGHT_GRAY, new Padding(0, 0, 1), null));
     styleMap.put("fwfailure", new Style(new Font("DejaVu Sans", Font.BOLD, 14),
-        Color.RED, null, new Padding(0, 0, 1), null));
+        Color.RED, Color.LIGHT_GRAY, new Padding(0, 0, 1), null));
     styleMap.put("bwfailure", new Style(new Font("DejaVu Sans", Font.BOLD, 14),
-        Color.GREEN, null, new Padding(0, 0, 1), null));
+        Color.GREEN, Color.LIGHT_GRAY, new Padding(0, 0, 1), null));
     styleMap.put("feature", new Style(new Font("DejaVu Sans", Font.PLAIN, 11),
         null, null, new Padding(0, 0, 1), null));
     styleMap.put("bracket", new Style(new Font("DejaVu Sans", Font.PLAIN, 14),
@@ -54,16 +55,22 @@ public class Style {
   private Style() {
     this.font = new Font("Monospaced", Font.PLAIN, 10);
     this.fgCol = Color.BLACK;
-    this.bgCol = Color.WHITE;
+    this.bgCol = Color.LIGHT_GRAY;
     this.padding = new Padding();
     this.stroke = new BasicStroke();
+    /*
+    this.padding = new Padding(2,2,2);
+    float[] defaultDash = { 10f, 10f };
+    this.stroke = new BasicStroke(2, BasicStroke.CAP_SQUARE, BasicStroke
+        .JOIN_BEVEL, 100.0f, defaultDash, 0);
+     */
   }
 
   /**
    * There are only ever going to be three non-default <code>Style</code>
    * Objects: They are created by using the styleMap, so this constructor is
    * private as well.
-   * 
+   *
    * @param aFont
    * @param foreground
    * @param background
@@ -84,13 +91,13 @@ public class Style {
   public static void add(String name,
       Font aFont, Color foreground, Color background,
       Padding aPadding, Stroke aStroke) {
-    styleMap.put(name, 
+    styleMap.put(name,
         new Style(aFont, foreground, background, aPadding, aStroke));
   }
   /**
    * Looks up the given style name in the styleMap and returns the appropriate
    * <code>Style</code> object
-   * 
+   *
    * @param name
    * @return the desired <code>Style</code> object
    */
@@ -113,13 +120,17 @@ public class Style {
   public void setFont(Font aFont) { this.font = aFont; }
 
   /** @return the foregroundColour */
-  public Color getForegroundColour() { return this.fgCol; }
+  public Color getForegroundColour() {
+    return (this.fgCol != null ? this.fgCol : Color.BLACK);
+  }
 
   /** @param aForegroundColour the foregroundColour to set */
   public void setForegroundColour(Color aColor) { this.fgCol = aColor; }
 
   /** @return the backgroundColour */
-  public Color getBackgroundColour() { return this.bgCol; }
+  public Color getBackgroundColour() {
+    return (this.bgCol != null ? this.bgCol : Color.WHITE);
+  }
 
   /** @param aBackgroundColour the backgroundColour to set */
   public void setBackgroundColour(Color aColor) { this.bgCol = aColor; }
@@ -136,28 +147,25 @@ public class Style {
   /** @param aStroke the stroke to set */
   public void setStroke(Stroke aStroke) { this.stroke = aStroke; }
   // END Getters and Setters
-  
+
   /** Adjust Graphics properties according to style.
    * @param  g the current graphics context
    * @return the incoming object. Might also be a copy if further changes made
    *         that necessary
    */
-  public Graphics setStyle(Graphics g) {
-
+  public Graphics setStyle(Graphics gPlain, boolean inverted) {
+    Graphics2D g = (Graphics2D) gPlain;
     // set properties of our Graphic object according to style
     if (null != this.getFont()) { g.setFont(this.getFont()); }
 
     // override default foreground color if given in style object
-    if (null != this.getForegroundColour()) {
-      g.setColor(this.getForegroundColour());
-    } else {
-      // default foreground color is black
-      g.setColor(Color.black);
-    }
+    g.setPaint(inverted
+        ? this.getBackgroundColour()
+        : this.getForegroundColour());
 
     // override stroke if given in style object
     if (null != this.getStroke()) {
-      ((Graphics2D) g).setStroke(this.getStroke());
+      g.setStroke(this.getStroke());
     }
 
     // return changed Graphics object
