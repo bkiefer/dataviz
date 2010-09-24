@@ -7,8 +7,30 @@ import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 
-
 public class ModelAdapterFactory {
+
+  /** Register built-in adapters */
+  static {
+    init();
+    DOMAdapter.init();
+    CollectionsAdapter.init();
+  }
+
+  @SuppressWarnings("unchecked")
+  private static void init() {
+    logger = Logger.getLogger(ModelAdapterFactory.class);
+    _prototypes = new HashMap<Class, Class>();
+    _classes = new ArrayList<Class>();
+  }
+
+  private static Logger logger;
+
+  @SuppressWarnings("unchecked")
+  private static HashMap<Class, Class> _prototypes;
+
+  @SuppressWarnings("unchecked")
+  private static ArrayList<Class> _classes;
+
 
   @SuppressWarnings("unchecked")
   private static class ClassComparator implements Comparator<Class> {;
@@ -30,16 +52,6 @@ public class ModelAdapterFactory {
     }
   }
 
-
-  private static final Logger logger =
-    Logger.getLogger(ModelAdapterFactory.class);
-
-  @SuppressWarnings("unchecked")
-  private static HashMap<Class, Class> _prototypes =
-    new HashMap<Class, Class>();
-
-  @SuppressWarnings("unchecked")
-  private static ArrayList<Class> _classes = new ArrayList<Class>();
 
   @SuppressWarnings("unchecked")
   public static void register(Class objClass, Class adapterClass) {

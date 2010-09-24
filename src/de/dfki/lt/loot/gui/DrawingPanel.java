@@ -75,6 +75,7 @@ public class DrawingPanel extends JPanel {
       this.setSize(0,0);
     }
     this._unadjusted = true;
+    this.repaint();
   }
 
   public Object getModel() { return _model; }
