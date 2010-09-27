@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Paint;
 import java.awt.Stroke;
 import java.util.HashMap;
 
@@ -36,7 +35,7 @@ public class Style {
         Color.GREEN, Color.LIGHT_GRAY, new Padding(0, 0, 1), null));
     styleMap.put("feature", new Style(new Font("DejaVu Sans", Font.PLAIN, 11),
         null, null, new Padding(0, 0, 1), null));
-    styleMap.put("bracket", new Style(new Font("DejaVu Sans", Font.PLAIN, 14),
+    styleMap.put("bracket", new Style(new Font("DejaVu Sans Mono", Font.PLAIN, 18),
         null, null, new Padding(0, 0, 2), null));
     styleMap.put("coref", new Style(new Font("DejaVu Sans", Font.BOLD, 10),
         null, null, new Padding(2, 1, 1), null));

@@ -5,13 +5,13 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 /** Represents a node of a {@link Quadtree}.  Nodes contain
  * items which have a spatial extent corresponding to the node's position
  * in the quadtree.
  */
+@SuppressWarnings("unchecked")
 public class Node<Content> {
   /**
    * subquads are numbered as follows:

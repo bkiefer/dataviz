@@ -19,13 +19,18 @@ public class ParenBracketNode extends BracketNode {
     from.put(Orientation.north, 0); to.put(Orientation.north, +180);
     from.put(Orientation.south, 0); to.put(Orientation.south, -180);
   }
-  
+
+  public ParenBracketNode(Orientation anOrientation) {
+    super(anOrientation, Style.get("bracket"));
+  }
+
   public ParenBracketNode(Orientation anOrientation, Style aStyle) {
     super(anOrientation, aStyle);
   }
 
   /** paint the bracket. r is in absolute coordinates, Padding already removed
-   */ 
+   */
+  @Override
   public void paintAbsolute(Rectangle r, Graphics g){
     // draw the bracket according to the OrientationType provided
     Orientation ori = this.getOrientation();

@@ -9,12 +9,17 @@ import de.dfki.lt.loot.gui.Style;
  */
 public class AngleBracketNode  extends BracketNode  {
 
+  public AngleBracketNode(Orientation anOrientation) {
+    super(anOrientation, Style.get("bracket"));
+  }
+
   public AngleBracketNode(Orientation anOrientation, Style aStyle) {
     super(anOrientation, aStyle);
   }
 
   /** paint the bracket. r is in absolute coordinates, Padding already removed
-   */ 
+   */
+  @Override
   public void paintAbsolute(Rectangle r, Graphics g){
     // The rectangle's height and width with added origin offset, the lower
     // right corner
@@ -22,7 +27,7 @@ public class AngleBracketNode  extends BracketNode  {
     int lry = r.height + r.y;
     int mrx = r.x + r.width / 2;
     int mry = r.y + r.height / 2;
-    
+
     // draw the bracket according to the OrientationType provided
     switch (this.getOrientation()) {
     case west:
@@ -43,7 +48,8 @@ public class AngleBracketNode  extends BracketNode  {
       break;
     } // end switch
   }
-  
+
+  @Override
   public void growTo(int width, int height) {
     if (height > width) {
       this.area.height = Math.min(height, 300);

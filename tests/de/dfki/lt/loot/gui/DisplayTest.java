@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import sun.awt.OrientableFlowLayout;
+
 import de.dfki.lt.loot.gui.adapters.CollectionsAdapter;
 import de.dfki.lt.loot.gui.adapters.DOMAdapter;
 import de.dfki.lt.loot.gui.adapters.EmptyModelAdapter;
@@ -19,6 +21,7 @@ import de.dfki.lt.loot.gui.connectors.StraightConnector;
 import de.dfki.lt.loot.gui.layouts.CompactLayout;
 import de.dfki.lt.loot.gui.layouts.Layout;
 import de.dfki.lt.loot.gui.layouts.LayoutAlgorithm;
+import de.dfki.lt.loot.gui.layouts.mxCompactTreeLayout;
 import de.dfki.lt.loot.gui.nodes.AngleBracketNode;
 import de.dfki.lt.loot.gui.nodes.BraceBracketNode;
 import de.dfki.lt.loot.gui.nodes.CompositeNode;
@@ -259,6 +262,116 @@ class TestBendConnectors implements Layout {
   }
 }
 
+class TestTreeLayout implements Layout {
+
+  TextNode[] nodes = new TextNode[11];
+
+  @Override
+  public GraphicalNode computeLayout(Object model, ModelAdapter adapt) {
+    GraphNode treeNode = new GraphNode(null);
+    TextNode[] nodes = new TextNode[11];
+    for (int i = 0; i < 11; ++i) {
+      nodes[i] = new TextNode(Integer.toString(i));
+      treeNode.addNode(nodes[i]);
+    }
+    int[][] edges = { {0,1},{0,2},{1,3},{3,7,},{3,8},{2,4},{2,5},{2,6},
+        {6,9}, {6,10} };
+    for (int[] edge : edges) {
+      treeNode.addConnector(
+          new StraightConnector(nodes[edge[0]], nodes[edge[1]]));
+    }
+    mxCompactTreeLayout la = new mxCompactTreeLayout(nodes[0]);
+    la.setLevelDistance(20); la.setNodeDistance(5);
+    treeNode.setLayoutAlgorithm(la);
+    return treeNode;
+  }
+}
+
+class TestBracketsLayout implements Layout {
+
+  @Override
+  public GraphicalNode computeLayout(Object model, ModelAdapter adapt) {
+    Style.add("pad", null, null, null, new Padding(2,0,2), null);
+    TabularNode res = new TabularNode(true, "cc");
+    res.startNext();
+    GraphicalNode node = new TextNode("Test");
+    for (int i = 0 ; i < 10; ++i) {
+      TabularNode n = new TabularNode(true, "ccc");
+      n.startNext();
+      n.addNode(null);
+      n.addNode(new AngleBracketNode(Orientation.north));
+      n.addNode(null);
+      n.startNext();
+      n.addNode(new AngleBracketNode(Orientation.west));
+      n.addNode(node);
+      n.addNode(new AngleBracketNode(Orientation.east));
+      n.startNext();
+      n.addNode(null);
+      n.addNode(new AngleBracketNode(Orientation.south));
+      n.addNode(null);
+      node = n;
+    }
+    res.addNode(node);
+    node = new TextNode("Test");
+    for (int i = 0 ; i < 10; ++i) {
+      TabularNode n = new TabularNode(true, "ccc");
+      n.startNext();
+      n.addNode(null);
+      n.addNode(new BraceBracketNode(Orientation.north));
+      n.addNode(null);
+      n.startNext();
+      n.addNode(new BraceBracketNode(Orientation.west));
+      n.addNode(node);
+      n.addNode(new BraceBracketNode(Orientation.east));
+      n.startNext();
+      n.addNode(null);
+      n.addNode(new BraceBracketNode(Orientation.south));
+      n.addNode(null);
+      node = n;
+    }
+    res.addNode(node);
+    res.startNext();
+    node = new TextNode("Test");
+    for (int i = 0 ; i < 10; ++i) {
+      TabularNode n = new TabularNode(true, "ccc");
+      n.startNext();
+      n.addNode(null);
+      n.addNode(new ParenBracketNode(Orientation.north));
+      n.addNode(null);
+      n.startNext();
+      n.addNode(new ParenBracketNode(Orientation.west));
+      n.addNode(node);
+      n.addNode(new ParenBracketNode(Orientation.east));
+      n.startNext();
+      n.addNode(null);
+      n.addNode(new ParenBracketNode(Orientation.south));
+      n.addNode(null);
+      node = n;
+    }
+    res.addNode(node);
+    node = new TextNode("Test");
+    for (int i = 0 ; i < 10; ++i) {
+      TabularNode n = new TabularNode(true, "ccc");
+      n.startNext();
+      n.addNode(null);
+      n.addNode(new SquareBracketNode(Orientation.north));
+      n.addNode(null);
+      n.startNext();
+      n.addNode(new SquareBracketNode(Orientation.west));
+      n.addNode(node);
+      n.addNode(new SquareBracketNode(Orientation.east));
+      n.startNext();
+      n.addNode(null);
+      n.addNode(new SquareBracketNode(Orientation.south));
+      n.addNode(null);
+      node = n;
+    }
+    res.addNode(node);
+    return res;
+  }
+}
+
+
 public class DisplayTest {
 
   protected static String example0 =
@@ -270,8 +383,7 @@ public class DisplayTest {
   public static void main(String[] args) throws Exception {
     CollectionsAdapter.init();
     DOMAdapter.init();
-    for (int which = 4; which < 5; ++which)
-    { //int which = 2;
+    for (int which = 0; which < 7; ++which) {
       switch(which) {
       case 0: {
         DrawingPanel contentArea =
@@ -321,6 +433,25 @@ public class DisplayTest {
         mf.setModel("SquareBendTest");
         break;
       }
+      case 5: {
+        DrawingPanel contentArea =
+          new DrawingPanel(
+              new TestTreeLayout(),
+              new EmptyModelAdapter());
+        MainFrame mf = new MainFrame("TreeLayoutTest", contentArea);
+        mf.setModel("TreeLayoutTest");
+        break;
+      }
+      case 6: {
+        DrawingPanel contentArea =
+          new DrawingPanel(
+              new TestBracketsLayout(),
+              new EmptyModelAdapter());
+        MainFrame mf = new MainFrame("BracketTest", contentArea);
+        mf.setModel("BracketTest");
+        break;
+      }
+
       /*
       case 1: {
         FSGrammar gram =

@@ -19,8 +19,9 @@ public class SimpleTreeLayout extends FacetLayoutBase {
   transform(Object model, ViewContext context, int facetMask) {
     GraphNode result = new GraphNode(model);
     GraphicalNode root = transformTreeInner(model, context, result, facetMask);
-    result.setLayoutAlgorithm(
-        new SimpleTreeLayoutAlgorithm(root, 5, 20));
+    mxCompactTreeLayout la = new mxCompactTreeLayout(root);
+    result.setLayoutAlgorithm(la);
+    //    new SimpleTreeLayoutAlgorithm(root, 5, 20));
     return result;
   }
 

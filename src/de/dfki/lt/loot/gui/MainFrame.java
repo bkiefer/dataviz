@@ -128,6 +128,7 @@ public class MainFrame extends JFrame {
     // create content panel and add it to the frame
     JPanel contentPane = new JPanel(new BorderLayout());
     contentPane.setLayout(new BorderLayout());
+    contentPane.setPreferredSize(new Dimension(600, 600));
     this.setContentPane(contentPane);
 
     // create menu bar

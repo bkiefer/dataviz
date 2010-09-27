@@ -11,6 +11,10 @@ public class SquareBracketNode extends BracketNode {
 
   private static final boolean useCharacters = false;
 
+  public SquareBracketNode(Orientation anOrientation) {
+    super(anOrientation, Style.get("bracket"));
+  }
+
   public SquareBracketNode(Orientation anOrientation, Style aStyle) {
     super(anOrientation, aStyle);
   }
@@ -33,19 +37,19 @@ public class SquareBracketNode extends BracketNode {
       } else {
         // This would be the preferred way of painting Brackets and Braces,
         // but the fonts are rendered strangely, and support seems incomplete?
-        int bc = (this.getOrientation() == Orientation.west) ? 0 : 3;
+        int bc = (this.getOrientation() == Orientation.west) ? 6 : 9;
         if (r.height <= this.fontHeight ) {
           g.drawString(bc == 0 ? "[" : "]", r.x, r.y - this.fontOffset);
         } else {
           int y = r.y - this.fontOffset;
           int x = r.x;
-          g.drawString(BracketChars.substring(bc,bc+1), x , y );
+          g.drawString(BRACKET_CHARS.substring(bc,bc+1), x , y );
           int yLast = r.y + r.height - this.fontHeight - this.fontOffset;
-          g.drawString(BracketChars.substring(bc+2,bc+3), x , yLast);
+          g.drawString(BRACKET_CHARS.substring(bc+2,bc+3), x , yLast);
           yLast -= this.fontHeight;
           while (y < yLast) {
             y += this.fontHeight;
-            g.drawString(BracketChars.substring(bc+1,bc+2), x, y);
+            g.drawString(BRACKET_CHARS.substring(bc+1,bc+2), x, y);
           }
         }
       }
