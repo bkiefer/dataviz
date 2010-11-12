@@ -5,7 +5,6 @@ import de.dfki.lt.loot.gui.adapters.ModelAdapter;
 import de.dfki.lt.loot.gui.connectors.StraightConnector;
 import de.dfki.lt.loot.gui.nodes.GraphNode;
 import de.dfki.lt.loot.gui.nodes.GraphicalNode;
-import de.dfki.lt.loot.gui.nodes.SimpleTreeLayoutAlgorithm;
 
 public class SimpleTreeLayout extends FacetLayoutBase {
 

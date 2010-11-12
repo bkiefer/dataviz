@@ -37,7 +37,7 @@ public class BraceBracketNode  extends BracketNode  {
     switch (this.getOrientation()) {
     case west:
       if (r.height <= this.fontHeight + 2) {
-        g.drawString("{", r.x, rly - 1); //- (fontHeight + fontOffset));
+        g.drawString("{", r.x, rly);
       } else {
         g.drawArc(h_mid_x, r.y, r.width, r.width, 90, 90);
         g.drawLine(h_mid_x, r.y + h_radius, h_mid_x, h_mid_y - h_radius);
@@ -49,7 +49,7 @@ public class BraceBracketNode  extends BracketNode  {
       break;
     case east:
       if (r.height <= this.fontHeight + 2) {
-        g.drawString("}", r.x, rly -1);
+        g.drawString("}", r.x, rly );
       } else {
         /*
         int bc = 16;

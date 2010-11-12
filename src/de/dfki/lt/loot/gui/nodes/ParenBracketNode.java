@@ -34,6 +34,16 @@ public class ParenBracketNode extends BracketNode {
   public void paintAbsolute(Rectangle r, Graphics g){
     // draw the bracket according to the OrientationType provided
     Orientation ori = this.getOrientation();
+    if (r.height <= this.fontHeight + 2) {
+      if (ori == Orientation.west) {
+        g.drawString("(", r.x, r.y + r.height);
+        return;
+      }
+      if (ori == Orientation.east) {
+        g.drawString(")", r.x, r.y + r.height);
+        return;
+      }
+    }
     g.drawArc(r.x, r.y, r.width, r.height, from.get(ori), to.get(ori));
   } // end method
 

@@ -106,10 +106,11 @@ public class GraphNode extends GraphicalNode {
     subNode.setParentNode(null);
   }
 
-  /** Exchange the given oldNode by newNode */
+  /** Exchange the given oldNode by newNode
+   *  TODO Is it okay if this is a do-nothing?
+   */
   @Override
   public void exchangeNode(GraphicalNode old, GraphicalNode newNode) {
-    // TODO Auto-generated method stub
   }
 
   /** Adds another <code>AbstractConnector</code> to the list of connectors.

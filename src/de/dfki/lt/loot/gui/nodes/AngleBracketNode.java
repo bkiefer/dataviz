@@ -27,7 +27,17 @@ public class AngleBracketNode  extends BracketNode  {
     int lry = r.height + r.y;
     int mrx = r.x + r.width / 2;
     int mry = r.y + r.height / 2;
-
+    if (r.height <= this.fontHeight + 2) {
+      Orientation ori = this.getOrientation();
+      if (ori == Orientation.west) {
+        g.drawString("\u27E8", r.x, lry);
+        return;
+      }
+      if (ori == Orientation.east) {
+        g.drawString("\u27E9", r.x, lry);
+        return;
+      }
+    }
     // draw the bracket according to the OrientationType provided
     switch (this.getOrientation()) {
     case west:

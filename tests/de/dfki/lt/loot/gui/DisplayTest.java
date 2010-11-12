@@ -294,7 +294,7 @@ class TestBracketsLayout implements Layout {
     Style.add("pad", null, null, null, new Padding(2,0,2), null);
     TabularNode res = new TabularNode(true, "cc");
     res.startNext();
-    GraphicalNode node = new TextNode("Test");
+    GraphicalNode node = new TextNode("<Test>");
     for (int i = 0 ; i < 10; ++i) {
       TabularNode n = new TabularNode(true, "ccc");
       n.startNext();
@@ -312,7 +312,7 @@ class TestBracketsLayout implements Layout {
       node = n;
     }
     res.addNode(node);
-    node = new TextNode("Test");
+    node = new TextNode("{Test}");
     for (int i = 0 ; i < 10; ++i) {
       TabularNode n = new TabularNode(true, "ccc");
       n.startNext();
@@ -331,7 +331,7 @@ class TestBracketsLayout implements Layout {
     }
     res.addNode(node);
     res.startNext();
-    node = new TextNode("Test");
+    node = new TextNode("(Test)");
     for (int i = 0 ; i < 10; ++i) {
       TabularNode n = new TabularNode(true, "ccc");
       n.startNext();
@@ -349,7 +349,7 @@ class TestBracketsLayout implements Layout {
       node = n;
     }
     res.addNode(node);
-    node = new TextNode("Test");
+    node = new TextNode("[Test]");
     for (int i = 0 ; i < 10; ++i) {
       TabularNode n = new TabularNode(true, "ccc");
       n.startNext();

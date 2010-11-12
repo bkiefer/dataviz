@@ -45,11 +45,9 @@ public class CompactMapLayout extends FacetLayoutBase {
 
       CompositeNode node = new CompositeNode('h');
       // add brackets and feature-value list to the result node
-      node.addNode(new SquareBracketNode(Orientation.west,
-          Style.get("bracket")));
+      node.addNode(new SquareBracketNode(Orientation.west));
       node.addNode(fvlistNode);
-      node.addNode(new SquareBracketNode(Orientation.east,
-          Style.get("bracket")));
+      node.addNode(new SquareBracketNode(Orientation.east));
       return node;
   }
     // only type
