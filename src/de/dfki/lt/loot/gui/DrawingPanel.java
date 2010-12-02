@@ -3,6 +3,7 @@ package de.dfki.lt.loot.gui;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.util.List;
 
 import javax.swing.JPanel;
 
@@ -22,10 +23,13 @@ import de.dfki.lt.loot.gui.nodes.GraphicalNode;
 public class DrawingPanel extends JPanel {
 
   // The root node of the structure
-  private GraphicalNode root = null;
+  private GraphicalNode _root = null;
 
   /** The object associated with this panel */
   private Object _model;
+
+  /** The view context, a mapping from model nodes to GraphicalNodes */
+  private ViewContext _context;
 
   /** A dynamic adapter to mediate between a model structure and the layout */
   private ModelAdapter _adapter;
@@ -55,23 +59,21 @@ public class DrawingPanel extends JPanel {
     this._layout = aLayout;
     this._adapter = adapter;
     this._controller = new Controller(this);
+    this._model = null;
+    this._context = null;
   }
 
-  /**
-   * Setter method for the TFS model.
-   *
-   * @param tfs:
-   *          The Typed Feature Structure in question.
-   */
+  /** set the top model node for this panel */
   public void setModel(Object aModel) {
     if (aModel != null) {
       this._model = aModel;
-      _adapter.setTopModel(this._model);
-      this.root = this._layout.computeLayout(this._model, _adapter);
-      this.setSize(this.root.getRect().height, this.root.getRect().width);
+      _context = new ViewContext(aModel, _adapter);
+      this._root = this._layout.computeView(this._model, _context);
+
+      this.setSize(this._root.getRect().height, this._root.getRect().width);
     }
     else {
-      this.root = new EmptyNode();
+      this._root = new EmptyNode();
       this.setSize(0,0);
     }
     this._unadjusted = true;
@@ -80,8 +82,16 @@ public class DrawingPanel extends JPanel {
 
   public Object getModel() { return _model; }
 
+  public GraphicalNode getMainView(Object model) {
+    return (_context == null ? null : _context.getRepresentative(model));
+  }
+
+  public List<GraphicalNode> getOtherViews(Object model) {
+    return (_context == null ? null : _context.equivalenceClass(model));
+  }
+
   public GraphicalNode getRoot() {
-    return root;
+    return _root;
   }
 
   /*
@@ -91,15 +101,14 @@ public class DrawingPanel extends JPanel {
    */
   @Override
   public Dimension getPreferredSize() {
-
     // if the root node's size has not yet been adjusted, return a 300x300
     // Dimension
-    if (null == this.root || this.root.getRect().width == 0 ||
-        this.root.getRect().height == 0) {
+    if (null == this._root || this._root.getRect().width == 0 ||
+        this._root.getRect().height == 0) {
       return new Dimension(100, 100);
     }
     // else return the root node's new size
-    return new Dimension(this.root.getRect().width, this.root.getRect().height);
+    return new Dimension(this._root.getRect().width, this._root.getRect().height);
   }
 
   public int getDefaultTextHeight() {
@@ -123,12 +132,12 @@ public class DrawingPanel extends JPanel {
     // object
     // but need to leave the original one untouched
     Graphics guiG = g.create();
-    if (this.root != null) {
+    if (this._root != null) {
       if (this._unadjusted) {
-        this.root.adjustSize(guiG);
+        this._root.adjustSize(guiG);
         this._unadjusted = false;
       }
-      this.root.paint(this.root.getRect(), guiG);
+      this._root.paint(this._root.getRect(), guiG);
     }
   }
 }

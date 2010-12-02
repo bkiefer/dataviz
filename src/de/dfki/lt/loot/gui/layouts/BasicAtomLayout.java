@@ -1,6 +1,5 @@
 package de.dfki.lt.loot.gui.layouts;
 
-import de.dfki.lt.loot.gui.Style;
 import de.dfki.lt.loot.gui.ViewContext;
 import de.dfki.lt.loot.gui.adapters.ModelAdapter;
 import de.dfki.lt.loot.gui.nodes.GraphicalNode;
@@ -17,8 +16,7 @@ public class BasicAtomLayout implements FacetLayout {
   @Override
   public
   GraphicalNode transform(Object model, ViewContext context, int facetMask) {
-    return new TextNode(
-        (model == null ? "<NULL>" : model.toString()), Style.get("default"));
+    return new TextNode(model == null ? "<NULL>" : model.toString());
   }
 
   /** This layout does not use any meta layout */

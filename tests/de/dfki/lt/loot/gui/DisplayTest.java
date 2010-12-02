@@ -9,11 +9,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import sun.awt.OrientableFlowLayout;
-
 import de.dfki.lt.loot.gui.adapters.CollectionsAdapter;
 import de.dfki.lt.loot.gui.adapters.DOMAdapter;
 import de.dfki.lt.loot.gui.adapters.EmptyModelAdapter;
+import de.dfki.lt.loot.gui.adapters.MapAdapterIterator;
 import de.dfki.lt.loot.gui.adapters.ModelAdapter;
 import de.dfki.lt.loot.gui.adapters.ModelAdapterFactory;
 import de.dfki.lt.loot.gui.connectors.SquareBendConnector;
@@ -34,7 +33,7 @@ import de.dfki.lt.loot.gui.nodes.TextNode;
 import de.dfki.lt.loot.gui.nodes.BracketNode.Orientation;
 
 class TestNodesLayout implements Layout {
-  public GraphicalNode computeLayout(Object model, ModelAdapter adapter) {
+  public GraphicalNode computeView(Object model, ViewContext ctxt) {
     return level5();
   }
   GraphicalNode level0() {
@@ -121,18 +120,14 @@ class TestNodesLayout implements Layout {
       new TabularNode (true, "ccc");
     node.startNext();
     node.addNode(null);
-    node.addNode(new SquareBracketNode(Orientation.north,
-                                               Style.get("bracket")));
+    node.addNode(new SquareBracketNode(Orientation.north));
     node.startNext();
-    node.addNode(new SquareBracketNode(Orientation.west,
-                                               Style.get("bracket")));
+    node.addNode(new SquareBracketNode(Orientation.west));
     node.addNode(level3());
-    node.addNode(new SquareBracketNode(Orientation.east,
-                                               Style.get("bracket")));
+    node.addNode(new SquareBracketNode(Orientation.east));
     node.startNext();
     node.addNode(null);
-    node.addNode(new SquareBracketNode(Orientation.south,
-                                               Style.get("bracket")));
+    node.addNode(new SquareBracketNode(Orientation.south));
     node.startNext();
     return node;
   }
@@ -142,19 +137,19 @@ class TestNodesLayout implements Layout {
       new CompositeNode('h', Style.get("test"));
     hcompo.addNode(level4());
     hcompo.addNode(new TextNode("horizontal", Style.get("type")));
-    hcompo.addNode(new SquareBracketNode(Orientation.east, Style.get("bracket")));
+    hcompo.addNode(new SquareBracketNode(Orientation.east));
     CompositeNode vcompo = new CompositeNode('v', Style.get("test"));
     vcompo.addNode(hcompo);
     vcompo.addNode(new TextNode("vertical", Style.get("type")));
-    vcompo.addNode(new SquareBracketNode(Orientation.south, Style.get("bracket")));
+    vcompo.addNode(new SquareBracketNode(Orientation.south));
     hcompo = new CompositeNode('s', Style.get("test"));
     hcompo.addNode(vcompo);
-    hcompo.addNode(new SquareBracketNode(Orientation.west, Style.get("bracket")));
+    hcompo.addNode(new SquareBracketNode(Orientation.west));
     hcompo.addNode(new TextNode("south", Style.get("type")));
     vcompo = new CompositeNode('e', Style.get("test"));
     vcompo.addNode(hcompo);
     vcompo.addNode(new TextNode("east", Style.get("type")));
-    vcompo.addNode(new SquareBracketNode(Orientation.south, Style.get("bracket")));
+    vcompo.addNode(new SquareBracketNode(Orientation.south));
     hcompo = new CompositeNode('n', Style.get("test"));
     hcompo.addNode(vcompo);
     hcompo.addNode(new TextNode("north", Style.get("type")));
@@ -182,7 +177,7 @@ class TestIntersectLayout implements Layout {
     }
   }
 
-  public GraphicalNode computeLayout(Object model, ModelAdapter adapt) {
+  public GraphicalNode computeView(Object model, ViewContext ctxt) {
     int radius = 400;
     GraphNode node = new GraphNode(null);
     node.setLayoutAlgorithm(new NoLayoutAlgorithm());
@@ -225,7 +220,7 @@ class TestBendConnectors implements Layout {
   }
 
   @Override
-  public GraphicalNode computeLayout(Object model, ModelAdapter adapt) {
+  public GraphicalNode computeView(Object model, ViewContext ctxt) {
     GraphNode result = new GraphNode(model);
     result.setLayoutAlgorithm(new NoLayoutAlgorithm());
     int[] xCoord = {40, 140, 240};
@@ -267,7 +262,7 @@ class TestTreeLayout implements Layout {
   TextNode[] nodes = new TextNode[11];
 
   @Override
-  public GraphicalNode computeLayout(Object model, ModelAdapter adapt) {
+  public GraphicalNode computeView(Object model, ViewContext ctxt) {
     GraphNode treeNode = new GraphNode(null);
     TextNode[] nodes = new TextNode[11];
     for (int i = 0; i < 11; ++i) {
@@ -290,7 +285,7 @@ class TestTreeLayout implements Layout {
 class TestBracketsLayout implements Layout {
 
   @Override
-  public GraphicalNode computeLayout(Object model, ModelAdapter adapt) {
+  public GraphicalNode computeView(Object model, ViewContext ctxt) {
     Style.add("pad", null, null, null, new Padding(2,0,2), null);
     TabularNode res = new TabularNode(true, "cc");
     res.startNext();
@@ -371,6 +366,32 @@ class TestBracketsLayout implements Layout {
   }
 }
 
+class DagNode {
+  public DagNode(String t) { type = t; }
+  public String type;
+  public HashMap<String, DagNode> edges = new HashMap<String, DagNode>();
+}
+
+class DagNodeAdapter extends CollectionsAdapter {
+  @Override
+  public int facets(Object model) {
+    // TODO Auto-generated method stub
+    return ModelAdapter.MAP;
+  }
+
+  @Override
+  public String getAttribute(Object model, String name) {
+    if (name.equals("type")) {
+      return ((DagNode)model).type;
+    }
+    return null;
+  }
+
+  @Override
+  public MapAdapterIterator mapIterator(Object model) {
+    return new CollectionsMapAdapterIterator(((DagNode) model).edges);
+  }
+}
 
 public class DisplayTest {
 
@@ -383,7 +404,8 @@ public class DisplayTest {
   public static void main(String[] args) throws Exception {
     CollectionsAdapter.init();
     DOMAdapter.init();
-    for (int which = 0; which < 7; ++which) {
+    for (int which = 0; which < 8; ++which) {
+      //if (which != 7) continue;
       switch(which) {
       case 0: {
         DrawingPanel contentArea =
@@ -449,6 +471,21 @@ public class DisplayTest {
               new EmptyModelAdapter());
         MainFrame mf = new MainFrame("BracketTest", contentArea);
         mf.setModel("BracketTest");
+        break;
+      }
+      case 7: {
+        DagNode root = new DagNode("1");
+        DagNode sub = new DagNode("3");
+        DagNode sub2 = new DagNode("77"); sub2.edges.put("feat77", root);
+        sub.edges.put("feat2", root);
+        sub.edges.put("feat4", sub2);
+        root.edges.put("feat0", new DagNode("2"));
+        root.edges.put("feat1", sub);
+        root.edges.put("very_long_feature3", new DagNode("4"));
+        DrawingPanel contentArea =
+          new DrawingPanel(new CompactLayout(), new DagNodeAdapter());
+        MainFrame mf = new MainFrame("CycleTest", contentArea);
+        mf.setModel(root);
         break;
       }
 

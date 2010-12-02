@@ -22,42 +22,25 @@ public class AlignMapLayout extends FacetLayoutBase {
   @Override
   public GraphicalNode
   transform(Object model, ViewContext context, int facetMask) {
+    ModelAdapter adapt = context._adapt;
 
     GraphicalNode result = null;
     GraphicalNode attributeNode = null;
 
     // create text / attribute node if necessary
-    String type = context._adapt.getAttribute(model, "type");
-    String fw = context._adapt.getAttribute(model, "forwardFails");
-    String bw = context._adapt.getAttribute(model, "backwardFails");
-    if (type != null || fw != null || bw != null) {
-      CompositeNode wrapNode = new CompositeNode('w');
-
-      if (type != null) {
-        TextNode typeTextNode = new TextNode(type);
-        typeTextNode.setStyle(Style.get("type"));
-
-        // add type typeTextNode in first row
-        wrapNode.addNode(typeTextNode);
-      }
-      // add eventual failures
-      if (fw != null) {
-        wrapNode.addNode(new TextNode(fw, Style.get("fwfailure")));
-      }
-      if (bw != null) {
-        wrapNode.addNode(new TextNode(bw, Style.get("bwfailure")));
-      }
-      attributeNode = wrapNode;
+    String type = adapt.getAttribute(model, "type");
+    if (type != null) {
+      attributeNode = new CompositeNode('w');
+      attributeNode.addNode(new TextNode(type, Style.get("type")));
     }
 
     // create parent node
-    MapAdapterIterator fvpList = context._adapt.mapIterator(model);
+    MapAdapterIterator fvpList = adapt.mapIterator(model);
     if (fvpList != null) {
       TabularNode node = new TabularNode (false, "c", 3);
       node.startNext("e");
       // add brackets to our node
-      node.addNode(new SquareBracketNode(Orientation.west,
-          Style.get("bracket")));
+      node.addNode(new SquareBracketNode(Orientation.west));
 
       node.startNext("c");
 
@@ -82,8 +65,7 @@ public class AlignMapLayout extends FacetLayoutBase {
       node.addNode(result);
 
       node.startNext("w");
-      node.addNode(new SquareBracketNode(Orientation.east,
-          Style.get("bracket")));
+      node.addNode(new SquareBracketNode(Orientation.east));
       result = node;
     } else {
       result = (attributeNode == null) ? new TextNode("") : attributeNode;

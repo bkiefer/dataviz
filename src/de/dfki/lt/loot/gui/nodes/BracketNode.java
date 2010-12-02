@@ -86,6 +86,19 @@ public abstract class BracketNode extends BasicNode {
 
   @Override
   public void growTo(int width, int height) {
+    if (this.getOrientation() == Orientation.west ||
+        this.getOrientation() == Orientation.east) {
+      this.area.height = height;
+      this.area.width = (int) Math.max(width/2,
+          Math.min(width, Math.round(height / 4.0)));
+    } else {
+      this.area.width = width;
+      this.area.height= (int) Math.max(height/2,
+          Math.min(height, Math.round(width / 4.0)));
+    }
+  }
+
+  public void growToOrig(int width, int height) {
     if (this.orientation == Orientation.west ||
         this.orientation == Orientation.east) {
       this.area.width = Math.min(width, height);

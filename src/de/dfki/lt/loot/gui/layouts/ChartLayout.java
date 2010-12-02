@@ -18,6 +18,9 @@ public class ChartLayout implements Layout {
 
   private ViewContext _context;
 
+  /** A DFS that adds node in inverse finishing order to the result list. Thus,
+   *  the nodes in result are topologically sorted after this method returns
+   */
   @SuppressWarnings("unchecked")
   private void DFS_inv_finish_add(Object vertex,
       IdentityHashMap<Object, Boolean> visited, List<GraphicalNode> result,
@@ -37,7 +40,7 @@ public class ChartLayout implements Layout {
     GraphicalNode node = ((name != null)
         ? new TextNode(name, Style.get("vertex"))
     : new CircleNode(Style.get("vertex")));
-    _context.setModel(node, vertex);
+    _context.setRepresentative(vertex, node);
     modelNode.addNode(node);
     result.add(0, node);
   }
@@ -64,33 +67,41 @@ public class ChartLayout implements Layout {
     int end;
     int level;
     Object modelEdge;
-   
-    
+
+
     public ChartEdge(int s, int e, Object edge){
       start = s; end = e; modelEdge = edge;
       level = -1;
     }
-    
+
+    /** This computes the height of an edge based on its children only.
+     *  That means that an edge with no children will get a level of zero,
+     *  while an edge with children will get the maximum level of its children,
+     *  plus one.
+     */
     @SuppressWarnings("unchecked")
-    private int computeMinLevel(IdentityHashMap<Object, ChartEdge> edgeLevel) {
+    public int computeTreeLevel(IdentityHashMap<Object, ChartEdge> edgeLevel) {
       if (level >= 0) {
         return level;
       }
-      
+
       Iterable children = _context._adapt.getTreeDaughters(modelEdge);
       if (children != null) {
         for (Object child : children) {
           if (child != null) {
-            int sublevel = edgeLevel.get(child).computeMinLevel(edgeLevel);
+            int sublevel = edgeLevel.get(child).computeTreeLevel(edgeLevel);
             level = Math.max(level, sublevel);
           }
         }
         ++level;
       }
-    
+
       return level;
     }
-    
+
+    /** Compare edges on the basis of a) span and b) tree height (max path
+     *  length to any of the leaves
+     */
     public int compareTo(ChartEdge e2) {
       int diff = ((end - start) - (e2.end - e2.start));
       if (diff == 0) {
@@ -109,8 +120,9 @@ public class ChartLayout implements Layout {
    */
   @SuppressWarnings("unchecked")
   @Override
-  public GraphicalNode computeLayout(Object model, ModelAdapter adapt) {
-    _context = new ViewContext(model, adapt);
+  public GraphicalNode computeView(Object model, ViewContext context) {
+    ModelAdapter adapt = _context._adapt;
+    _context = context;
     GraphNode graphNode = new GraphNode(model);
 
     // Sort vertices and edges according to topological sort:
@@ -124,7 +136,7 @@ public class ChartLayout implements Layout {
           String name = adapt.getAttribute(edge, "name");
           GraphicalNode edgeNode =
             new TextNode((name != null) ? name : "", Style.get("edge"));
-          _context.setModel(edgeNode, edge);
+          _context.setRepresentative(edge, edgeNode);
           graphNode.addNode(edgeNode);
 
           graphNode.addConnector(
@@ -138,49 +150,58 @@ public class ChartLayout implements Layout {
       }
     }
 
-    
+
     // the edges are sorted according to span first, then start vertex
     IdentityHashMap<Object, Integer> vertexPos =
       new IdentityHashMap<Object, Integer>();
-    int i = 0;
+    int vertexNo = 0;
     for (GraphicalNode node : vertices) {
-      vertexPos.put(node.getModel(), i++);
+      vertexPos.put(node.getModel(), vertexNo++);
     }
-    IdentityHashMap<Object, ChartEdge> edgeSet =
+    // Map model edges onto ChartEdges to compute the layout
+    IdentityHashMap<Object, ChartEdge> edgeMap =
       new IdentityHashMap<Object, ChartEdge>();
     for (GraphicalNode sourceNode : vertices) {
       int startPos = vertexPos.get(sourceNode.getModel());
       Iterable edges = adapt.outEdges(sourceNode.getModel());
       if (edges != null) {
         for (Object edge : edges) {
-          edgeSet.put(edge,
+          edgeMap.put(edge,
               new ChartEdge(startPos, vertexPos.get(adapt.target(edge)), edge));
         }
       }
     }
-    
-    for (ChartEdge cEdge : edgeSet.values()) {
-      cEdge.computeMinLevel(edgeSet);
+
+    // compute the tree height for every edge, that is, the maximum length of
+    // a path to some leaf (plus one) when looking at the chart edges as tree
+    // nodes.
+    for (ChartEdge cEdge : edgeMap.values()) {
+      cEdge.computeTreeLevel(edgeMap);
     }
-    
-    System.out.print(edgeSet.size());
-    int[] minHeight = new int[i];
-    for (int j = 0; j < i; ++j) {
-      minHeight[j] = 0;
+
+    // maxHeight[j] contains the maximum height of an edge in the gap between
+    // nodes j and j + 1
+    int[] maxHeight = new int[vertexNo];
+    for (int j = 0; j < vertexNo; ++j) {
+      maxHeight[j] = 0;
     }
     IdentityHashMap<GraphicalNode, Integer> edgeLevel =
       new IdentityHashMap<GraphicalNode, Integer>();
-    PriorityQueue<ChartEdge> edgeQueue = new PriorityQueue(edgeSet.values());
+    PriorityQueue<ChartEdge> edgeQueue = new PriorityQueue(edgeMap.values());
     while (! edgeQueue.isEmpty()) {
       ChartEdge cEdge = edgeQueue.poll();
       int edgeHeight = 0;
+      // after this loop, edgeHeight will be the maximum height of an edge
+      // between cEdge.start and cEdge.end
       for (int j = cEdge.start; j < cEdge.end; ++j) {
-        edgeHeight = Math.max(edgeHeight, minHeight[j]);
+        edgeHeight = Math.max(edgeHeight, maxHeight[j]);
       }
       ++edgeHeight;
+      // now we've computed the abstract (grid) height for an edge
       edgeLevel.put(_context.getRepresentative(cEdge.modelEdge), edgeHeight);
+      // update maxHeight to include the currently treated edge
       for (int j = cEdge.start; j < cEdge.end; ++j) {
-        minHeight[j] = Math.max(edgeHeight, minHeight[j]);
+        maxHeight[j] = Math.max(edgeHeight, maxHeight[j]);
       }
     }
 

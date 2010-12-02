@@ -30,7 +30,8 @@ public class SquareBracketNode extends BracketNode {
     case east:
     case west:
       if (! useCharacters) {
-        if (r.height <= this.fontHeight) {
+        // doesn't look better if enabled
+        if (false && r.height <= this.fontHeight) {
           if (this.getOrientation() == Orientation.west) {
             g.drawString("[", r.x, r.y + r.height);
           } else {

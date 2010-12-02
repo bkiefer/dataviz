@@ -27,7 +27,8 @@ public class AngleBracketNode  extends BracketNode  {
     int lry = r.height + r.y;
     int mrx = r.x + r.width / 2;
     int mry = r.y + r.height / 2;
-    if (r.height <= this.fontHeight + 2) {
+
+    if (false && r.height <= this.fontHeight + 2) {
       Orientation ori = this.getOrientation();
       if (ori == Orientation.west) {
         g.drawString("\u27E8", r.x, lry);
@@ -61,12 +62,12 @@ public class AngleBracketNode  extends BracketNode  {
 
   @Override
   public void growTo(int width, int height) {
-    if (height > width) {
-      this.area.height = Math.min(height, 300);
-      this.area.width = Math.max(width, (this.area.height/13));
+    super.growTo(width, height);
+    if (this.getOrientation() == Orientation.west ||
+        this.getOrientation() == Orientation.east) {
+      this.area.height = Math.min(this.area.height, 300);
     } else {
-      this.area.width = Math.min(width, 300);
-      this.area.height= Math.max(height, (this.area.width/13));
+      this.area.width = Math.min(this.area.width, 300);
     }
   }
 }

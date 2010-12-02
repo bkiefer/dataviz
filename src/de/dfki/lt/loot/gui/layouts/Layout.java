@@ -1,5 +1,6 @@
 package de.dfki.lt.loot.gui.layouts;
 
+import de.dfki.lt.loot.gui.ViewContext;
 import de.dfki.lt.loot.gui.adapters.ModelAdapter;
 import de.dfki.lt.loot.gui.nodes.GraphicalNode;
 
@@ -10,6 +11,6 @@ public interface Layout {
    *  common interfaces, called facets.
    *  TODO \todo rename this to computeView
    */
-  GraphicalNode computeLayout(Object model, ModelAdapter adapt);
+  GraphicalNode computeView(Object model, ViewContext context);
 
 }

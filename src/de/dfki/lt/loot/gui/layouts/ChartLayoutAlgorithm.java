@@ -24,6 +24,9 @@ public class ChartLayoutAlgorithm implements LayoutAlgorithm {
     _edgeLevel = edgeLevel;
   }
 
+  /** This computes real coordinates from the abstract, grid-based coordinates
+   *  given by the vertex number and edgeLevel.
+   */
   @Override
   public Rectangle execute(GraphNode node, Graphics g) {
 

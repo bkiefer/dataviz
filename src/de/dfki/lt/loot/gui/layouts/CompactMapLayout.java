@@ -11,6 +11,9 @@ import de.dfki.lt.loot.gui.nodes.SquareBracketNode;
 import de.dfki.lt.loot.gui.nodes.TextNode;
 import de.dfki.lt.loot.gui.nodes.BracketNode.Orientation;
 
+/** This layout is to show maps using as little space as possible, which means
+ *  that the values are not aligned.
+ */
 public class CompactMapLayout extends FacetLayoutBase {
 
   @Override

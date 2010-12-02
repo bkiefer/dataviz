@@ -58,11 +58,11 @@ public class CollectionsAdapter extends ModelAdapter {
   };
 
   /* -- MapFacet -- */
-  private class CollectionsMapAdapterIterator implements MapAdapterIterator {
+  protected class CollectionsMapAdapterIterator implements MapAdapterIterator {
 
     private Iterator _entryIterator;
 
-    CollectionsMapAdapterIterator(Map map) {
+    public CollectionsMapAdapterIterator(Map map) {
       _entryIterator = map.entrySet().iterator();
     }
 

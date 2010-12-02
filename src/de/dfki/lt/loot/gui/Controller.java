@@ -1,5 +1,6 @@
 package de.dfki.lt.loot.gui;
 
+import java.awt.Component;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
@@ -28,6 +29,9 @@ public class Controller implements MouseMotionListener {
    *  and good performance could easily be extended in a useful way.
    */
   public void mouseMoved(MouseEvent e) {
+    Component originator = e.getComponent();
+    assert(originator instanceof DrawingPanel);
+    DrawingPanel view = (DrawingPanel) e.getComponent();
     Point p = e.getPoint();
 
     if (view.getVisibleRect().contains(p) && view.getRoot() != null) {

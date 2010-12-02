@@ -35,9 +35,9 @@ public class Style {
         Color.GREEN, Color.LIGHT_GRAY, new Padding(0, 0, 1), null));
     styleMap.put("feature", new Style(new Font("DejaVu Sans", Font.PLAIN, 11),
         null, null, new Padding(0, 0, 1), null));
-    styleMap.put("bracket", new Style(new Font("DejaVu Sans Mono", Font.PLAIN, 18),
+    styleMap.put("bracket", new Style(new Font("DejaVu Sans Mono", Font.PLAIN, 14),
         null, null, new Padding(0, 0, 1), null));
-    styleMap.put("squarebracket", new Style(new Font("DejaVu Sans Mono", Font.PLAIN, 12),
+    styleMap.put("squarebracket", new Style(new Font("DejaVu Sans Mono", Font.PLAIN, 10),
         null, null, new Padding(0, 0, 1), null));
     styleMap.put("coref", new Style(new Font("DejaVu Sans", Font.BOLD, 10),
         null, null, new Padding(2, 1, 1), null));

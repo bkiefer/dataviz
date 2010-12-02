@@ -11,11 +11,17 @@ import de.dfki.lt.loot.gui.nodes.GraphicalNode;
 import de.dfki.lt.loot.gui.nodes.TextNode;
 
 /** This implements a quite generic `meta layout', which delegates the true
- *  layout to the facet layouts.
+ *  layout to the facet layouts and cares about displaying coreferences
+ *  (nodes with an indegree > 1) by displaying little boxes.
+ *
+ *  Alternative, a subclass can overwrite the transformBasic method and
+ *  do its own basic transformation / dispatching.
  */
 public abstract class AbstractLayout implements Layout, FacetLayout {
 
   private List<FacetLayout> _facetLayouts = new ArrayList<FacetLayout>(10);
+
+  private List<Decorator> _decorators = new ArrayList<Decorator>(10);
 
   private int _facets;
 
@@ -25,37 +31,49 @@ public abstract class AbstractLayout implements Layout, FacetLayout {
     layout.register(this);
   }
 
+  public void addDecorator(Decorator deco) {
+    _decorators.add(deco);
+  }
+
   public int facet() {
     return _facets;
   }
 
   /** A do-noting. This is a meta layout that does not use others. */
-  public void register(FacetLayout metaLayout) {}
-
-  /**
-   * @param model   an object to transform into a graphical representation
-   * @return a GraphicalNode representation of the model
-   *         You will need to call adjustSize(Graphics g) on the return value.
-   */
-  @Override
-  public GraphicalNode computeLayout(Object model, ModelAdapter adapt) {
-    ViewContext context = new ViewContext(model, adapt);
-
-    return this.transform(model, context, ModelAdapter.ALL);
+  public void register(FacetLayout metaLayout) {
   }
 
+  /** The main method for Layout. Compute a view out of a model, with the
+   *  help of a ViewContext and its embedded ModelAdapter
+   *
+   * @param model
+   *          an object to transform into a graphical representation
+   * @return a GraphicalNode representation of the model You will need to call
+   *         adjustSize(Graphics g) on the return value.
+   */
+  @Override
+  public GraphicalNode computeView(Object model, ViewContext context) {
+    GraphicalNode root = this.transform(model, context, ModelAdapter.ALL);
+    // maybe the root node got a coref, but then, this can only occur because
+    // of a cycle, so we are safe because that was not added through a change.
+    return root;
+  }
 
-  //dispatch between the different types of fs nodes. The model has to
-  // provide the distinction between the nodes
-  protected GraphicalNode
-  someFSNode(Object model, ViewContext context, int facetMask) {
+  /** Dispatch between the different types of models. The ModelAdapter has to
+   *  provide the distinction between them, and together with the registered
+   *  FacetLayouts, the method looks for a matching between model facets and
+   *  the layout to handle them.
+   */
+  protected GraphicalNode transformBasic(Object model, ViewContext context,
+    int facetMask) {
     int facets = context._adapt.facets(model) & facetMask;
     GraphicalNode result = null;
     for (FacetLayout layout : _facetLayouts) {
       if ((facets & layout.facet()) != 0) {
         result = layout.transform(model, context, facetMask);
       }
-      if (result != null) break;
+      if (result != null)
+        break;
     }
 
     if (result == null)
@@ -63,59 +81,121 @@ public abstract class AbstractLayout implements Layout, FacetLayout {
     return result;
   }
 
-  /** dispatch between the different types of fs nodes. The model has to
-   * provide the distinction between the nodes by fulfilling facets
+
+
+  /** Recursively transform the model into a view, adding coreferences where
+   *  necessary. The building blocks for each level are created using the
+   *  facets and adapter, which decide what should be represented in what way.
+   *
+   *  Take this as a blueprint for layouts that display coreferences, it deals
+   *  with cycles and other problems in the right way. If possible, avoid copy
+   *  and paste, rather use a subclass.
    */
-  public GraphicalNode
-  transform(Object model, ViewContext context, int facetMask) {
-    GraphicalNode node = context.getRepresentative(model);
-    if (node != null) {
-      // check if this node has been visited more than once
-      int corefNo = context.equivalenceClassNo(model);
-      if (corefNo == 0) {
+  public GraphicalNode transform(Object model, ViewContext context,
+    int facetMask) {
+    GraphicalNode node;
+    // check if model has already been visited
+    if (context.hasRepresentative(model)) {
+      // check if this node has been visited more than once: is the
+      // equivalence class no. for this model nonnegative
+      int corefNo = context.getEquivalenceClassNo(model);
+      if (corefNo < 0) {
         // this is the second visit of model, assign a new equivalence class no.
-        // add also a coreference sign between the parent and this node
-        corefNo = context.setRepresentative(model, node);
+        corefNo = context.newEquivalenceClassNo(model);
+        // if we have hit a cycle, we can check the class no for the member on
+        // return of the recursive call that build its view
 
-        // get the old parent of node
-        GraphicalNode parent = node.getParentNode();
+        GraphicalNode representative = context.getRepresentative(model);
+        // node == null means: the model was visited, but no view has been
+        // produced up to this point: we are still in the recursion and
+        // have hit a cycle!
+        // So, if node != null, we have to decorate the old representative
+        // with a coref
+        if (representative != null) {
+          // get the old parent of node
+          GraphicalNode parent = representative.getParentNode();
+          assert(parent != null); // root only gets coref through cycle!
+          // now we embed node into another composite node that also contains
+          // a coreference
+          CompositeNode newRepresentative = new CompositeNode('n');
+          // change parent -- daughter link
+          parent.exchangeNode(representative, newRepresentative);
 
-        // now we embed node into another composite node that also contains
-        // a coreference
-        CompositeNode tnode = new CompositeNode('n');
-        if (parent != null) {
-          // this also releases the parent link of node and replaces node by
-          // tnode
-          parent.exchangeNode(node, tnode);
+          // exchange the representative
+          context.changeRepresentative(newRepresentative, model);
+
+          newRepresentative.addNode(
+              new TextNode(Integer.toString(corefNo), Style.get("coref")));
+          newRepresentative.addNode(representative);
         }
-        tnode.addNode(new TextNode(Integer.toString(corefNo),
-            Style.get("coref")));
-        tnode.addNode(node);
       }
       // now: draw only coref, corefNo is the equivalence class no and node
       // the representative
       node = new TextNode(Integer.toString(corefNo), Style.get("coref"));
-    } else {
+      for (Decorator deco : _decorators) {
+        node = deco.decorate(node, model, context);
+      }
+      context.addToEquivalenceClass(corefNo, node);
+    }
+    else {
       // no coref: construct only subnode
-      node = someFSNode(model, context, facetMask);
-    }
-
-    String fw = context._adapt.getAttribute(model, "fwfailure");
-    String bw = context._adapt.getAttribute(model, "bwfailure");
-    if ((fw != null) || (bw != null)) {
-      CompositeNode failnode = new CompositeNode('w');
-      if (fw != null) {
-        failnode.addNode(new TextNode(fw.toString(), Style.get("fwfailure")));
+      // set visited
+      context.setRepresentative(model, null);
+      node = transformBasic(model, context, facetMask);
+      for (Decorator deco : _decorators) {
+        node = deco.decorate(node, model, context);
       }
-      if (bw != null) {
-        failnode.addNode(new TextNode(bw.toString(), Style.get("bwfailure")));
+      int corefNo = context.getEquivalenceClassNo(model);
+      if (corefNo >= 0) {
+        // there was a cycle found inside the recursive call, so
+        // add the appropriate coref to the new node
+        CompositeNode newRepresentative = new CompositeNode('n');
+        newRepresentative.addNode(
+            new TextNode(Integer.toString(corefNo), Style.get("coref")));
+        newRepresentative.addNode(node);
+        node = newRepresentative;
       }
-      failnode.addNode(node);
-      node = failnode;
+      context.setRepresentative(model, node);
     }
-
-    context.setModel(node, model);
     return node;
   }
 
+  /* An abstract description of a proper transform method
+  private void abstractAlgo(Object model) {
+    if (visited(model)) {  // has model been visited
+      // Yes, at least the second visit
+      int corefNo = getClassNo(model); // get me its equivalence class no
+      if (coref < 0) {
+        // this marks model as having been visited at least twice, if we have
+        // hit a cycle, we can check the class no for the member on return of
+        // the recursive call that build its view
+        corefNo = getNewClassNo(model);
+        // this is the second visit: the (eventual) representative has not
+        // been decorated yet.
+        GraphicalNode representative = getRepresentative();
+        if (representative != null) {
+          // we are not in a cycle, model already has a proper representative
+          // decorate the current representative and make the new decoration
+          // node the new representative
+          representative = decorate(representative, corefNo);
+          exchangeRepresentative(representative, model);
+        }
+      }
+      // here, corefNo has a positive value
+      GrapicalNode newView = makeCorefOnlyView(corefNo);
+      addToEquivClass(corefNo, newView);
+      return newView;
+    } else {
+      setVisited(model);
+      GraphicalNode node = recursivelyBuildView(model);
+      int corefNo = getClassNo(model);
+      if (corefNo >= 0) {
+        // there was a cycle inside the recursive call
+        node = decorateWithCoref(node);
+      }
+      setRepresentative(model, node);
+      return node;
+    }
+  }
+  */
 }
