@@ -5,7 +5,7 @@ import de.dfki.lt.loot.gui.Style;
 import de.dfki.lt.loot.gui.ViewContext;
 import de.dfki.lt.loot.gui.adapters.MapAdapterIterator;
 import de.dfki.lt.loot.gui.adapters.ModelAdapter;
-import de.dfki.lt.loot.gui.nodes.CompositeNode;
+import de.dfki.lt.loot.gui.nodes.AligningNode;
 import de.dfki.lt.loot.gui.nodes.GraphicalNode;
 import de.dfki.lt.loot.gui.nodes.SquareBracketNode;
 import de.dfki.lt.loot.gui.nodes.TabularNode;
@@ -25,12 +25,12 @@ public class AlignMapLayout extends FacetLayoutBase {
     ModelAdapter adapt = context._adapt;
 
     GraphicalNode result = null;
-    GraphicalNode attributeNode = null;
+    AligningNode attributeNode = null;
 
     // create text / attribute node if necessary
     String type = adapt.getAttribute(model, "type");
     if (type != null) {
-      attributeNode = new CompositeNode('w');
+      attributeNode = new AligningNode('w');
       attributeNode.addNode(new TextNode(type, Style.get("type")));
     }
 

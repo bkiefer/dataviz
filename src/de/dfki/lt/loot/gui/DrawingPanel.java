@@ -1,8 +1,13 @@
 package de.dfki.lt.loot.gui;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JPanel;
@@ -20,7 +25,8 @@ import de.dfki.lt.loot.gui.nodes.GraphicalNode;
  * @author Antonia Scheidel
  */
 @SuppressWarnings("serial")
-public class DrawingPanel extends JPanel {
+public class DrawingPanel extends JPanel
+implements MouseMotionListener, java.awt.event.MouseListener {
 
   // The root node of the structure
   private GraphicalNode _root = null;
@@ -42,42 +48,45 @@ public class DrawingPanel extends JPanel {
    */
   private boolean _unadjusted;
 
-  /** Mediates between user input and model */
-  @SuppressWarnings("unused")
-  private Controller _controller;
+  /** The list of listeners that are notified of events when entering or leaving
+   *  a node
+   */
+  private List<MouseListener> _nodeListeners;
 
-  /**
-   * Create a new <code>DrawingPanel</code> with a specified layout.
-   *
-   * @param aLayout:
-   *          mandatory!
+  /** The node that was at the mouse pointer position in the last event */
+  private GraphicalNode _underMouse;
+
+  /** Create a new <code>DrawingPanel</code> with a specified layout.
+   * @param aLayout: the object that converts the model into a view
    */
   public DrawingPanel(Layout aLayout, ModelAdapter adapter) {
     if (aLayout == null || adapter == null) {
       throw new IllegalArgumentException("Layout and Adapter must be given");
     }
-    this._layout = aLayout;
-    this._adapter = adapter;
-    this._controller = new Controller(this);
-    this._model = null;
-    this._context = null;
+    _layout = aLayout;
+    _adapter = adapter;
+    _model = null;
+    _context = null;
+
+    _underMouse = null;
+    _nodeListeners = new ArrayList<MouseListener>(3);
   }
 
   /** set the top model node for this panel */
   public void setModel(Object aModel) {
     if (aModel != null) {
-      this._model = aModel;
+      _model = aModel;
       _context = new ViewContext(aModel, _adapter);
-      this._root = this._layout.computeView(this._model, _context);
+      _root = _layout.computeView(_model, _context);
 
-      this.setSize(this._root.getRect().height, this._root.getRect().width);
+      setSize(_root.getRect().height, _root.getRect().width);
     }
     else {
-      this._root = new EmptyNode();
-      this.setSize(0,0);
+      _root = new EmptyNode();
+      setSize(0,0);
     }
-    this._unadjusted = true;
-    this.repaint();
+    _unadjusted = true;
+    repaint();
   }
 
   public Object getModel() { return _model; }
@@ -94,25 +103,23 @@ public class DrawingPanel extends JPanel {
     return _root;
   }
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see javax.swing.JComponent#getPreferredSize()
+
+  /* @see javax.swing.JComponent#getPreferredSize()
    */
   @Override
   public Dimension getPreferredSize() {
     // if the root node's size has not yet been adjusted, return a 300x300
     // Dimension
-    if (null == this._root || this._root.getRect().width == 0 ||
-        this._root.getRect().height == 0) {
+    if (null == _root || _root.getRect().width == 0 ||
+        _root.getRect().height == 0) {
       return new Dimension(100, 100);
     }
     // else return the root node's new size
-    return new Dimension(this._root.getRect().width, this._root.getRect().height);
+    return new Dimension(_root.getRect().width, _root.getRect().height);
   }
 
   public int getDefaultTextHeight() {
-    Graphics g = this.getGraphics();
+    Graphics g = getGraphics();
     assert(g != null);
     FontMetrics fm = g.getFontMetrics(Style.get(null).getFont());
     return fm.getHeight();
@@ -132,12 +139,122 @@ public class DrawingPanel extends JPanel {
     // object
     // but need to leave the original one untouched
     Graphics guiG = g.create();
-    if (this._root != null) {
-      if (this._unadjusted) {
-        this._root.adjustSize(guiG);
-        this._unadjusted = false;
+    if (_root != null) {
+      if (_unadjusted) {
+        _root.adjustSize(guiG);
+        _unadjusted = false;
       }
-      this._root.paint(this._root.getRect(), guiG);
+      _root.paint(_root.getRect(), guiG, false);
     }
   }
+
+  /* **********************************************************************
+   * Custom Listener providing implementation
+   * *********************************************************************/
+
+  public void addListener(MouseListener l) {
+    if (_nodeListeners.isEmpty()) {
+      addMouseMotionListener(this);
+      addMouseListener(this);
+    }
+    _nodeListeners.add(l);
+  }
+
+  public void removeListener(MouseListener l) {
+    _nodeListeners.remove(l);
+    if (_nodeListeners.isEmpty()) {
+      removeMouseMotionListener(this);
+      removeMouseListener(this);
+    }
+  }
+
+  private void fireMouseEnters(MouseEvent e, GraphicalNode node) {
+    for (MouseListener l : _nodeListeners) {
+      l.mouseEnters(e, node);
+    }
+  }
+
+  private void fireMouseLeaves(MouseEvent e, GraphicalNode node) {
+    for (MouseListener l : _nodeListeners) {
+      l.mouseLeaves(e, node);
+    }
+  }
+
+  private void fireMouseClicked(MouseEvent e, GraphicalNode node) {
+    for (MouseListener l : _nodeListeners) {
+      l.mouseClicked(e, node);
+    }
+  }
+
+
+  /* **********************************************************************
+   * MouseMotionListener implementation
+   * *********************************************************************/
+
+  /** A preliminary implementation that has most of the needed functionality
+   *  and good performance could easily be extended in a useful way.
+   */
+  public void mouseMoved(MouseEvent e) {
+    Component originator = e.getComponent();
+    assert(originator instanceof DrawingPanel);
+    DrawingPanel view = (DrawingPanel) e.getComponent();
+    assert(originator == view);
+    Point p = e.getPoint();
+
+    if (view.getVisibleRect().contains(p) && view.getRoot() != null) {
+      GraphicalNode nowPointsTo =
+        ((_underMouse == null) ? view.getRoot() : _underMouse)
+        .getDeepestIncludingPoint(p);
+
+      if (nowPointsTo != _underMouse) {
+        if (_underMouse != null) {
+          fireMouseLeaves(e, _underMouse);
+        }
+        if (nowPointsTo != null) {
+          fireMouseEnters(e, nowPointsTo);
+        }
+        _underMouse = nowPointsTo;
+      }
+    }
+  }
+
+  /** We don't currently support dragging events */
+  public void mouseDragged(MouseEvent e) { }
+
+  /* **********************************************************************
+   * MouseListener implementation
+   * *********************************************************************/
+
+  @Override
+  public void mouseClicked(MouseEvent e) {
+    Component originator = e.getComponent();
+    assert(originator instanceof DrawingPanel);
+    DrawingPanel view = (DrawingPanel) e.getComponent();
+    assert(originator == view);
+    Point p = e.getPoint();
+    if (view.getVisibleRect().contains(p) && view.getRoot() != null) {
+      // the _underMouse optimization is likely to get no improvement since
+      // clicks are rarely very near to each other
+      GraphicalNode nowPointsTo = view.getRoot().getDeepestIncludingPoint(p);
+      if (nowPointsTo != null) {
+        fireMouseClicked(e, nowPointsTo);
+      }
+    }
+  }
+
+  /** currently not used */
+  @Override
+  public void mouseReleased(MouseEvent e) { }
+
+  /** currently not used */
+  @Override
+  public void mouseEntered(MouseEvent e) { }
+
+  /** currently not used */
+  @Override
+  public void mouseExited(MouseEvent e) { }
+
+  /** currently not used */
+  @Override
+  public void mousePressed(MouseEvent e) { }
 }

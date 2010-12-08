@@ -31,7 +31,7 @@ public class ParenBracketNode extends BracketNode {
   /** paint the bracket. r is in absolute coordinates, Padding already removed
    */
   @Override
-  public void paintAbsolute(Rectangle r, Graphics g){
+  protected void paintAbsolute(Rectangle r, Graphics g, boolean inverted){
     // draw the bracket according to the OrientationType provided
     Orientation ori = this.getOrientation();
     if (false && r.height <= this.fontHeight + 2) {

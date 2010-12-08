@@ -10,7 +10,8 @@ public class EmptyNode extends BasicNode {
 
   /** A do-nothing */
   @Override
-  public void paintAbsolute(Rectangle absoluteArea, Graphics g) {
+  protected void paintAbsolute(Rectangle absoluteArea, Graphics g,
+    boolean inverted) {
   }
 
 }

@@ -6,6 +6,7 @@ import java.util.List;
 import de.dfki.lt.loot.gui.Style;
 import de.dfki.lt.loot.gui.ViewContext;
 import de.dfki.lt.loot.gui.adapters.ModelAdapter;
+import de.dfki.lt.loot.gui.nodes.AligningNode;
 import de.dfki.lt.loot.gui.nodes.CompositeNode;
 import de.dfki.lt.loot.gui.nodes.GraphicalNode;
 import de.dfki.lt.loot.gui.nodes.TextNode;
@@ -113,20 +114,23 @@ public abstract class AbstractLayout implements Layout, FacetLayout {
         // with a coref
         if (representative != null) {
           // get the old parent of node
-          GraphicalNode parent = representative.getParentNode();
-          assert(parent != null); // root only gets coref through cycle!
+          GraphicalNode p = representative.getParentNode();
+          assert(p != null); // root only gets coref through cycle!
           // now we embed node into another composite node that also contains
           // a coreference
-          CompositeNode newRepresentative = new CompositeNode('n');
-          // change parent -- daughter link
-          parent.exchangeNode(representative, newRepresentative);
+          if (p instanceof CompositeNode) {
+            CompositeNode parent = (CompositeNode) p;
+            AligningNode newRepresentative = new AligningNode('n');
+            // change parent -- daughter link
+            parent.exchangeNode(representative, newRepresentative);
 
-          // exchange the representative
-          context.changeRepresentative(newRepresentative, model);
+            // exchange the representative
+            context.changeRepresentative(newRepresentative, model);
 
-          newRepresentative.addNode(
-              new TextNode(Integer.toString(corefNo), Style.get("coref")));
-          newRepresentative.addNode(representative);
+            newRepresentative.addNode(
+                new TextNode(Integer.toString(corefNo), Style.get("coref")));
+            newRepresentative.addNode(representative);
+          }
         }
       }
       // now: draw only coref, corefNo is the equivalence class no and node
@@ -135,7 +139,7 @@ public abstract class AbstractLayout implements Layout, FacetLayout {
       for (Decorator deco : _decorators) {
         node = deco.decorate(node, model, context);
       }
-      context.addToEquivalenceClass(corefNo, node);
+      context.addToEquivalenceClass(model, corefNo, node);
     }
     else {
       // no coref: construct only subnode
@@ -149,7 +153,7 @@ public abstract class AbstractLayout implements Layout, FacetLayout {
       if (corefNo >= 0) {
         // there was a cycle found inside the recursive call, so
         // add the appropriate coref to the new node
-        CompositeNode newRepresentative = new CompositeNode('n');
+        AligningNode newRepresentative = new AligningNode('n');
         newRepresentative.addNode(
             new TextNode(Integer.toString(corefNo), Style.get("coref")));
         newRepresentative.addNode(node);

@@ -2,9 +2,9 @@ package de.dfki.lt.loot.gui.nodes;
 
 import java.awt.BasicStroke;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.Graphics2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.util.LinkedList;
@@ -27,12 +27,23 @@ public abstract class GraphicalNode {
   private static final List<Connector> _emptyConnectors =
     new LinkedList<Connector>();
 
+  /** What is represented by this node (view) */
   protected Object model;
+
+  /** The area covered by this node, in relative coordinates */
   protected Rectangle area;
+
+  /** The parent of this node, if any (null only for root node) */
   protected GraphicalNode parentNode;
+
+  /** The list of conntectors in and out of this node, initialized lazily! */
   protected List<Connector> _in, _out;
+
+  /** The style associated with this node */
   protected Style style;
-  protected boolean inverted = false;
+
+  /** Is this node highlighted or not */
+  protected boolean _inverted = false;
 
   /** Creates a new instance of <code>GraphicalNode</code> with default style
    */
@@ -65,15 +76,6 @@ public abstract class GraphicalNode {
     this.parentNode = parentnode;
   }
 
-  /** Only relevant for complex nodes that have sub-nodes: add the given
-   *  node to the sub-nodes of this node
-   */
-  public abstract void addNode(GraphicalNode subNode);
-
-  public abstract void removeNode(GraphicalNode subNode);
-
-  public abstract void exchangeNode(GraphicalNode old, GraphicalNode newNode);
-
   /** @return the style */
   public Style getStyle() { return this.style; }
 
@@ -82,10 +84,12 @@ public abstract class GraphicalNode {
   // END Getters and Setters
 
   /** paints the node with regard to the given offset
-   * @param parentArea the parent's absolute area
-   * @param g Graphics object
+   * @param parentArea  the parent's absolute area
+   * @param g Graphics  object
+   * @param inverted    flag to inherit inverted/highlighted state from the
+   *                    parent
    */
-  public final void paint(Rectangle parentArea, Graphics g) {
+  public final void paint(Rectangle parentArea, Graphics g, boolean inverted) {
     Rectangle absoluteArea = new Rectangle(this.area);
     // translate (relative) area by origin to get absolute coordinates
     absoluteArea.translate(parentArea.x, parentArea.y);
@@ -93,22 +97,25 @@ public abstract class GraphicalNode {
     if (! absoluteArea.intersects(g.getClipBounds()))
       return;
 
+    if (_inverted) {
+      inverted = ! inverted;
+    }
     this.style.setStyle(g, inverted);
 
-    // TODO this works, but is preliminary. It has to be merged with the above
-    // code, and inverted styles must be specified (or computed, if possible)
-    if (inverted) {
+    if (_inverted) {
       Graphics2D g2d = (Graphics2D) g;
-      g2d.setColor(this.style.getForegroundColour());
-      //g2d.setComposite(AlphaComposite.DstOver);
+      g2d.setColor(! inverted
+          ? style.invertedColor()
+          : style.getForegroundColour());
       g2d.fillRect(absoluteArea.x, absoluteArea.y,
-          absoluteArea.width, absoluteArea .height);
-      //g2d.setPaintMode();
-      g2d.setColor(this.style.getBackgroundColour());
+          absoluteArea.width, absoluteArea.height);
+      g2d.setColor(! inverted
+          ? style.getForegroundColour()
+          : style.invertedColor());
     }
 
+    Padding padding = style.getPadding();
     // now handle padding
-    Padding padding = this.style.getPadding();
     if (padding.border > 0) {
       Graphics2D g2d = (Graphics2D) g;
       BasicStroke s = new BasicStroke(padding.border);
@@ -121,16 +128,18 @@ public abstract class GraphicalNode {
       g2d.setStroke(this.style.getStroke());
     }
 
-    int offset = padding.getOffset();
+    /*
     if (offset > 0) {
       offset = - offset;
       absoluteArea.grow(offset, offset);
     }
+    */
 
-    paintAbsolute(absoluteArea, g);
+    paintAbsolute(absoluteArea, g, inverted);
   }
 
-  public abstract void paintAbsolute(Rectangle absoluteArea, Graphics g);
+  protected abstract void paintAbsolute(Rectangle absoluteArea, Graphics g,
+    boolean inverted);
 
   /** This function computes the size of the node, and sets area such that the
    * area rectangle is 0, 0, width, height. The computed size might be the
@@ -181,32 +190,16 @@ public abstract class GraphicalNode {
     return current.getChildContainingPoint(p);
   }
 
-  public void mouseLeaves() {
-    //setInverted(false);
-    //System.out.print(">");
-    return;
-  }
-
-  public void mouseEnters() {
-    //setInverted(true);
-    //System.out.print("<");
-    return;
-  }
-
   /** Returns the area that is covered by this GraphicalNode on the drawing
    *  area, including all padding elements.
    */
   public Rectangle getAbsRect() {
-    int off = this.style.getPadding().getOffset();
-    int twotimesoff = off << 1;
-    Rectangle absoluteArea =
-      new Rectangle(area.x - off, area.y - off,
-          area.width + twotimesoff, area.height + twotimesoff);
-    GraphicalNode current = this, parent;
-    while ((parent = current.parentNode) != null) {
+    Rectangle absoluteArea = new Rectangle(area);
+    GraphicalNode parent = this.parentNode;
+    while (parent != null) {
       absoluteArea.x += parent.area.x;
       absoluteArea.y += parent.area.y;
-      current = parent;
+      parent = parent.parentNode;
     }
     return absoluteArea;
   }
@@ -256,8 +249,8 @@ public abstract class GraphicalNode {
     return pointOnRim(out.getX() - in.getX(), out.getY() - in.getY());
   }
 
-  public void setInverted(boolean inverted) {
-    this.inverted = inverted;
+  public void setHighlight(boolean inverted) {
+    this._inverted = inverted;
   }
 
 }

@@ -49,6 +49,12 @@ public class Style {
         null, null, new Padding(0, 0, 0), null));
   }
 
+
+  private Color complementaryColor(Color color) {
+    return new Color(255 - color.getRed(), 255 - color.getGreen(),
+        255 - color.getBlue(), color.getAlpha());
+  }
+
   /**
    * Must not be called from the outside, thus private. Is called once to create
    * the default <code>Style</code> object.
@@ -56,15 +62,15 @@ public class Style {
   private Style() {
     this.font = new Font("Monospaced", Font.PLAIN, 10);
     this.fgCol = Color.BLACK;
-    this.bgCol = Color.LIGHT_GRAY;
-    this.padding = new Padding();
+    this.bgCol = complementaryColor(this.fgCol);
+    this.padding = new Padding(0,0,0);
     this.stroke = new BasicStroke();
     /*
     this.padding = new Padding(2,2,2);
     float[] defaultDash = { 10f, 10f };
     this.stroke = new BasicStroke(2, BasicStroke.CAP_SQUARE, BasicStroke
         .JOIN_BEVEL, 100.0f, defaultDash, 0);
-     */
+    */
   }
 
   /**
@@ -86,6 +92,11 @@ public class Style {
     this.fgCol = (null == foreground ? Color.BLACK : foreground);
     this.bgCol = (null == background ? Color.WHITE : background);
     this.padding = (aPadding == null ? new Padding() : aPadding);
+    /*
+    this.padding.border = 1;
+    this.padding.margin = 4;
+    this.padding.padding = 1;
+    */
     this.stroke = (null == aStroke ? new BasicStroke() : aStroke);
   }
 
@@ -95,6 +106,7 @@ public class Style {
     styleMap.put(name,
         new Style(aFont, foreground, background, aPadding, aStroke));
   }
+
   /**
    * Looks up the given style name in the styleMap and returns the appropriate
    * <code>Style</code> object
@@ -129,8 +141,10 @@ public class Style {
   public void setForegroundColour(Color aColor) { this.fgCol = aColor; }
 
   /** @return the backgroundColour */
-  public Color getBackgroundColour() {
-    return (this.bgCol != null ? this.bgCol : Color.WHITE);
+  public Color getBackgroundColour() { return this.bgCol; }
+
+  public Color invertedColor() {
+    return complementaryColor(this.getForegroundColour());
   }
 
   /** @param aBackgroundColour the backgroundColour to set */
@@ -161,7 +175,7 @@ public class Style {
 
     // override default foreground color if given in style object
     g.setPaint(inverted
-        ? this.getBackgroundColour()
+        ? complementaryColor(this.getForegroundColour())
         : this.getForegroundColour());
 
     // override stroke if given in style object

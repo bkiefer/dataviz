@@ -22,9 +22,9 @@ public class SquareBracketNode extends BracketNode {
   /** paint the bracket. r is in absolute coordinates, Padding already removed
    */
   @Override
-  public void paintAbsolute(Rectangle r, Graphics g){
+  protected void paintAbsolute(Rectangle r, Graphics g, boolean inverted){
     int lry = r.height + r.y;
-    int lrx = r.width + r.x;
+    int lrx = r.width + r.x - 1;
     // draw the bracket according to the OrientationType provided
     switch (this.getOrientation()) {
     case east:

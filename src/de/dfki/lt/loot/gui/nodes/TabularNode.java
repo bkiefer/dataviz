@@ -1,10 +1,8 @@
 package de.dfki.lt.loot.gui.nodes;
 
 import java.awt.Graphics;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -17,7 +15,7 @@ import java.util.ListIterator;
  * @author Pia Mennig
  * @author Antonia Scheidel
  */
-public class TabularNode extends GraphicalNode {
+public class TabularNode extends CompositeNode {
 
   // This node's table of subNodes, the rows are the inner Lists, i.e.,
   // iterating over rows means iterating over nodeTable
@@ -107,13 +105,6 @@ public class TabularNode extends GraphicalNode {
     if (subNode != null) subNode.setParentNode(this);
   }
 
-  /** Remove the given subNode from my sub-nodes list */
-  @Override
-  public void removeNode(GraphicalNode subNode) {
-    this.nodeTable.remove(subNode);
-    subNode.setParentNode(null);
-  }
-
   /** Replace node old by newNode */
   @Override
   public void exchangeNode(GraphicalNode old, GraphicalNode newNode) {
@@ -122,6 +113,7 @@ public class TabularNode extends GraphicalNode {
       GraphicalNode node = li.next();
       if (node == old) {
         li.set(newNode);
+        newNode.setParentNode(this);
         old.setParentNode(null);
         return;
       }
@@ -129,18 +121,10 @@ public class TabularNode extends GraphicalNode {
     throw new IllegalArgumentException("subnode not contained in this node");
   }
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see de.unisb.loot.gui.GraphicalNode#paintAbsolute(java.awt.Rectangle,
-   *      java.awt.Graphics)
-   */
+
   @Override
-  public void paintAbsolute(Rectangle absoluteArea, Graphics g) {
-    // call the paint method of every sub node
-    for (GraphicalNode subNode : this.nodeTable) {
-      if (subNode != null) subNode.paint(absoluteArea, g);
-    }
+  protected Iterable<GraphicalNode> subNodes() {
+    return this.nodeTable;
   }
 
   /*
@@ -255,17 +239,5 @@ public class TabularNode extends GraphicalNode {
     subNode.setOrigin(x + xoff, y  + yoff);
   } // end method
 
-
-  @Override
-  protected GraphicalNode getChildContainingPoint(Point p) {
-    for (GraphicalNode child : nodeTable) {
-      if (child != null && child.area.contains(p)) {
-        p.x -= child.area.x;
-        p.y -= child.area.y;
-        return child.getChildContainingPoint(p);
-      }
-    }
-    return this;
-  }
 } // end class
 

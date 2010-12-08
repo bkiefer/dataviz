@@ -10,7 +10,7 @@ import de.dfki.lt.loot.gui.connectors.Connector;
 import de.dfki.lt.loot.gui.layouts.LayoutAlgorithm;
 import de.dfki.lt.loot.gui.quadtree.Quadtree;
 
-public class GraphNode extends GraphicalNode {
+public class GraphNode extends CompositeNode {
 
   // This node's list of subNodes
   private List<GraphicalNode> _subNodes;
@@ -74,16 +74,18 @@ public class GraphNode extends GraphicalNode {
   }
 
   @Override
-  public void paintAbsolute(Rectangle absoluteArea, Graphics g) {
+  protected Iterable<GraphicalNode> subNodes() {
+    return (_subNodes == null) ? new LinkedList<GraphicalNode>() : _subNodes;
+  }
+
+  @Override
+  protected void paintAbsolute(Rectangle absoluteArea, Graphics g,
+    boolean inverted) {
     if (this._connectors != null)
       for (Connector conn : this._connectors) {
         conn.paintAbsolute(absoluteArea, g);
       }
-    // call the paint method of every sub node
-    if (this._subNodes != null)
-      for (GraphicalNode subNode : this._subNodes) {
-        subNode.paint(absoluteArea, g);
-      }
+    super.paintAbsolute(absoluteArea, g, inverted);
   }
 
   /** Adds another <code>GraphicalNode</code> to the list of subNodes.
@@ -97,13 +99,6 @@ public class GraphNode extends GraphicalNode {
     this._subNodes.add(subNode);
     // set the new subnode's parentNode
     subNode.setParentNode(this);
-  }
-
-  /** Remove the given subNode from my sub-nodes list */
-  @Override
-  public void removeNode(GraphicalNode subNode) {
-    this._subNodes.remove(subNode);
-    subNode.setParentNode(null);
   }
 
   /** Exchange the given oldNode by newNode

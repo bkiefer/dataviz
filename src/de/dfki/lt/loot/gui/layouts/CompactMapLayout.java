@@ -5,7 +5,7 @@ import de.dfki.lt.loot.gui.Style;
 import de.dfki.lt.loot.gui.ViewContext;
 import de.dfki.lt.loot.gui.adapters.MapAdapterIterator;
 import de.dfki.lt.loot.gui.adapters.ModelAdapter;
-import de.dfki.lt.loot.gui.nodes.CompositeNode;
+import de.dfki.lt.loot.gui.nodes.AligningNode;
 import de.dfki.lt.loot.gui.nodes.GraphicalNode;
 import de.dfki.lt.loot.gui.nodes.SquareBracketNode;
 import de.dfki.lt.loot.gui.nodes.TextNode;
@@ -28,7 +28,7 @@ public class CompactMapLayout extends FacetLayoutBase {
       context._adapt.mapIterator(model);
     if (fvpList != null) {
       // This CompositeNode will hold the type and feature-value pairs
-      CompositeNode fvlistNode = new CompositeNode('w');
+      AligningNode fvlistNode = new AligningNode('w');
 
       String type = context._adapt.getAttribute(model, "type");
       if (type != null) {
@@ -39,14 +39,14 @@ public class CompactMapLayout extends FacetLayoutBase {
       // create child nodes: add feature value pairs
       while (fvpList.hasNext()) {
         Pair<String, Object> fvp = fvpList.next();
-        CompositeNode fvpNode = new CompositeNode('n');
+        AligningNode fvpNode = new AligningNode('n');
         fvpNode.addNode(new TextNode(fvp.getFirst(), Style.get("feature")));
         fvpNode.addNode(_meta.transform(fvp.getSecond(), context,
                                                 facetMask));
         fvlistNode.addNode(fvpNode);
       }
 
-      CompositeNode node = new CompositeNode('h');
+      AligningNode node = new AligningNode('h');
       // add brackets and feature-value list to the result node
       node.addNode(new SquareBracketNode(Orientation.west));
       node.addNode(fvlistNode);

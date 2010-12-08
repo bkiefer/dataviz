@@ -17,13 +17,15 @@ import de.dfki.lt.loot.gui.adapters.ModelAdapter;
 import de.dfki.lt.loot.gui.adapters.ModelAdapterFactory;
 import de.dfki.lt.loot.gui.connectors.SquareBendConnector;
 import de.dfki.lt.loot.gui.connectors.StraightConnector;
+import de.dfki.lt.loot.gui.controllers.ClickHighlightListener;
+import de.dfki.lt.loot.gui.controllers.HoverHighlightListener;
 import de.dfki.lt.loot.gui.layouts.CompactLayout;
 import de.dfki.lt.loot.gui.layouts.Layout;
 import de.dfki.lt.loot.gui.layouts.LayoutAlgorithm;
 import de.dfki.lt.loot.gui.layouts.mxCompactTreeLayout;
 import de.dfki.lt.loot.gui.nodes.AngleBracketNode;
 import de.dfki.lt.loot.gui.nodes.BraceBracketNode;
-import de.dfki.lt.loot.gui.nodes.CompositeNode;
+import de.dfki.lt.loot.gui.nodes.AligningNode;
 import de.dfki.lt.loot.gui.nodes.GraphNode;
 import de.dfki.lt.loot.gui.nodes.GraphicalNode;
 import de.dfki.lt.loot.gui.nodes.ParenBracketNode;
@@ -133,27 +135,27 @@ class TestNodesLayout implements Layout {
   }
   GraphicalNode level5() {
     Style.add("test", null, null, null, new Padding(0,0,0), null);
-    CompositeNode hcompo =
-      new CompositeNode('h', Style.get("test"));
+    AligningNode hcompo =
+      new AligningNode('h', Style.get("test"));
     hcompo.addNode(level4());
     hcompo.addNode(new TextNode("horizontal", Style.get("type")));
     hcompo.addNode(new SquareBracketNode(Orientation.east));
-    CompositeNode vcompo = new CompositeNode('v', Style.get("test"));
+    AligningNode vcompo = new AligningNode('v', Style.get("test"));
     vcompo.addNode(hcompo);
     vcompo.addNode(new TextNode("vertical", Style.get("type")));
     vcompo.addNode(new SquareBracketNode(Orientation.south));
-    hcompo = new CompositeNode('s', Style.get("test"));
+    hcompo = new AligningNode('s', Style.get("test"));
     hcompo.addNode(vcompo);
     hcompo.addNode(new SquareBracketNode(Orientation.west));
     hcompo.addNode(new TextNode("south", Style.get("type")));
-    vcompo = new CompositeNode('e', Style.get("test"));
+    vcompo = new AligningNode('e', Style.get("test"));
     vcompo.addNode(hcompo);
     vcompo.addNode(new TextNode("east", Style.get("type")));
     vcompo.addNode(new SquareBracketNode(Orientation.south));
-    hcompo = new CompositeNode('n', Style.get("test"));
+    hcompo = new AligningNode('n', Style.get("test"));
     hcompo.addNode(vcompo);
     hcompo.addNode(new TextNode("north", Style.get("type")));
-    vcompo = new CompositeNode('w', Style.get("test"));
+    vcompo = new AligningNode('w', Style.get("test"));
     vcompo.addNode(hcompo);
     vcompo.addNode(new TextNode("west", Style.get("type")));
     return vcompo;
@@ -405,7 +407,7 @@ public class DisplayTest {
     CollectionsAdapter.init();
     DOMAdapter.init();
     for (int which = 0; which < 8; ++which) {
-      //if (which != 7) continue;
+      //if (which != 6) continue;
       switch(which) {
       case 0: {
         DrawingPanel contentArea =
@@ -435,8 +437,9 @@ public class DisplayTest {
         // tfs3.put("feat6", li2.iterator());
         ModelAdapter ma = ModelAdapterFactory.getAdapter(tfs1);
         DrawingPanel dp = new DrawingPanel(new CompactLayout(), ma);
+        dp.addListener(new ClickHighlightListener());
         MainFrame mf = new MainFrame("CollectionsTest", dp);
-        mf.setModel(li1.iterator());
+        mf.setModel(tfs1);
         break;
       }
       case 3: {
@@ -469,11 +472,14 @@ public class DisplayTest {
           new DrawingPanel(
               new TestBracketsLayout(),
               new EmptyModelAdapter());
+        contentArea.addListener(new ClickHighlightListener());
         MainFrame mf = new MainFrame("BracketTest", contentArea);
         mf.setModel("BracketTest");
         break;
       }
       case 7: {
+
+
         DagNode root = new DagNode("1");
         DagNode sub = new DagNode("3");
         DagNode sub2 = new DagNode("77"); sub2.edges.put("feat77", root);
@@ -484,6 +490,9 @@ public class DisplayTest {
         root.edges.put("very_long_feature3", new DagNode("4"));
         DrawingPanel contentArea =
           new DrawingPanel(new CompactLayout(), new DagNodeAdapter());
+
+        contentArea.addListener(new HoverHighlightListener());
+
         MainFrame mf = new MainFrame("CycleTest", contentArea);
         mf.setModel(root);
         break;

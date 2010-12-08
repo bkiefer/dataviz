@@ -4,7 +4,7 @@ import de.dfki.lt.loot.gui.Style;
 import de.dfki.lt.loot.gui.ViewContext;
 import de.dfki.lt.loot.gui.adapters.ModelAdapter;
 import de.dfki.lt.loot.gui.nodes.AngleBracketNode;
-import de.dfki.lt.loot.gui.nodes.CompositeNode;
+import de.dfki.lt.loot.gui.nodes.AligningNode;
 import de.dfki.lt.loot.gui.nodes.GraphicalNode;
 import de.dfki.lt.loot.gui.nodes.TextNode;
 import de.dfki.lt.loot.gui.nodes.BracketNode.Orientation;
@@ -19,7 +19,7 @@ public class CompactConsLayout extends FacetLayoutBase {
   @Override
   public GraphicalNode
   transform(Object model, ViewContext context, int facetMask) {
-    CompositeNode node = new CompositeNode('h');
+    AligningNode node = new AligningNode('h');
 
     node.addNode(new AngleBracketNode(Orientation.west, Style.get("bracket")));
     Object first, rest;

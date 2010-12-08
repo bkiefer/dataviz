@@ -20,7 +20,7 @@ public class BraceBracketNode  extends BracketNode  {
   /** paint the bracket. r is in absolute coordinates, Padding already removed
    */
   @Override
-  public void paintAbsolute(Rectangle r, Graphics g){
+  protected void paintAbsolute(Rectangle r, Graphics g, boolean inverted){
     // The corresponding corner point ('R'ight 'L'ower)
     int rlx = r.x + r.width;
     int rly = r.y + r.height;

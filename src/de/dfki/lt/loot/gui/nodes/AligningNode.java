@@ -1,8 +1,6 @@
 package de.dfki.lt.loot.gui.nodes;
 
 import java.awt.Graphics;
-import java.awt.Point;
-import java.awt.Rectangle;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -18,7 +16,7 @@ import de.dfki.lt.loot.gui.Style;
  * @author Pia Mennig
  * @author Antonia Scheidel
  */
-public class CompositeNode extends GraphicalNode {
+public class AligningNode extends CompositeNode {
 
   // This node's list of subNodes
   private List<GraphicalNode> subNodes;
@@ -27,13 +25,13 @@ public class CompositeNode extends GraphicalNode {
   // h and v are horizontally resp. vertically centered
   private char align;
 
-  public CompositeNode(char alignment, Style aStyle) {
+  public AligningNode(char alignment, Style aStyle) {
     super(aStyle);
     align = alignment;
     this.subNodes = new LinkedList<GraphicalNode>();
   }
 
-  public CompositeNode(char alignment) {
+  public AligningNode(char alignment) {
     align = alignment;
     this.subNodes = new LinkedList<GraphicalNode>();
   }
@@ -50,13 +48,6 @@ public class CompositeNode extends GraphicalNode {
     subNode.setParentNode(this);
   }
 
-  /** Remove the given subNode from my sub-nodes list */
-  @Override
-  public void removeNode(GraphicalNode subNode) {
-    this.subNodes.remove(subNode);
-    subNode.setParentNode(null);
-  }
-
   /** Replace the node old by newNode in my sub-nodes list */
   @Override
   public void exchangeNode(GraphicalNode old, GraphicalNode newNode) {
@@ -65,6 +56,7 @@ public class CompositeNode extends GraphicalNode {
       GraphicalNode node = li.next();
       if (node == old) {
         li.set(newNode);
+        newNode.setParentNode(this);
         old.setParentNode(null);
         return;
       }
@@ -72,17 +64,10 @@ public class CompositeNode extends GraphicalNode {
     throw new IllegalArgumentException("subnode not contained in this node");
   }
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see de.unisb.loot.gui.GraphicalNode#paint(java.awt.Point,
-   *      java.awt.Graphics)
-   */
+
   @Override
-  public void paintAbsolute(Rectangle absoluteArea, Graphics g) {
-    // call the paint method of every sub node
-    for (GraphicalNode subNode : subNodes)
-      subNode.paint(absoluteArea, g);
+  protected Iterable<GraphicalNode> subNodes() {
+    return subNodes;
   }
 
   private void adjustHorizontal(Graphics g) {
@@ -179,15 +164,4 @@ public class CompositeNode extends GraphicalNode {
     }
   } // end adjustSize
 
-  @Override
-  protected GraphicalNode getChildContainingPoint(Point p) {
-    for (GraphicalNode child : subNodes) {
-      if (child.area.contains(p)) {
-        p.x -= child.area.x;
-        p.y -= child.area.y;
-        return child.getChildContainingPoint(p);
-      }
-    }
-    return this;
-  }
 } // end class

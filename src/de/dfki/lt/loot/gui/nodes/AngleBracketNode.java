@@ -20,10 +20,10 @@ public class AngleBracketNode  extends BracketNode  {
   /** paint the bracket. r is in absolute coordinates, Padding already removed
    */
   @Override
-  public void paintAbsolute(Rectangle r, Graphics g){
+  protected void paintAbsolute(Rectangle r, Graphics g, boolean inverted){
     // The rectangle's height and width with added origin offset, the lower
     // right corner
-    int lrx = r.width + r.x;
+    int lrx = r.width + r.x - 1;
     int lry = r.height + r.y;
     int mrx = r.x + r.width / 2;
     int mry = r.y + r.height / 2;

@@ -9,7 +9,7 @@ import de.dfki.lt.loot.gui.Style;
 
 /**
  * This is the TextNode class. A TextNode's content is just a String.
- * 
+ *
  * @author Tassilo Barth
  * @author Pia Mennig
  * @author Antonia Scheidel
@@ -46,12 +46,14 @@ public class TextNode extends BasicNode {
   public void setText(String content) { this.text = content; }
 
   /** draws a String (formatted by g) from text and origin
-   * @param inner the inner rectangle (padding already treated correctly)
    * @param g the graphics context
+   * @param inner the inner rectangle (padding already treated correctly)
    */
-  public void paintAbsolute(Rectangle inner, Graphics g) {
+  @Override
+  protected void paintAbsolute(Rectangle inner, Graphics g, boolean inverted) {
     Graphics2D g2d = (Graphics2D)g;
-    
+    int offset = this.getStyle().getPadding().getOffset();
+
     g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
         //RenderingHints.VALUE_TEXT_ANTIALIAS_OFF
         //RenderingHints.VALUE_TEXT_ANTIALIAS_ON
@@ -69,12 +71,14 @@ public class TextNode extends BasicNode {
     );
     */
 
-    g.drawString(this.text, inner.x + this.xOffset, inner.y + this.yOffset);
+    g.drawString(this.text,
+        inner.x + this.xOffset + offset,
+        inner.y + this.yOffset + offset);
   }
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see de.unisb.loot.gui.BasicNode#adjustSize(java.awt.Graphics)
    */
   @Override
@@ -87,7 +91,7 @@ public class TextNode extends BasicNode {
     // adjust offsets
     this.xOffset = charBounds.x ;
     this.yOffset = -charBounds.y ;
-    
+
     // add offset to Node's size
     this.area.width = charBounds.width;
     this.area.height = charBounds.height;

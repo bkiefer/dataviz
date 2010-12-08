@@ -2,7 +2,7 @@ package de.dfki.lt.loot.gui.layouts;
 
 import de.dfki.lt.loot.gui.Style;
 import de.dfki.lt.loot.gui.ViewContext;
-import de.dfki.lt.loot.gui.nodes.CompositeNode;
+import de.dfki.lt.loot.gui.nodes.AligningNode;
 import de.dfki.lt.loot.gui.nodes.GraphicalNode;
 import de.dfki.lt.loot.gui.nodes.TextNode;
 
@@ -14,7 +14,7 @@ public class FailureDecorator implements Decorator {
     String fw = context._adapt.getAttribute(model, "fwfailure");
     String bw = context._adapt.getAttribute(model, "bwfailure");
     if ((fw != null) || (bw != null)) {
-      CompositeNode failnode = new CompositeNode('w');
+      AligningNode failnode = new AligningNode('w');
       if (fw != null) {
         failnode.addNode(new TextNode(fw.toString(), Style.get("fwfailure")));
       }

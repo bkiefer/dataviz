@@ -20,24 +20,6 @@ public abstract class BasicNode extends GraphicalNode {
     super(aStyle);
   }
 
-  /** Only relevant for complex nodes that have sub-nodes: add the given
-   *  node to the sub-nodes of this node
-   */
-  @Override
-  public void addNode(GraphicalNode subNode) {}
-
-  /** Only relevant for complex nodes that have sub-nodes: add the given
-   *  node to the sub-nodes of this node
-   */
-  @Override
-  public void removeNode(GraphicalNode subNode) {}
-
-  /** Only relevant for complex nodes that have sub-nodes: add the given
-   *  node to the sub-nodes of this node
-   */
-  @Override
-  public void exchangeNode(GraphicalNode old, GraphicalNode newNode) {}
-
   /** This is what all basic nodes return correctly. Complex nodes have to
    *  implement this method. (another reason for having a BasicNode class)
    */

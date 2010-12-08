@@ -60,7 +60,9 @@ public class ViewContext {
    *  that is, the class number must have been acquired by calling
    *  newEquivalenceClassNo()
    */
-  public void addToEquivalenceClass(int classNo, GraphicalNode node) {
+  public void addToEquivalenceClass(Object model, int classNo,
+    GraphicalNode node) {
+    node.setModel(model);
     assert(_equivs.size() > classNo);
     _equivs.get(classNo).add(node);
   }
@@ -96,6 +98,9 @@ public class ViewContext {
 
   /** return the graphicalnode that primarily represents an object */
   public void setRepresentative(Object model, GraphicalNode view) {
+    if (view != null) { // null is used as marker value
+      view.setModel(model);
+    }
     _backPointer.put(model, view);
   }
 

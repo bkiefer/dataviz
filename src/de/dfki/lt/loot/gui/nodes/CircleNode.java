@@ -17,8 +17,12 @@ public class CircleNode extends BasicNode {
   }
 
   @Override
-  public void paintAbsolute(Rectangle area, Graphics g) {
-    g.drawArc(area.x, area.y, area.width - 1 , area.height - 1, 0, 360);
+  protected void paintAbsolute(Rectangle area, Graphics g, boolean inverted) {
+    int offset = this.getStyle().getPadding().getOffset();
+    g.drawArc(area.x + offset, area.y + offset,
+        area.width - 1 - offset - offset,
+        area.height - 1 - offset - offset,
+        0, 360);
   }
 
   /*
