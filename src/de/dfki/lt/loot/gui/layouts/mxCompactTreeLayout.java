@@ -11,64 +11,27 @@ import de.dfki.lt.loot.gui.nodes.GraphicalNode;
 public class mxCompactTreeLayout implements LayoutAlgorithm {
 
   /** Specifies the orientation of the layout. Default is false. */
-  protected boolean horizontal;
+  protected boolean _horizontal;
 
   /** Holds the levelDistance. Default is 10. */
-  protected int levelDistance = 10;
+  protected int _levelDistance = 10;
 
   /** Holds the nodeDistance. Default is 20. */
-  protected int nodeDistance = 20;
+  protected int _nodeDistance = 20;
 
   private GraphicalNode _root;
-
-  /** @param root the root of the tree
-   */
-  public mxCompactTreeLayout(GraphicalNode root) {
-    this(root, false);
-  }
 
   /**
    * @param root the root of the tree
    * @param horizontal if true, layouts from right to left, otherwise from top
    *                   to bottom. Default is false;
    */
-  public mxCompactTreeLayout(GraphicalNode root, boolean horizontal) {
+  public mxCompactTreeLayout(GraphicalNode root, boolean horizontal,
+    int levelDistance, int nodeDistance) {
     this._root = root;
-    this.horizontal = horizontal;
-  }
-
-  /** If true, this algorithm layouts from right to left, otherwise from top
-   *  to bottom.
-   *  @return the horizontal */
-  public boolean isHorizontal() {
-    return horizontal;
-  }
-
-  /** If horizontal is true, this algorithm layouts from right to left,
-   *  otherwise from top to bottom.
-   */
-  public void setHorizontal(boolean horizontal) {
-    this.horizontal = horizontal;
-  }
-
-  /** @return the levelDistance */
-  public int getLevelDistance() {
-    return levelDistance;
-  }
-
-  /** @param levelDistance the levelDistance to set */
-  public void setLevelDistance(int levelDistance) {
-    this.levelDistance = levelDistance;
-  }
-
-  /** @return the nodeDistance */
-  public int getNodeDistance() {
-    return nodeDistance;
-  }
-
-  /** @param nodeDistance the nodeDistance to set */
-  public void setNodeDistance(int nodeDistance) {
-    this.nodeDistance = nodeDistance;
+    this._horizontal = horizontal;
+    this._levelDistance = levelDistance;
+    this._nodeDistance = nodeDistance;
   }
 
   /** Implements {@link LayoutAlgorithm}.execute(). */
@@ -78,7 +41,7 @@ public class mxCompactTreeLayout implements LayoutAlgorithm {
 
     // contains the area required for the whole tree after layout computation.
     Rectangle2D bounds = new Rectangle2D.Double();
-    if (horizontal) {
+    if (_horizontal) {
       horizontalLayout(node, 0, 0, bounds);
     } else {
       verticalLayout(node, 0, 0, bounds);
@@ -112,7 +75,7 @@ public class mxCompactTreeLayout implements LayoutAlgorithm {
   protected TreeNode createTreeNodes(GraphicalNode root) {
     TreeNode node = new TreeNode(root);
     Rectangle r = root.getRect();
-    if (horizontal) {
+    if (_horizontal) {
       node.width = r.height;
       node.height = r.width;
     }
@@ -201,9 +164,9 @@ public class mxCompactTreeLayout implements LayoutAlgorithm {
    *
    */
   protected void attachParent(TreeNode node, double height) {
-    double x = nodeDistance + levelDistance;
-    double y2 = (height - node.width) / 2 - nodeDistance;
-    double y1 = y2 + node.width + 2 * nodeDistance - height;
+    double x = _nodeDistance + _levelDistance;
+    double y2 = (height - node.width) / 2 - _nodeDistance;
+    double y1 = y2 + node.width + 2 * _nodeDistance - height;
 
     node.child.offsetX = x + node.height;
     node.child.offsetY = y1;
@@ -218,7 +181,7 @@ public class mxCompactTreeLayout implements LayoutAlgorithm {
 	 *
 	 */
   protected void layoutLeaf(TreeNode node) {
-    double dist = 2 * nodeDistance;
+    double dist = 2 * _nodeDistance;
 
     node.contour.upperTail = createLine(node.height + dist, 0, null);
     node.contour.upperHead = node.contour.upperTail;
@@ -229,7 +192,7 @@ public class mxCompactTreeLayout implements LayoutAlgorithm {
 
   /** Merge the contours of all childs of this node. */
   protected double join(TreeNode node) {
-    double dist = 2 * nodeDistance;
+    double dist = 2 * _nodeDistance;
 
     TreeNode child = node.child;
     node.contour = child.contour;
@@ -371,83 +334,39 @@ public class mxCompactTreeLayout implements LayoutAlgorithm {
     bounds.setRect(newX, newY, newXmax - newX, newYmax - newY);
   }
 
-  /**
-   *
-   */
-  protected static class TreeNode
-  {
+  protected static class TreeNode {
     @Override
     public String toString() {
       return "["+x+","+y+"]("+width+","+height+")" ;
     }
-    /**
-     *
-     */
+
     protected GraphicalNode cell;
 
-    /**
-     *
-     */
     protected double x, y, width, height, offsetX, offsetY;
 
-    /**
-     *
-     */
     protected TreeNode child, next; // parent, sibling
 
-    /**
-     *
-     */
     protected Polygon contour = new Polygon();
 
-    /**
-     *
-     */
-    public TreeNode(GraphicalNode cell)
-    {
+    public TreeNode(GraphicalNode cell) {
       this.cell = cell;
     }
 
   }
 
-
-  /**
-	 *
-	 */
   protected Polyline createLine(double dx, double dy, Polyline next) {
     return new Polyline(dx, dy, next);
   }
 
-  /**
-	 *
-	 */
   protected static class Polygon {
-
-    /**
-		 *
-		 */
     protected Polyline lowerHead, lowerTail, upperHead, upperTail;
-
   }
 
-  /**
-	 *
-	 */
   protected static class Polyline {
-
-    /**
-		 *
-		 */
     protected double dx, dy;
 
-    /**
-		 *
-		 */
     protected Polyline next;
 
-    /**
-		 *
-		 */
     protected Polyline(double dx, double dy, Polyline next) {
       this.dx = dx;
       this.dy = dy;

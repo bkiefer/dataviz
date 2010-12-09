@@ -1,5 +1,6 @@
 package de.dfki.lt.loot.gui;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import de.dfki.lt.loot.gui.adapters.ModelAdapter;
 import de.dfki.lt.loot.gui.layouts.Layout;
@@ -43,6 +45,9 @@ implements MouseMotionListener, java.awt.event.MouseListener {
   /** An object transforming the model into a graphical representation */
   private Layout _layout;
 
+  /** The scroll pane we have been wrapped into, if any */
+  private JScrollPane _myScrollPane = null;
+
   /** a private field that indicates if a graphical representation has been
    *  generated for the last model that has been set.
    */
@@ -70,11 +75,18 @@ implements MouseMotionListener, java.awt.event.MouseListener {
 
     _underMouse = null;
     _nodeListeners = new ArrayList<MouseListener>(3);
+    setBackground(Color.white);
+  }
+
+  public JScrollPane wrapScrollable() {
+    _myScrollPane = new JScrollPane(this);
+    return _myScrollPane;
   }
 
   /** set the top model node for this panel */
-  public void setModel(Object aModel) {
+  public void setModel(Object aModel, ModelAdapter adapt) {
     if (aModel != null) {
+      _adapter = adapt;
       _model = aModel;
       _context = new ViewContext(aModel, _adapter);
       _root = _layout.computeView(_model, _context);
@@ -87,6 +99,11 @@ implements MouseMotionListener, java.awt.event.MouseListener {
     }
     _unadjusted = true;
     repaint();
+  }
+
+  /** set the top model node for this panel */
+  public void setModel(Object aModel) {
+    setModel(aModel, _adapter);
   }
 
   public Object getModel() { return _model; }
@@ -141,6 +158,11 @@ implements MouseMotionListener, java.awt.event.MouseListener {
     Graphics guiG = g.create();
     if (_root != null) {
       if (_unadjusted) {
+        if (_myScrollPane != null) {
+          int unitIncrement = getDefaultTextHeight();
+          _myScrollPane.getHorizontalScrollBar().setUnitIncrement(unitIncrement);
+          _myScrollPane.getVerticalScrollBar().setUnitIncrement(unitIncrement);
+        }
         _root.adjustSize(guiG);
         _unadjusted = false;
       }

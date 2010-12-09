@@ -25,7 +25,7 @@ public class TextNode extends BasicNode {
    * @param content
    *          The TextNode's content
    */
-  public TextNode(String content) { this.text = content; }
+  public TextNode(String content) { this(content, Style.get("text")); }
 
   /** The default constructor: Creates a new instance of <code>TextNode</code>
    * @param content

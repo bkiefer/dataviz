@@ -27,6 +27,8 @@ public class Style {
   // This is the style map. Contains style information about the three styles.
   static {
     styleMap = new HashMap<String, Style>();
+    styleMap.put("text", new Style(new Font("DejaVu Sans", Font.PLAIN, 11),
+        null, null, null, null));
     styleMap.put("type", new Style(new Font("DejaVu Sans", Font.BOLD, 11),
         Color.BLUE, Color.LIGHT_GRAY, new Padding(0, 0, 1), null));
     styleMap.put("fwfailure", new Style(new Font("DejaVu Sans", Font.BOLD, 14),
@@ -103,8 +105,12 @@ public class Style {
   public static void add(String name,
       Font aFont, Color foreground, Color background,
       Padding aPadding, Stroke aStroke) {
-    styleMap.put(name,
-        new Style(aFont, foreground, background, aPadding, aStroke));
+    Style style = new Style(aFont, foreground, background, aPadding, aStroke);
+    if (name == null || 0 == name.length()) {
+      defaultStyle = style;
+    } else {
+      styleMap.put(name, style);
+    }
   }
 
   /**

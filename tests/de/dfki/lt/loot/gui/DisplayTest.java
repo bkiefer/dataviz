@@ -277,8 +277,7 @@ class TestTreeLayout implements Layout {
       treeNode.addConnector(
           new StraightConnector(nodes[edge[0]], nodes[edge[1]]));
     }
-    mxCompactTreeLayout la = new mxCompactTreeLayout(nodes[0]);
-    la.setLevelDistance(20); la.setNodeDistance(5);
+    mxCompactTreeLayout la = new mxCompactTreeLayout(nodes[0], false, 20, 5);
     treeNode.setLayoutAlgorithm(la);
     return treeNode;
   }

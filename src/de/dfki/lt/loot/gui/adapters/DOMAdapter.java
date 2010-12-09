@@ -93,7 +93,7 @@ public class DOMAdapter extends ModelAdapter {
   };
 
   @SuppressWarnings("unchecked")
-  private class NodeListIterable implements Iterable {
+  protected class NodeListIterable implements Iterable {
     private NodeList _list;
     private int _current;
 
