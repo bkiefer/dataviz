@@ -627,19 +627,25 @@ public class MainFrame extends JFrame {
     return false;
   }
 
-  public void openFileDialog() {
+  protected FileNameExtensionFilter getFileFilter() {
+    return new FileNameExtensionFilter("txt/xml files only", "txt", "xml");
+  }
+
+  protected void openFileDialog() {
     // create file chooser for txt files
     JFileChooser fc = new JFileChooser();
-    fc.addChoosableFileFilter(
-        new FileNameExtensionFilter("txt/xml files only", "txt", "xml"));
-    fc.setCurrentDirectory(MainFrame.this._currentDir);
+    FileNameExtensionFilter fexf = getFileFilter();
+    if (fexf != null) {
+      fc.addChoosableFileFilter(fexf);
+    }
+    fc.setCurrentDirectory(_currentDir);
     int returnVal = -1;
     boolean success = false;
     do {
       returnVal = fc.showOpenDialog(MainFrame.this);
       if (returnVal == JFileChooser.APPROVE_OPTION) {
         // update current directory
-        MainFrame.this._currentDir = fc.getSelectedFile().getParentFile();
+        _currentDir = fc.getSelectedFile().getParentFile();
         // get the object read from this file
         File toRead = fc.getSelectedFile();
         success = openFile(toRead);
