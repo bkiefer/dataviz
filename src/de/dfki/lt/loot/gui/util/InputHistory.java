@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.Iterator;
@@ -35,7 +36,10 @@ public class InputHistory implements HistoryModel {
 
   public InputHistory(int maxSize) {
     _maxHistorySize = maxSize;
-    _history = new LimitedDeque<String>(_maxHistorySize);
+    _history =
+      (_maxHistorySize > 0 )
+      ? new LimitedDeque<String>(_maxHistorySize)
+      : new ArrayDeque<String>();
     _historyChanged = false;
     _changeListeners = new ArrayList<HistoryListener>(2);
   }
@@ -63,7 +67,7 @@ public class InputHistory implements HistoryModel {
 
   private void addLast(String currentText) {
     _historyChanged = true;
-    add(currentText);
+    _history.add(currentText);
     for (HistoryListener l : _changeListeners) {
       l.addLast(currentText);
     }
@@ -108,8 +112,11 @@ public class InputHistory implements HistoryModel {
    *  This also takes care about changes in the view.
    */
   public void add(String currentText) {
-    if (! _history.contains(currentText)) {
-      while (! _history.offer(currentText)) {
+    if (_history.contains(currentText)) {
+      _history.remove(currentText);
+      addLast(currentText);
+    } else {
+      while (!_history.isEmpty() && ! _history.offer(currentText)) {
         removeFirst();
       }
       addLast(currentText);
