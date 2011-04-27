@@ -4,108 +4,24 @@
 (a simple JRE will not be sufficient -> no javac). -->
 
 <project name="dataviz" basedir="." default="compile">
-  
+
+  <import file="build-skeleton.xml" as=""/>
+
   <!-- ================================================================= -->
-  <!-- PROPERTIES                                                        -->
+  <!-- SUBMODULES                                                        -->
   <!-- ================================================================= -->
-  
-  <property name="version" value="0.1"/>
-  <property name="vname" value="dataviz-${version}"/>
-  
-  <property name="lib.dir"      value="lib"/>
-  <property name="jar.file"     value="${vname}.jar"/>
-  
-  <property name="classes.dir"  value="classes"/>
-  <property name="source.dir"   value="src"/>
 
-  <patternset id="sources">
-    <include name="**/*.java"/>
-    <exclude name="de/dfki/lt/loot/visualization/**"/>
-  </patternset>
-
-  <target name="compile" description="compile all">
-    <mkdir dir="${classes.dir}"/>
-    <javac debug="yes" deprecation="yes"
-           srcdir="${source.dir}" destdir="${classes.dir}">
-      <patternset refid="sources"/>
-      <classpath><fileset dir="${lib.dir}"/></classpath>
-      <compilerarg value="-Xlint"/>
-    </javac>
+  <!--
+  <target name="modules" description="make submodules">
+    <antcall target="subant">
+      <param name="target" value="${target}"/>
+      <param name="dir" value="../cplan"/>
+    </antcall>
+    <antcall target="subant">
+      <param name="target" value="${target}"/>
+      <param name="dir" value="../openccg-dfki"/>
+    </antcall>
   </target>
-  
-  <target name="jar" depends="compile" description="jar the main code">
-    <jar destfile="${lib.dir}/${jar.file}" compress="true">
-      <fileset dir="${classes.dir}"/>
-    </jar>
-  </target>
-  
-  <!-- -->
-  <target name="tfsparser" description="translate javacc files for TFS parser">
-    <javacc target="src/de/unisb/loot/tfs/parser/tfs.jj" 
-            outputdirectory="src/de/unisb/loot/tfs/parser/"
-            javacchome="/usr/share/java"/>
-  </target>
-  <!-- -->
-
-  <target name="run1" depends="compile" description="run loot">
-    <java classname="de.unisb.loot.parsing0.BottomUpParser">
-      <arg value="data/cfg/Beispiel.cfg"/>
-      <classpath>
-        <fileset dir="${lib.dir}"/> <!-- external libs -->
-        <pathelement path="${classes.dir}"/>
-      </classpath>
-    </java>
-  </target>
-
-  <target name="run" depends="compile" description="run loot">
-    <java classname="de.unisb.loot.parsing0.BottomUpParser">
-      <arg value="data/cfg/slides.cfg"/>
-      <classpath>
-        <fileset dir="${lib.dir}"/> <!-- external libs -->
-        <pathelement path="${classes.dir}"/>
-      </classpath>
-    </java>
-  </target>
-
-  <target name="runlc" depends="compile" description="run loot">
-    <java classname="de.unisb.loot.parsing0.LeftCornerParser">
-      <arg value="data/cfg/slides.cfg"/>
-      <classpath>
-        <fileset dir="${lib.dir}"/> <!-- external libs -->
-        <pathelement path="${classes.dir}"/>
-      </classpath>
-    </java>
-  </target>
-
-  <target name="runGUI" depends="compile" description="run loot">
-    <java classname="de.dfki.lt.loot.gui.MainFrame" fork="true" spawn="true">
-      <arg value="data/tfs/katzen.txt"/>
-      <classpath>
-        <fileset dir="${lib.dir}"/> <!-- external libs -->
-        <pathelement path="${classes.dir}"/>
-      </classpath>
-    </java>
-  </target>
-
-  <target name="clean" description="remove class files">
-    <delete>
-      <fileset dir="${classes.dir}" includes="**/*.class"/>
-    </delete>
-  </target>
-  
-  <target name="cleanall"
-          description="remove class files, (internal) jars and war"
-          depends="clean">
-    <delete>
-      <fileset dir="${lib.dir}" includes="${jar.file}"/>
-    </delete>
-  </target>
-  
-  <target name="tar" description="build distribution tar file">
-    <tar destfile="../${vname}.tar" basedir="../" includes="loot/**" 
-         excludes="jtfs*.tar*"/>
-    <gzip src="../${vname}.tar" destfile="../${vname}.tar.gz"/>
-    <delete file="../${vname}.tar"/>
-  </target>
+  -->
 
 </project>

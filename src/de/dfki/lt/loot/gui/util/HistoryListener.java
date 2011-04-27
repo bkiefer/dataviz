@@ -12,4 +12,6 @@ public interface HistoryListener {
 
   public abstract void fileChanged(File f);
 
+  public abstract void remove(int pos);
+
 }

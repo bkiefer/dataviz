@@ -65,14 +65,6 @@ public class InputHistory implements HistoryModel {
     }
   }
 
-  private void addLast(String currentText) {
-    _historyChanged = true;
-    _history.add(currentText);
-    for (HistoryListener l : _changeListeners) {
-      l.addLast(currentText);
-    }
-  }
-
   private void fireFileChanged(File f) {
     for (HistoryListener l : _changeListeners) {
       l.fileChanged(f);
@@ -112,14 +104,30 @@ public class InputHistory implements HistoryModel {
    *  This also takes care about changes in the view.
    */
   public void add(String currentText) {
-    if (_history.contains(currentText)) {
-      _history.remove(currentText);
-      addLast(currentText);
-    } else {
-      while (!_history.isEmpty() && ! _history.offer(currentText)) {
+    if (! _history.contains(currentText)) {
+      while (! _history.offer(currentText)) {
         removeFirst();
       }
-      addLast(currentText);
+      _historyChanged = true;
+      for (HistoryListener l : _changeListeners) {
+        l.addLast(currentText);
+      }
+    } else {
+      int pos = 0;
+      for (Iterator<String> it = _history.iterator(); it.hasNext();) {
+        if (it.next().equals(currentText)) {
+          it.remove();
+          break;
+        }
+        ++pos;
+      }
+      for (HistoryListener l : _changeListeners) {
+        l.remove(pos);
+      }
+      _history.add(currentText);
+      for (HistoryListener l : _changeListeners) {
+        l.addLast(currentText);
+      }
     }
   }
 
@@ -169,7 +177,10 @@ public class InputHistory implements HistoryModel {
           while (spaceLeft && (nextLine = in.readLine()) != null) {
             nextLine = nextLine.trim();
             if (nextLine.isEmpty()) {
-              spaceLeft = _history.offer(nextInput.toString());
+              String nextString = nextInput.toString();
+              if (! _history.contains(nextString)) {
+                spaceLeft = _history.offer(nextString);
+              }
               nextInput = new StringBuilder();
             } else {
               if (nextInput.length() > 0) {
