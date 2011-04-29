@@ -560,12 +560,13 @@ public class MainFrame extends JFrame {
 
   protected void initFrame() {
     try {
+      _iconPath = getResourcesDir().getAbsolutePath() + "/icons/";
       String lookAndFeel = UIManager.getSystemLookAndFeelClassName();
       UIManager.setLookAndFeel(lookAndFeel);
-      if (lookAndFeel.contains("GTK")) {
-        _iconPath = "/usr/share/icons/gnome/";
-      } else {
-        _iconPath = getResourcesDir().getAbsolutePath() + "/icons/";
+      if (! new File(_iconPath).isDirectory()) {
+        if (lookAndFeel.contains("GTK")) {
+          _iconPath = "/usr/share/icons/gnome/";
+        }
       }
     } catch (ClassNotFoundException e) {
       // well, we're content with everything we get
