@@ -1,7 +1,5 @@
 package de.dfki.lt.loot.gui;
 
-import java.awt.event.MouseEvent;
-
 import de.dfki.lt.loot.gui.nodes.GraphicalNode;
 
 public interface MouseListener {

@@ -1,26 +1,11 @@
 package de.dfki.lt.loot.gui.controllers;
 
-import java.awt.Rectangle;
-import java.awt.event.MouseEvent;
-
-import javax.swing.JComponent;
-
+import de.dfki.lt.loot.gui.MouseEvent;
 import de.dfki.lt.loot.gui.MouseListener;
 import de.dfki.lt.loot.gui.nodes.GraphicalNode;
 
 public class HoverHighlightListener implements MouseListener {
   GraphicalNode lastInverted = null;
-
-  private void redraw(MouseEvent e, GraphicalNode node) {
-    JComponent view = (JComponent) e.getSource();
-    Rectangle r = node.getAbsRect(); r.grow(1,1);
-    view.repaint(r);
-  }
-
-  private void changeHighlight(MouseEvent e, boolean how) {
-    lastInverted.setHighlight(how);
-    redraw(e, lastInverted);
-  }
 
   @Override
   public synchronized void mouseLeaves(MouseEvent e, GraphicalNode node) {
@@ -29,7 +14,7 @@ public class HoverHighlightListener implements MouseListener {
       withModel = withModel.getParentNode();
     }
     if (lastInverted == withModel) {
-      changeHighlight(e, false);
+      e.panel.changeHighlight(lastInverted, false);
       lastInverted = null;
     }
   }
@@ -43,11 +28,11 @@ public class HoverHighlightListener implements MouseListener {
     }
     if (lastInverted != withModel) {
       if (lastInverted != null) {
-        changeHighlight(e, false);
+        e.panel.changeHighlight(lastInverted, false);
       }
       lastInverted = withModel;
       if (lastInverted != null) {
-        changeHighlight(e, true);
+        e.panel.changeHighlight(lastInverted, true);
       }
     }
   }

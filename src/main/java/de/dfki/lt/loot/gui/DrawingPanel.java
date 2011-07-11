@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
@@ -120,6 +121,19 @@ implements MouseMotionListener, java.awt.event.MouseListener {
     return _root;
   }
 
+  public ModelAdapter getAdapter() {
+    return _adapter;
+  }
+
+  public void redraw(GraphicalNode node) {
+    Rectangle r = node.getAbsRect(); r.grow(1,1);// r.grow(3,3);
+    this.repaint(r);
+  }
+
+  public void changeHighlight(GraphicalNode node, boolean how) {
+    node.setHighlight(how);
+    redraw(node);
+  }
 
   /* @see javax.swing.JComponent#getPreferredSize()
    */
@@ -192,19 +206,19 @@ implements MouseMotionListener, java.awt.event.MouseListener {
 
   private void fireMouseEnters(MouseEvent e, GraphicalNode node) {
     for (MouseListener l : _nodeListeners) {
-      l.mouseEnters(e, node);
+      l.mouseEnters(new de.dfki.lt.loot.gui.MouseEvent(this, e), node);
     }
   }
 
   private void fireMouseLeaves(MouseEvent e, GraphicalNode node) {
     for (MouseListener l : _nodeListeners) {
-      l.mouseLeaves(e, node);
+      l.mouseLeaves(new de.dfki.lt.loot.gui.MouseEvent(this, e), node);
     }
   }
 
   private void fireMouseClicked(MouseEvent e, GraphicalNode node) {
     for (MouseListener l : _nodeListeners) {
-      l.mouseClicked(e, node);
+      l.mouseClicked(new de.dfki.lt.loot.gui.MouseEvent(this, e), node);
     }
   }
 

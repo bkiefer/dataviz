@@ -121,8 +121,8 @@ public class ChartLayout implements Layout {
   @SuppressWarnings("unchecked")
   @Override
   public GraphicalNode computeView(Object model, ViewContext context) {
-    ModelAdapter adapt = _context._adapt;
     _context = context;
+    ModelAdapter adapt = _context._adapt;
     GraphNode graphNode = new GraphNode(model);
 
     // Sort vertices and edges according to topological sort:
