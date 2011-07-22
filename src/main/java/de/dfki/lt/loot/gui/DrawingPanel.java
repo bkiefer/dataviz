@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import de.dfki.lt.loot.gui.adapters.ModelAdapter;
+import de.dfki.lt.loot.gui.adapters.ModelAdapterFactory;
 import de.dfki.lt.loot.gui.layouts.Layout;
 import de.dfki.lt.loot.gui.nodes.EmptyNode;
 import de.dfki.lt.loot.gui.nodes.GraphicalNode;
@@ -66,9 +67,6 @@ implements MouseMotionListener, java.awt.event.MouseListener {
    * @param aLayout: the object that converts the model into a view
    */
   public DrawingPanel(Layout aLayout, ModelAdapter adapter) {
-    if (aLayout == null || adapter == null) {
-      throw new IllegalArgumentException("Layout and Adapter must be given");
-    }
     _layout = aLayout;
     _adapter = adapter;
     _model = null;
@@ -89,6 +87,10 @@ implements MouseMotionListener, java.awt.event.MouseListener {
     if (aModel != null) {
       _adapter = adapt;
       _model = aModel;
+      if (_layout == null || _adapter == null) {
+        throw new IllegalArgumentException("No feasible layout or adapter found"
+            + " for " + aModel );
+      }
       _context = new ViewContext(aModel, _adapter);
       _root = _layout.computeView(_model, _context);
 
@@ -104,6 +106,9 @@ implements MouseMotionListener, java.awt.event.MouseListener {
 
   /** set the top model node for this panel */
   public void setModel(Object aModel) {
+    if (_adapter == null) {
+      _adapter = ModelAdapterFactory.getAdapter(aModel);
+    }
     setModel(aModel, _adapter);
   }
 

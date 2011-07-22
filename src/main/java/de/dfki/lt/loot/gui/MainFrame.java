@@ -277,8 +277,7 @@ public class MainFrame extends JFrame {
   }
 
   public MainFrame(String title) {
-    this(title, new File("."),
-        new DrawingPanel(new CompactLayout(), new EmptyModelAdapter()));
+    this(title, new File("."), new DrawingPanel(new CompactLayout(), null));
   }
 
   public MainFrame(String title, DrawingPanel dp) {
@@ -660,7 +659,11 @@ public class MainFrame extends JFrame {
   }
 
   public void setModel(Object model) {
-    this._contentArea.setModel(model);
+    if (_contentArea.getAdapter() != null) {
+      _contentArea.setModel(model);
+    } else {
+      _contentArea.setModel(model, ModelAdapterFactory.getAdapter(model));
+    }
   }
 
   public static Document readXmlFile(File xmlFile) {
