@@ -13,7 +13,7 @@ import de.dfki.lt.loot.Pair;
 public class DOMAdapter extends ModelAdapter {
 
   public static void init() {
-    ModelAdapterFactory.register(Document.class, DOMAdapter.class);
+    ModelAdapterFactory.registerAdapter(Document.class, DOMAdapter.class);
   }
 
   @Override

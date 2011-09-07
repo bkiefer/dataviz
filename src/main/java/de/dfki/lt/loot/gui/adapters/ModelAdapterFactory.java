@@ -4,8 +4,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.log4j.Logger;
+
+import de.dfki.lt.loot.gui.ViewContext;
+import de.dfki.lt.loot.gui.layouts.CompactLayout;
+import de.dfki.lt.loot.gui.layouts.Layout;
+import de.dfki.lt.loot.gui.nodes.GraphicalNode;
 
 public class ModelAdapterFactory {
 
@@ -14,22 +20,27 @@ public class ModelAdapterFactory {
     init();
     DOMAdapter.init();
     CollectionsAdapter.init();
+    // register a default layout.
+    registerLayout(Object.class, CompactLayout.class);
   }
 
   @SuppressWarnings("unchecked")
   private static void init() {
     logger = Logger.getLogger(ModelAdapterFactory.class);
-    _prototypes = new HashMap<Class, Class>();
+    _adapterPrototypes = new HashMap<Class, Class>();
+    _layoutPrototypes = new HashMap<Class, Class>();
     _classes = new ArrayList<Class>();
   }
 
   private static Logger logger;
 
   @SuppressWarnings("unchecked")
-  private static HashMap<Class, Class> _prototypes;
+  private static HashMap<Class, Class> _adapterPrototypes;
+  @SuppressWarnings("unchecked")
+  private static HashMap<Class, Class> _layoutPrototypes;
 
   @SuppressWarnings("unchecked")
-  private static ArrayList<Class> _classes;
+  private static List<Class> _classes;
 
 
   @SuppressWarnings("unchecked")
@@ -54,40 +65,72 @@ public class ModelAdapterFactory {
 
 
   @SuppressWarnings("unchecked")
-  public static void register(Class objClass, Class adapterClass) {
-    _classes.add(objClass);
-    Collections.sort(_classes, new ClassComparator());
-    _prototypes.put(objClass, adapterClass);
+  public static void registerLayout(Class objClass, Class layoutClass) {
+    if (!_classes.contains(objClass)) {
+      _classes.add(objClass);
+      Collections.sort(_classes, new ClassComparator());
+    }
+    _layoutPrototypes.put(objClass, layoutClass);
   }
 
   @SuppressWarnings("unchecked")
-  public static ModelAdapter getAdapter(Object o) {
-    if (o == null) {
-      return new ModelAdapter() {
-
-        @Override
-        public int facets(Object model) {
-          // TODO Auto-generated method stub
-          return ModelAdapter.NULL;
-        }
-      };
+  public static void registerAdapter(Class objClass, Class adapterClass) {
+    if (!_classes.contains(objClass)) {
+      _classes.add(objClass);
+      Collections.sort(_classes, new ClassComparator());
     }
+    _adapterPrototypes.put(objClass, adapterClass);
+  }
 
+
+  @SuppressWarnings("unchecked")
+  private static Object getPrototype(HashMap<Class, Class> protos, Object o) {
     for (Class c : _classes) {
       if (c.isInstance(o)) {
-        Class ModelAdapterClass = _prototypes.get(c);
-        assert(ModelAdapterClass != null);
-        try {
-          return (ModelAdapter) ModelAdapterClass.newInstance();
-        }
-        catch (InstantiationException iex) {
-          logger.warn("Could not create Instance for " + ModelAdapterClass);
-        }
-        catch (IllegalAccessException iaex) {
-          logger.warn("Could not create Instance for " + ModelAdapterClass);
+        Class clazz = protos.get(c);
+        if (clazz != null) {
+          try {
+            return clazz.newInstance();
+          }
+          catch (InstantiationException iex) {
+            logger.warn("Could not create Instance for " + clazz);
+          }
+          catch (IllegalAccessException iaex) {
+            logger.warn("Could not create Instance for " + clazz);
+          }
         }
       }
     }
     return null;
+  }
+
+  public static ModelAdapter getAdapter(Object o) {
+    if (o == null) {
+      return new ModelAdapter() {
+        @Override
+        public int facets(Object model) { return ModelAdapter.NULL; }
+      };
+    }
+    Object result = getPrototype(_adapterPrototypes, o);
+    if (! (result instanceof ModelAdapter)) {
+      return null;
+    }
+    return (ModelAdapter) result;
+  }
+
+  public static Layout getLayout(Object o) {
+    if (o == null) {
+      return new Layout() {
+        @Override
+        public GraphicalNode computeView(Object model, ViewContext context) {
+          return null;
+        }
+      };
+    }
+    Object result = getPrototype(_layoutPrototypes, o);
+    if (! (result instanceof Layout)) {
+      return null;
+    }
+    return (Layout) result;
   }
 }

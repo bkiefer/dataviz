@@ -13,13 +13,16 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Semaphore;
+import java.util.zip.GZIPInputStream;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -44,12 +47,7 @@ import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import de.dfki.lt.loot.gui.adapters.CollectionsAdapter;
-import de.dfki.lt.loot.gui.adapters.DOMAdapter;
-import de.dfki.lt.loot.gui.adapters.EmptyModelAdapter;
-import de.dfki.lt.loot.gui.adapters.ModelAdapter;
-import de.dfki.lt.loot.gui.adapters.ModelAdapterFactory;
-import de.dfki.lt.loot.gui.layouts.CompactLayout;
+import de.dfki.lt.loot.ObjectReader;
 import de.dfki.lt.loot.gui.util.HistoryView;
 import de.dfki.lt.loot.gui.util.IniFileReader;
 import de.dfki.lt.loot.gui.util.IniFileWriter;
@@ -68,6 +66,20 @@ public class MainFrame extends JFrame {
 
   /** This contains the currently open frames. */
   protected static List<MainFrame> _openFrames = new ArrayList<MainFrame>();
+
+  /** Associates file extensions with input readers */
+  private static HashMap<String, ObjectReader> _associations;
+
+  static {
+    _associations = new HashMap<String, ObjectReader>();
+    MainFrame.addFileAssociation("xml",
+        new ObjectReader() {
+      @Override
+      public Object read(InputStream in) throws IOException {
+        return MainFrame.readXmlFile(in);
+      }
+    });
+  }
 
   /** These listeners are called when the last frame has been closed */
   protected static List<CloseAllListener> clAll =
@@ -277,7 +289,7 @@ public class MainFrame extends JFrame {
   }
 
   public MainFrame(String title) {
-    this(title, new File("."), new DrawingPanel(new CompactLayout(), null));
+    this(title, new File("."), new DrawingPanel(null, null));
   }
 
   public MainFrame(String title, DrawingPanel dp) {
@@ -613,12 +625,7 @@ public class MainFrame extends JFrame {
   public boolean openFile(File toRead) {
     Object fileContent = readFileContent(toRead);
     if (fileContent != null) {
-      ModelAdapter adapt = ModelAdapterFactory.getAdapter(fileContent);
-      if (adapt != null) {
-        setModel(fileContent, adapt);
-      } else {
-        setModel(fileContent);
-      }
+      setModel(fileContent);
       return true;
     }
     else {
@@ -653,20 +660,15 @@ public class MainFrame extends JFrame {
     } while (! success && returnVal != JFileChooser.CANCEL_OPTION);
   }
 
-
-  public void setModel(Object model, ModelAdapter adapt) {
-    this._contentArea.setModel(model, adapt);
-  }
-
   public void setModel(Object model) {
-    if (_contentArea.getAdapter() != null) {
-      _contentArea.setModel(model);
-    } else {
-      _contentArea.setModel(model, ModelAdapterFactory.getAdapter(model));
-    }
+    _contentArea.setModel(model);
   }
 
-  public static Document readXmlFile(File xmlFile) {
+  public static void addFileAssociation(String extension, ObjectReader r) {
+    _associations.put(extension, r);
+  }
+
+  public static Document readXmlFile(InputStream xmlFile) {
     try {
       DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
       DocumentBuilder db = dbf.newDocumentBuilder();
@@ -693,10 +695,33 @@ public class MainFrame extends JFrame {
       errorDialog("No such File: " + fileToOpen);
       return null;
     }
-    if (fileToOpen.getName().endsWith(".xml")) {
-      return readXmlFile(fileToOpen);
+    String fileName = fileToOpen.getName();
+    int lastDot = fileName.lastIndexOf('.');
+    String extension = fileName.substring(fileName.lastIndexOf('.') + 1);
+    boolean uncompress = false;
+    if (extension.equals("gz")) {
+      uncompress = true;
+      int secondLast = fileName.lastIndexOf('.', lastDot - 1);
+      extension = fileName.substring(secondLast + 1, lastDot);
     }
-    return null;
+    Object result = null;
+    if (! extension.isEmpty()) {
+      ObjectReader r = _associations.get(extension);
+      if (r != null) {
+        try {
+          InputStream in = new FileInputStream(fileToOpen);
+          if (uncompress) {
+            in = new GZIPInputStream(in);
+          }
+          result = r.read(in);
+        }
+        catch (IOException ioex) {
+          System.err.println(ioex);
+          result = null;
+        }
+      }
+    }
+    return result;
   }
 
   protected void errorDialog(String string) {
@@ -714,8 +739,6 @@ public class MainFrame extends JFrame {
   }
 
   public static void main(String args[]) {
-    DOMAdapter.init();
-    CollectionsAdapter.init();
     @SuppressWarnings("unused")
     MainFrame mf = new MainFrame("Main Window");
   }

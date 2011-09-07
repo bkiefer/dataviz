@@ -11,9 +11,9 @@ import de.dfki.lt.loot.Pair;
 public class CollectionsAdapter extends ModelAdapter {
 
   public static void init() {
-    ModelAdapterFactory.register(List.class, CollectionsAdapter.class);
-    ModelAdapterFactory.register(Map.class, CollectionsAdapter.class);
-    ModelAdapterFactory.register(Iterator.class, CollectionsAdapter.class);
+    ModelAdapterFactory.registerAdapter(List.class, CollectionsAdapter.class);
+    ModelAdapterFactory.registerAdapter(Map.class, CollectionsAdapter.class);
+    ModelAdapterFactory.registerAdapter(Iterator.class, CollectionsAdapter.class);
   }
 
   // Has to be a stack of iterators to handle nested lists.
