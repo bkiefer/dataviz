@@ -48,6 +48,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import de.dfki.lt.loot.ObjectReader;
+import de.dfki.lt.loot.gui.util.FileProcessor;
 import de.dfki.lt.loot.gui.util.HistoryView;
 import de.dfki.lt.loot.gui.util.IniFileReader;
 import de.dfki.lt.loot.gui.util.IniFileWriter;
@@ -62,7 +63,7 @@ import de.dfki.lt.loot.gui.util.InputHistory;
  * @version $Id: MainFrame.java 222 2009-01-29 13:51:16Z jost02 $
  */
 @SuppressWarnings("serial")
-public class MainFrame extends JFrame {
+public class MainFrame extends JFrame implements FileProcessor {
 
   /** This contains the currently open frames. */
   protected static List<MainFrame> _openFrames = new ArrayList<MainFrame>();
@@ -93,7 +94,9 @@ public class MainFrame extends JFrame {
       {"New", "window-new", "New Frame", "New Frame",
         new Runnable() { public void run() { newFrame(); } } },
       {"Open", "document-open", "Open", "Open File",
-        new Runnable() { public void run() { openFileDialog(); } } },
+        new Runnable() {
+          public void run() { openFileDialog(MainFrame.this);
+        } } },
       {"Select Font", "go-next", "Select Font", "Select Font",
         new Runnable() { public void run() { chooseFont(); } } },
       {"Close", "window-close", "Close", "Close Window",
@@ -111,7 +114,9 @@ public class MainFrame extends JFrame {
       new Runnable() { public void run() { newFrame(); } }
     },
     { "Open", KeyEvent.VK_O,
-      new Runnable() { public void run() { openFileDialog(); } }
+      new Runnable() {
+        public void run() { openFileDialog(MainFrame.this); }
+      }
     },
     { "Close",
       KeyStroke.getKeyStroke(Character.valueOf('w'),
@@ -540,7 +545,7 @@ public class MainFrame extends JFrame {
                     @Override
                 public void actionPerformed(ActionEvent e) {
                   String fileName = e.getActionCommand();
-                  MainFrame.this.openFile(new File(fileName));
+                  MainFrame.this.processFile(new File(fileName));
                 }
               }).getMenu());
         }
@@ -622,7 +627,7 @@ public class MainFrame extends JFrame {
     this.setVisible(true);
   }
 
-  public boolean openFile(File toRead) {
+  public boolean processFile(File toRead) {
     Object fileContent = readFileContent(toRead);
     if (fileContent != null) {
       setModel(fileContent);
@@ -638,7 +643,7 @@ public class MainFrame extends JFrame {
     return new FileNameExtensionFilter("txt/xml files only", "txt", "xml");
   }
 
-  protected void openFileDialog() {
+  protected void openFileDialog(FileProcessor proc) {
     // create file chooser for txt files
     JFileChooser fc = new JFileChooser();
     FileNameExtensionFilter fexf = getFileFilter();
@@ -655,7 +660,7 @@ public class MainFrame extends JFrame {
         _currentDir = fc.getSelectedFile().getParentFile();
         // get the object read from this file
         File toRead = fc.getSelectedFile();
-        success = openFile(toRead);
+        success = proc.processFile(toRead);
       }
     } while (! success && returnVal != JFileChooser.CANCEL_OPTION);
   }

@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import de.dfki.lt.loot.gui.MouseListener;
 import de.dfki.lt.loot.gui.ViewContext;
 import de.dfki.lt.loot.gui.layouts.CompactLayout;
 import de.dfki.lt.loot.gui.layouts.Layout;
@@ -29,6 +30,7 @@ public class ModelAdapterFactory {
     logger = Logger.getLogger(ModelAdapterFactory.class);
     _adapterPrototypes = new HashMap<Class, Class>();
     _layoutPrototypes = new HashMap<Class, Class>();
+    _listenerPrototypes = new HashMap<Class, Class>();
     _classes = new ArrayList<Class>();
   }
 
@@ -38,6 +40,8 @@ public class ModelAdapterFactory {
   private static HashMap<Class, Class> _adapterPrototypes;
   @SuppressWarnings("unchecked")
   private static HashMap<Class, Class> _layoutPrototypes;
+  @SuppressWarnings("unchecked")
+  private static HashMap<Class, Class> _listenerPrototypes;
 
   @SuppressWarnings("unchecked")
   private static List<Class> _classes;
@@ -80,6 +84,15 @@ public class ModelAdapterFactory {
       Collections.sort(_classes, new ClassComparator());
     }
     _adapterPrototypes.put(objClass, adapterClass);
+  }
+
+  @SuppressWarnings("unchecked")
+  public static void registerListener(Class objClass, Class listenerClass) {
+    if (!_classes.contains(objClass)) {
+      _classes.add(objClass);
+      Collections.sort(_classes, new ClassComparator());
+    }
+    _listenerPrototypes.put(objClass, listenerClass);
   }
 
 
@@ -132,5 +145,15 @@ public class ModelAdapterFactory {
       return null;
     }
     return (Layout) result;
+  }
+
+  public static MouseListener getListener(Object o) {
+    if (o == null) return null;
+
+    Object result = getPrototype(_listenerPrototypes, o);
+    if (! (result instanceof MouseListener)) {
+      return null;
+    }
+    return (MouseListener) result;
   }
 }

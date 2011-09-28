@@ -96,6 +96,11 @@ implements MouseMotionListener, java.awt.event.MouseListener {
         throw new IllegalArgumentException("No feasible layout or adapter found"
             + " for " + aModel );
       }
+      if (_nodeListeners == null || _nodeListeners.isEmpty()) {
+        MouseListener listener = ModelAdapterFactory.getListener(aModel);
+        if (listener != null)
+          addListener(listener);
+      }
       _model = aModel;
       _context = new ViewContext(aModel, _adapter);
       _root = _layout.computeView(_model, _context);
