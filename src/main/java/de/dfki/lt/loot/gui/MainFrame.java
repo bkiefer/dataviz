@@ -89,6 +89,10 @@ public class MainFrame extends JFrame implements FileProcessor {
   /** This contains the current directory. */
   protected File _currentDir;
 
+  /* *************************************************************************
+   * Button and Menu specifications
+   * *************************************************************************/
+
   protected Object[][] actionSpecs() {
     Object [][] results = {
       {"New", "window-new", "New Frame", "New Frame",
@@ -173,8 +177,11 @@ public class MainFrame extends JFrame implements FileProcessor {
   /** Font chooser dialog */
   protected FontChooser f;
 
+  /** Name of tool bar containing the action buttons */
+  protected String _toolBarName = "Main Tools";
+
   /** Action Buttons */
-  protected ArrayList<JButton> _actionButtons;
+  protected ArrayList<JButton> _actionButtons = new ArrayList<JButton>();
 
   protected static String _defaultFont = "Monospace";
   protected static String _iconPath = null;
@@ -469,11 +476,16 @@ public class MainFrame extends JFrame implements FileProcessor {
     return button;
   }
 
-  /** This initializes the menu bar. */
-  protected JToolBar newMainToolBar() {
-    _actionButtons = new ArrayList<JButton>();
-    JToolBar toolBar = new JToolBar("Content Planner Tools");
-    Object [][] specs = actionSpecs();
+  /** This returns a newly created tool bar.
+   *  @param specs        the Action specifications for this tool bar
+   *  @param toolBarName  the name of the tool bar
+   *  @param buttons      [IN/OUT] the list of buttons created for this tool
+   *                      bar, to be able to access them directly.
+   *                      TODO this should be changed using Swing Actions
+   */
+  public JToolBar newToolBar(Object [][] specs, String toolBarName,
+    List<JButton> buttons) {
+    JToolBar toolBar = new JToolBar(toolBarName);
     if (specs == null) return null;
     for (Object[] spec : specs) {
       if (spec[1] != null) {
@@ -488,7 +500,7 @@ public class MainFrame extends JFrame implements FileProcessor {
                  }
               }
           );
-        _actionButtons.add(newButton);
+        buttons.add(newButton);
         toolBar.add(newButton);
       }
     }
@@ -608,7 +620,7 @@ public class MainFrame extends JFrame implements FileProcessor {
 
     // create menu bar
     this.newMainMenuBar();
-    JToolBar toolBar = newMainToolBar();
+    JToolBar toolBar = newToolBar(actionSpecs(), _toolBarName, _actionButtons);
     if (toolBar != null) {
       this.add(toolBar, BorderLayout.NORTH);
     }
