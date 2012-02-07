@@ -44,7 +44,7 @@ public abstract class ModelAdapter {
     throw new UnsupportedOperationException();
   };
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings("rawtypes")
   public Iterable getTreeDaughters(Object model){
     throw new UnsupportedOperationException();
   };
@@ -52,7 +52,7 @@ public abstract class ModelAdapter {
   /* -- Graph -- */
 
   /** Get all the vertices in this graph */
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings("rawtypes")
   public Iterable getVertices(Object model) {
     throw new UnsupportedOperationException();
   }
@@ -60,7 +60,7 @@ public abstract class ModelAdapter {
   /** Get the list of edges out of a vertex. An edge is an object of its own,
    * but besides the target vertex, it can only contain attribute information.
    */
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings("rawtypes")
   public Iterable outEdges(Object edge) {
     throw new UnsupportedOperationException();
   }

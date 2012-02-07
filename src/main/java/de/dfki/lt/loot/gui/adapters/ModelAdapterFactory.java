@@ -25,7 +25,7 @@ public class ModelAdapterFactory {
     registerLayout(Object.class, CompactLayout.class);
   }
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings("rawtypes")
   private static void init() {
     logger = Logger.getLogger(ModelAdapterFactory.class);
     _adapterPrototypes = new HashMap<Class, Class>();
@@ -36,18 +36,18 @@ public class ModelAdapterFactory {
 
   private static Logger logger;
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings("rawtypes")
   private static HashMap<Class, Class> _adapterPrototypes;
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings("rawtypes")
   private static HashMap<Class, Class> _layoutPrototypes;
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings("rawtypes")
   private static HashMap<Class, Class> _listenerPrototypes;
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings("rawtypes")
   private static List<Class> _classes;
 
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings("rawtypes")
   private static class ClassComparator implements Comparator<Class> {;
     @Override
     public int compare(Class o1, Class o2) {
@@ -68,7 +68,7 @@ public class ModelAdapterFactory {
   }
 
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings("rawtypes")
   public static void registerLayout(Class objClass, Class layoutClass) {
     if (!_classes.contains(objClass)) {
       _classes.add(objClass);
@@ -77,7 +77,7 @@ public class ModelAdapterFactory {
     _layoutPrototypes.put(objClass, layoutClass);
   }
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings("rawtypes")
   public static void registerAdapter(Class objClass, Class adapterClass) {
     if (!_classes.contains(objClass)) {
       _classes.add(objClass);
@@ -86,7 +86,7 @@ public class ModelAdapterFactory {
     _adapterPrototypes.put(objClass, adapterClass);
   }
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings("rawtypes")
   public static void registerListener(Class objClass, Class listenerClass) {
     if (!_classes.contains(objClass)) {
       _classes.add(objClass);
@@ -96,7 +96,7 @@ public class ModelAdapterFactory {
   }
 
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings("rawtypes")
   private static Object getPrototype(HashMap<Class, Class> protos, Object o) {
     for (Class c : _classes) {
       if (c.isInstance(o)) {

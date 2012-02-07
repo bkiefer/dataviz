@@ -92,7 +92,7 @@ public class DOMAdapter extends ModelAdapter {
     return null;
   };
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings("rawtypes")
   protected class NodeListIterable implements Iterable {
     private NodeList _list;
     private int _current;
@@ -131,7 +131,7 @@ public class DOMAdapter extends ModelAdapter {
   }
 
   @Override
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings("rawtypes")
   public Iterable getTreeDaughters(Object model){
     if (model instanceof Document) {
       model = ((Document) model).getDocumentElement();

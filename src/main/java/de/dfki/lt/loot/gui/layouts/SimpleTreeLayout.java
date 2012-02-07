@@ -68,7 +68,7 @@ public class SimpleTreeLayout extends FacetLayoutBase {
     return result;
   }
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings("rawtypes")
   private GraphicalNode
   transformTreeInner(Object model, ViewContext context,
                      GraphNode graphNode, int facetMask) {

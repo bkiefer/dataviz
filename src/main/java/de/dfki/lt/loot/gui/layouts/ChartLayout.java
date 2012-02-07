@@ -21,7 +21,7 @@ public class ChartLayout implements Layout {
   /** A DFS that adds node in inverse finishing order to the result list. Thus,
    *  the nodes in result are topologically sorted after this method returns
    */
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings("rawtypes")
   private void DFS_inv_finish_add(Object vertex,
       IdentityHashMap<Object, Boolean> visited, List<GraphicalNode> result,
       GraphNode modelNode) {
@@ -79,7 +79,7 @@ public class ChartLayout implements Layout {
      *  while an edge with children will get the maximum level of its children,
      *  plus one.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     public int computeTreeLevel(IdentityHashMap<Object, ChartEdge> edgeLevel) {
       if (level >= 0) {
         return level;
@@ -118,7 +118,7 @@ public class ChartLayout implements Layout {
    *  and Connectors, while the algorithm puts them into their final places,
    *  eventually with hints already given in this method.
    */
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({ "rawtypes", "unchecked" })
   @Override
   public GraphicalNode computeView(Object model, ViewContext context) {
     _context = context;

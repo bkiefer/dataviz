@@ -7,7 +7,7 @@ import java.util.Stack;
 
 import de.dfki.lt.loot.Pair;
 
-@SuppressWarnings("unchecked")
+@SuppressWarnings("rawtypes")
 public class CollectionsAdapter extends ModelAdapter {
 
   public static void init() {
