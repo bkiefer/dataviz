@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.concurrent.Semaphore;
 import java.util.zip.GZIPInputStream;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -34,6 +36,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
@@ -192,6 +195,9 @@ public class MainFrame extends JFrame implements FileProcessor {
 
   /** displays error and status information */
   protected JLabel _statusLine;
+
+  /** To use if needed to display progress information */
+  protected JProgressBar _progressBar;
 
   /** This contains the content area. */
   protected DrawingPanel _contentArea;
@@ -624,9 +630,19 @@ public class MainFrame extends JFrame implements FileProcessor {
     if (toolBar != null) {
       this.add(toolBar, BorderLayout.NORTH);
     }
-    // add statusline
-    _statusLine = new JLabel();
-    contentPane.add(_statusLine, BorderLayout.SOUTH);
+
+    // add statusline and optional progress bar
+    _statusLine = new JLabel(" ");
+    _progressBar = new JProgressBar(0, 0);
+    JPanel bottomLine = new JPanel();
+    bottomLine.setLayout(new BoxLayout(bottomLine, BoxLayout.LINE_AXIS));
+    bottomLine.add(_statusLine);
+    bottomLine.add(Box.createHorizontalGlue());
+    bottomLine.add(_progressBar);
+    _progressBar.setAlignmentY(CENTER_ALIGNMENT);
+    _progressBar.setVisible(false);
+
+    contentPane.add(bottomLine, BorderLayout.SOUTH);
     clearStatusLine();
 
     // add this frame to the list of open frames
@@ -637,6 +653,22 @@ public class MainFrame extends JFrame implements FileProcessor {
     // display the frame
     this.pack();
     this.setVisible(true);
+  }
+
+  private void handleProgressBar(Dimension dim, boolean show) {
+    _progressBar.setPreferredSize(dim);
+    _progressBar.setMaximumSize(dim);
+    _progressBar.setVisible(show);
+  }
+
+  public void showProgressBar() {
+    handleProgressBar(
+        new Dimension(100, (int)(_statusLine.getHeight() * .8)),
+        true);
+  }
+
+  public void hideProgressBar() {
+    handleProgressBar(new Dimension(0, 0), false);
   }
 
   public boolean processFile(File toRead) {
