@@ -56,6 +56,7 @@ import de.dfki.lt.loot.gui.util.HistoryView;
 import de.dfki.lt.loot.gui.util.IniFileReader;
 import de.dfki.lt.loot.gui.util.IniFileWriter;
 import de.dfki.lt.loot.gui.util.InputHistory;
+import de.dfki.lt.loot.gui.util.ProgressListener;
 
 /**
  * <code>MainFrame</code> defines the main window of the application.
@@ -405,6 +406,46 @@ public class MainFrame extends JFrame implements FileProcessor {
   }
 
   /* **********************************************************************
+   * Handling of hideable progress bar (in the bottom (status) part)
+   * ********************************************************************** */
+
+  /* Helper method for show/hide */
+  private void handleProgressBar(Dimension dim, boolean show) {
+    _progressBar.setPreferredSize(dim);
+    _progressBar.setMaximumSize(dim);
+    _progressBar.setVisible(show);
+  }
+
+  /** Show the progress bar */
+  public void showProgressBar() {
+    handleProgressBar(
+        new Dimension(100, (int)(_statusLine.getHeight() * .8)),
+        true);
+  }
+
+  /** return a new Listener for the progress bar.
+   *  The setMaximum method is for initialization, the progress method is the
+   *  `listen' method, so to say.
+   */
+  public ProgressListener getProgressBarListener() {
+    return new ProgressListener() {
+      public void setMaximum(int max) {
+        _progressBar.setMaximum(max);
+        _progressBar.setValue(0);
+      }
+
+      public void progress(int value) {
+        _progressBar.setValue(value);
+      }
+    };
+  }
+
+  /** Hide the progress bar */
+  public void hideProgressBar() {
+    handleProgressBar(new Dimension(0, 0), false);
+  }
+
+  /* **********************************************************************
    * Initialization / Creation
    * ********************************************************************** */
 
@@ -653,22 +694,6 @@ public class MainFrame extends JFrame implements FileProcessor {
     // display the frame
     this.pack();
     this.setVisible(true);
-  }
-
-  private void handleProgressBar(Dimension dim, boolean show) {
-    _progressBar.setPreferredSize(dim);
-    _progressBar.setMaximumSize(dim);
-    _progressBar.setVisible(show);
-  }
-
-  public void showProgressBar() {
-    handleProgressBar(
-        new Dimension(100, (int)(_statusLine.getHeight() * .8)),
-        true);
-  }
-
-  public void hideProgressBar() {
-    handleProgressBar(new Dimension(0, 0), false);
   }
 
   public boolean processFile(File toRead) {
