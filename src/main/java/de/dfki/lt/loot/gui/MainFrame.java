@@ -95,6 +95,8 @@ public class MainFrame extends JFrame implements FileProcessor {
 
   /* *************************************************************************
    * Button and Menu specifications
+   * 
+   * Implemented as methods to avoid the bogus fields in derived classes
    * *************************************************************************/
 
   protected Object[][] actionSpecs() {
@@ -804,7 +806,7 @@ public class MainFrame extends JFrame implements FileProcessor {
   }
 
   protected void warningDialog(String string) {
-    JOptionPane.showMessageDialog(this, string, "Error",
+    JOptionPane.showMessageDialog(this, string, "Warning",
         JOptionPane.WARNING_MESSAGE);
   }
 
