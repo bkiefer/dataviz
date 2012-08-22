@@ -1,5 +1,7 @@
 package de.dfki.lt.loot.gui;
 
+import static org.junit.Assert.*;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
@@ -8,6 +10,8 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import org.junit.Test;
 
 import de.dfki.lt.loot.gui.adapters.CollectionsAdapter;
 import de.dfki.lt.loot.gui.adapters.DOMAdapter;
@@ -23,16 +27,16 @@ import de.dfki.lt.loot.gui.layouts.CompactLayout;
 import de.dfki.lt.loot.gui.layouts.Layout;
 import de.dfki.lt.loot.gui.layouts.LayoutAlgorithm;
 import de.dfki.lt.loot.gui.layouts.mxCompactTreeLayout;
+import de.dfki.lt.loot.gui.nodes.AligningNode;
 import de.dfki.lt.loot.gui.nodes.AngleBracketNode;
 import de.dfki.lt.loot.gui.nodes.BraceBracketNode;
-import de.dfki.lt.loot.gui.nodes.AligningNode;
+import de.dfki.lt.loot.gui.nodes.BracketNode.Orientation;
 import de.dfki.lt.loot.gui.nodes.GraphNode;
 import de.dfki.lt.loot.gui.nodes.GraphicalNode;
 import de.dfki.lt.loot.gui.nodes.ParenBracketNode;
 import de.dfki.lt.loot.gui.nodes.SquareBracketNode;
 import de.dfki.lt.loot.gui.nodes.TabularNode;
 import de.dfki.lt.loot.gui.nodes.TextNode;
-import de.dfki.lt.loot.gui.nodes.BracketNode.Orientation;
 
 class TestNodesLayout implements Layout {
   public GraphicalNode computeView(Object model, ViewContext ctxt) {
@@ -513,7 +517,7 @@ public class DisplayTest {
         TypedFeatStruct tfs3 = new TypedFeatStruct("type3");
 
         tfs1.addFeatValPair(new FeatValPair("feat1", tfs2));
-        tfs1.addFeatValPair(new FeatValPair("feat2", tfs3));
+        tfs1.addFeatValPair(new FeatValPair("feat2", tTestNodesLayoutfs3));
         tfs2.addFeatValPair(new FeatValPair("feat3", tfs3));
         tfs3.addFeatValPair(new FeatValPair("feat4", "Val1"));
 
@@ -533,4 +537,6 @@ public class DisplayTest {
       }
     }
   }
+  
+  @Test public void testDisplay() {}
 }
