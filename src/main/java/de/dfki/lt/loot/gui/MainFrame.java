@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.concurrent.Semaphore;
 import java.util.zip.GZIPInputStream;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -99,62 +101,146 @@ public class MainFrame extends JFrame implements FileProcessor {
    * Implemented as methods to avoid the bogus fields in derived classes
    * *************************************************************************/
 
-  protected Object[][] actionSpecs() {
-    Object [][] results = {
-      {"New", "window-new", "New Frame", "New Frame",
-        new Runnable() { public void run() { newFrame(); } } },
-      {"Open", "document-open", "Open", "Open File",
-        new Runnable() {
-          public void run() { openFileDialog(MainFrame.this);
-        } } },
-      {"Select Font", "go-next", "Select Font", "Select Font",
-        new Runnable() { public void run() { chooseFont(); } } },
-      {"Close", "window-close", "Close", "Close Window",
-        new Runnable() { public void run() { close(); } } },
-      {"Quit", "application-exit", "Quit", "Quit",
-        new Runnable() { public void run() { closeAll(); } } },
+  private static String iconUrl(String name) {
+    String imgLocation = _iconPath + "24x24/actions/" + name + ".png";
+    // URL imageURL = MainFrame.class.getResource(imgLocation);
+    if (new File(imgLocation).exists()) {
+      return imgLocation;
+    }
+    return null;
+  }
+  
+  public static class RunnableAction extends AbstractAction {
+    private Runnable _r;
+    
+    public RunnableAction(String title, String iconName, String toolTipText,
+        String altText, Object key, Runnable r) {
+      super(title);
+      if (iconName != null) {
+        String iconFileName = iconUrl(iconName);
+        if (iconFileName != null) {
+          putValue(SMALL_ICON, new ImageIcon(iconFileName, altText));
+        }
+      }
+      putValue(SHORT_DESCRIPTION, toolTipText);
+      if (key != null)
+        putValue(ACCELERATOR_KEY, key);
+      _r = r;
+    }
+    
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      _r.run();
+    }
+  }
+  
+  protected class MyMenu extends JMenu {
+    public MyMenu(String title, Object key, Object ... menuItems) {
+      super(title);
+      if (key != null)
+        setMnemonic((Integer)key);
+      
+      for (Object spec : menuItems) {
+        if (spec == null) {
+          addSeparator();
+        } else if (spec instanceof RunnableAction) {
+          JMenuItem item = add((Action) spec);
+          item.setIcon(null);  // currently, no icons for menus
+        } else if (spec instanceof JMenuItem) {
+          add((JMenuItem) spec);
+        }
+      }
+    }
+  }
+  
+  protected RunnableAction newAction() {
+    return new RunnableAction(
+      "New", "window-new", "New Frame", "New Frame",
+      KeyStroke.getKeyStroke(Character.valueOf('n'), InputEvent.ALT_DOWN_MASK),
+      new Runnable() { public void run() { newFrame(); } });
+  }
+    
+  protected RunnableAction closeAction() {
+    return new RunnableAction(
+      "Close", "window-close", "Close", "Close Window",
+      KeyStroke.getKeyStroke(Character.valueOf('w'),
+          InputEvent.META_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK),
+          new Runnable() { public void run() { close(); } });
+  }
+    
+  protected RunnableAction openAction() {
+    return new RunnableAction(
+      "Open", "document-open", "Open", "Open File",
+      KeyStroke.getKeyStroke((char)KeyEvent.VK_O),
+      new Runnable() { public void run() { openFileDialog(MainFrame.this); } });
+  }
+  
+  protected RunnableAction chooseFontAction() {
+    return new RunnableAction(
+      "Select Font", "go-next", "Select Font", "Select Font", null,
+      new Runnable() { public void run() { chooseFont(); } });
+  }
+  
+  protected RunnableAction exitAction() {
+    return new RunnableAction(
+      "Quit", "application-exit", "Quit", "Quit",
+      KeyStroke.getKeyStroke(Character.valueOf('a'), InputEvent.ALT_DOWN_MASK),
+      new Runnable() { public void run() { closeAll(); } });
+  }
+  
+  protected RunnableAction loadHistoryAction() {
+    return new RunnableAction(
+      "Load History", null, "Load History", "Load History", null,
+      new Runnable() { public void run() { loadHistory(); } });
+  }
+  
+  protected RunnableAction saveHistoryAction() {
+    return new RunnableAction(
+      "Save History", null, "Save History", "Save History", null,
+      new Runnable() { public void run() { saveHistory(); } });
+  }
+  
+  protected RunnableAction clearHistoryAction() {
+    return new RunnableAction(
+      "Clear History", null, "Clear History", "Clear History", null,
+      new Runnable() { public void run() { _history.clear(); } });
+  }
+  
+  protected JMenu recentFiles() {
+    return new HistoryView("Recent Files", _recentFiles, null,
+        new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            String fileName = e.getActionCommand();
+            MainFrame.this.processFile(new File(fileName));
+          }
+        }).getMenu();
+  }
+  
+  protected RunnableAction[] actionSpecs() {
+    RunnableAction[] results = {
+        newAction(), openAction(), chooseFontAction(), closeAction(),
+        exitAction(),
     };
     return results;
   }
 
-  protected Object[][] menuSpecs() {
-    Object [][] results = {
-    { "New",
-      KeyStroke.getKeyStroke(Character.valueOf('n'), InputEvent.ALT_DOWN_MASK),
-      new Runnable() { public void run() { newFrame(); } }
-    },
-    { "Open", KeyEvent.VK_O,
-      new Runnable() {
-        public void run() { openFileDialog(MainFrame.this); }
-      }
-    },
-    { "Close",
-      KeyStroke.getKeyStroke(Character.valueOf('w'),
-          InputEvent.META_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK),
-      new Runnable() { public void run() { close(); } }
-    },
-    { null },
-    { "Recent Files", null, null },
-    { null },
-    { "Select Font", null,
-      new Runnable() { public void run() { chooseFont(); } }
-    },
-    /*
-    { "Load History", null,
-      new Runnable() { public void run() { loadHistory(); } } },
-    { "Save History", null,
-      new Runnable() { public void run() { saveHistory(); } } },
-    { "Clear History", null,
-      new Runnable() { public void run() { _history.clear(); } } },
-    { null },
-    */
-    {"Exit",
-      KeyStroke.getKeyStroke(Character.valueOf('a'),
-          InputEvent.ALT_DOWN_MASK),
-      new Runnable() { public void run() { closeAll(); } }
-    }
+  protected MyMenu[] menuSpecs(RunnableAction[] toolBarAction) {
+    Object[] fileSpecs = {
+    toolBarAction[0],
+    toolBarAction[1],
+    toolBarAction[3],
+    null,
+    recentFiles(),
+    null,
+    toolBarAction[2],
+    // loadHistoryAction, saveHistoryAction, clearHistoryAction, separator
+    toolBarAction[4],
     };
-    return results;
+    MyMenu[] menuBarSpecs = {
+        new MyMenu("File", KeyEvent.VK_F, fileSpecs),
+    };
+    return menuBarSpecs;
   }
 
   /* *************************************************************************
@@ -425,6 +511,11 @@ public class MainFrame extends JFrame implements FileProcessor {
         true);
   }
 
+  /** Hide the progress bar */
+  public void hideProgressBar() {
+    handleProgressBar(new Dimension(0, 0), false);
+  }
+
   /** return a new Listener for the progress bar.
    *  The setMaximum method is for initialization, the progress method is the
    *  `listen' method, so to say.
@@ -440,11 +531,6 @@ public class MainFrame extends JFrame implements FileProcessor {
         _progressBar.setValue(value);
       }
     };
-  }
-
-  /** Hide the progress bar */
-  public void hideProgressBar() {
-    handleProgressBar(new Dimension(0, 0), false);
   }
 
   /* **********************************************************************
@@ -532,13 +618,13 @@ public class MainFrame extends JFrame implements FileProcessor {
    *                      bar, to be able to access them directly.
    *                      TODO this should be changed using Swing Actions
    */
-  public JToolBar newToolBar(Object [][] specs, String toolBarName,
+  public JToolBar newToolBar0(Object [][] specs, String toolBarName,
     List<JButton> buttons) {
     JToolBar toolBar = new JToolBar(toolBarName);
     if (specs == null) return null;
     for (Object[] spec : specs) {
       if (spec[1] != null) {
-        final Runnable r = (Runnable) spec[4];
+        final Runnable r = (Runnable) spec[5];
         JButton newButton =
           newButton((String) spec[1],(String) spec[0],
               (String) spec[2],(String) spec[3],
@@ -556,7 +642,29 @@ public class MainFrame extends JFrame implements FileProcessor {
     return toolBar;
   }
 
-
+  /** This returns a newly created tool bar.
+   *  @param specs        the Action specifications for this tool bar
+   *  @param toolBarName  the name of the tool bar
+   *  @param buttons      [IN/OUT] the list of buttons created for this tool
+   *                      bar, to be able to access them directly.
+   *                      TODO this should be changed using Swing Actions
+   */
+  public JToolBar newToolBar(RunnableAction[] specs, String toolBarName,
+      List<JButton> buttons) {
+    JToolBar toolBar = new JToolBar(toolBarName);
+    for (RunnableAction spec : specs) {
+      JButton newButton = new JButton(spec);
+      if (newButton.getIcon() != null) {
+        newButton.setText(null);
+      }
+      buttons.add(newButton);
+      toolBar.add(newButton);
+    }
+    return toolBar;
+  }
+ 
+      
+      
   /** Create a new menu item out from name and key spec and add it to the
    *  given menu
    */
@@ -576,43 +684,16 @@ public class MainFrame extends JFrame implements FileProcessor {
   }
 
 
-  /** This initializes the menu bar. */
-  protected void newMainMenuBar() {
+  /** This initialises the menu bar. */
+  protected void newMainMenuBar(RunnableAction[] actions) {
     // create the menu bar
     JMenuBar menuBar = new JMenuBar();
     menuBar.setOpaque(true);
     menuBar.setPreferredSize(new Dimension(400, 20));
 
-    // create the 'File' menu
-    JMenu menu = new JMenu("File");
-    menu.setMnemonic(KeyEvent.VK_F);
-    menuBar.add(menu);
-
-    for (Object[] spec : menuSpecs()) {
-      if (spec[0] != null) {
-        if (spec[2] != null) {
-          final Runnable r = (Runnable) spec[2];
-          newMenuItem(menu, (String) spec[0], spec[1], new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) { r.run(); }
-          });
-        } else {
-          if (_recentFiles == null) {
-            _recentFiles = new InputHistory(5);
-          }
-          newMenuItem(menu, (String) spec[0], spec[1],
-              new HistoryView("Recent Files", _recentFiles, null,
-                  new ActionListener() {
-                    @Override
-                public void actionPerformed(ActionEvent e) {
-                  String fileName = e.getActionCommand();
-                  MainFrame.this.processFile(new File(fileName));
-                }
-              }).getMenu());
-        }
-      } else {
-        menu.addSeparator();
-      }
+    for (MyMenu menu : menuSpecs(actions)) {
+      // create the 'File' menu
+      menuBar.add(menu);
     }
 
     if (_history != null) {
@@ -668,8 +749,12 @@ public class MainFrame extends JFrame implements FileProcessor {
     this.setContentPane(contentPane);
 
     // create menu bar
-    this.newMainMenuBar();
-    JToolBar toolBar = newToolBar(actionSpecs(), _toolBarName, _actionButtons);
+    if (_recentFiles == null) {
+      _recentFiles = new InputHistory(5);
+    }
+    RunnableAction[] actions = actionSpecs();
+    this.newMainMenuBar(actions);
+    JToolBar toolBar = newToolBar(actions, _toolBarName, _actionButtons);
     if (toolBar != null) {
       this.add(toolBar, BorderLayout.NORTH);
     }
@@ -699,13 +784,16 @@ public class MainFrame extends JFrame implements FileProcessor {
   }
 
   public boolean processFile(File toRead) {
-    Object fileContent = readFileContent(toRead);
-    if (fileContent != null) {
-      setModel(fileContent);
-      return true;
-    }
-    else {
-      errorDialog("File content of " + toRead + " could not be read");
+    try {
+      Object fileContent = readFileContent(toRead);
+      if (fileContent != null) {
+        setModel(fileContent);
+        return true;
+      }
+    } catch (IOException ex) {
+      errorDialog("File content of " + toRead + " could not be read:\n"
+          + ((ex.getCause() != null)
+              ? ex.getCause().toString() : ex.toString()));
     }
     return false;
   }
@@ -764,7 +852,7 @@ public class MainFrame extends JFrame implements FileProcessor {
     return null;
   }
 
-  public Object readFileContent(File fileToOpen) {
+  public Object readFileContent(File fileToOpen) throws IOException {
     // add some smart code to assess the file type and call the right `open'
     // method
     if (! fileToOpen.exists()) {
@@ -784,17 +872,11 @@ public class MainFrame extends JFrame implements FileProcessor {
     if (! extension.isEmpty()) {
       ObjectReader r = _associations.get(extension);
       if (r != null) {
-        try {
-          InputStream in = new FileInputStream(fileToOpen);
-          if (uncompress) {
-            in = new GZIPInputStream(in);
-          }
-          result = r.read(in);
+        InputStream in = new FileInputStream(fileToOpen);
+        if (uncompress) {
+          in = new GZIPInputStream(in);
         }
-        catch (IOException ioex) {
-          System.err.println(ioex);
-          result = null;
-        }
+        result = r.read(in);
       }
     }
     return result;
