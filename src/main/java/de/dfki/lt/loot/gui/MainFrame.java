@@ -286,7 +286,7 @@ public class MainFrame extends JFrame {
   protected DrawingPanel _contentArea;
   
   /** A generic file handler */
-  protected GenericFileProcessor _fileProcessor;
+  protected GenericFileProcessor _fileProcessor = new GenericFileProcessor();
 
   /* **********************************************************************
    * Window closing functionality
