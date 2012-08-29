@@ -43,7 +43,7 @@ import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.filechooser.FileFilter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -52,12 +52,14 @@ import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import de.dfki.lt.loot.ObjectReader;
+import de.dfki.lt.loot.gui.util.FileAssociation;
 import de.dfki.lt.loot.gui.util.FileProcessor;
+import de.dfki.lt.loot.gui.util.GenericFileProcessor;
 import de.dfki.lt.loot.gui.util.HistoryView;
 import de.dfki.lt.loot.gui.util.IniFileReader;
 import de.dfki.lt.loot.gui.util.IniFileWriter;
 import de.dfki.lt.loot.gui.util.InputHistory;
+import de.dfki.lt.loot.gui.util.ObjectHandler;
 import de.dfki.lt.loot.gui.util.ProgressListener;
 
 /**
@@ -69,24 +71,12 @@ import de.dfki.lt.loot.gui.util.ProgressListener;
  * @version $Id: MainFrame.java 222 2009-01-29 13:51:16Z jost02 $
  */
 @SuppressWarnings("serial")
-public class MainFrame extends JFrame implements FileProcessor {
+public class MainFrame extends JFrame {
+  
+  private static final Logger logger = Logger.getLogger(MainFrame.class);
 
   /** This contains the currently open frames. */
   protected static List<MainFrame> _openFrames = new ArrayList<MainFrame>();
-
-  /** Associates file extensions with input readers */
-  private static HashMap<String, ObjectReader> _associations;
-
-  static {
-    _associations = new HashMap<String, ObjectReader>();
-    MainFrame.addFileAssociation("xml",
-        new ObjectReader() {
-      @Override
-      public Object read(InputStream in) throws IOException {
-        return MainFrame.readXmlFile(in);
-      }
-    });
-  }
 
   /** These listeners are called when the last frame has been closed */
   protected static List<CloseAllListener> clAll =
@@ -172,7 +162,7 @@ public class MainFrame extends JFrame implements FileProcessor {
     return new RunnableAction(
       "Open", "document-open", "Open", "Open File",
       KeyStroke.getKeyStroke((char)KeyEvent.VK_O),
-      new Runnable() { public void run() { openFileDialog(MainFrame.this); } });
+      new Runnable() { public void run() { openFileDialog(_fileProcessor); } });
   }
   
   protected RunnableAction chooseFontAction() {
@@ -212,7 +202,11 @@ public class MainFrame extends JFrame implements FileProcessor {
           @Override
           public void actionPerformed(ActionEvent e) {
             String fileName = e.getActionCommand();
-            MainFrame.this.processFile(new File(fileName));
+            try {
+              _fileProcessor.processFile(new File(fileName));
+            } catch (IOException ex) {
+              errorDialog("Problem during file processing:\n" + ex);
+            }
           }
         }).getMenu();
   }
@@ -290,6 +284,9 @@ public class MainFrame extends JFrame implements FileProcessor {
 
   /** This contains the content area. */
   protected DrawingPanel _contentArea;
+  
+  /** A generic file handler */
+  protected GenericFileProcessor _fileProcessor;
 
   /* **********************************************************************
    * Window closing functionality
@@ -431,6 +428,60 @@ public class MainFrame extends JFrame implements FileProcessor {
     _statusLine.setText(msg);
   }
 
+  protected void errorDialog(String string) {
+    JOptionPane.showMessageDialog(this, string, "Error",
+        JOptionPane.ERROR_MESSAGE);
+  }
+
+  protected void warningDialog(String string) {
+    JOptionPane.showMessageDialog(this, string, "Warning",
+        JOptionPane.WARNING_MESSAGE);
+  }
+
+  protected void reportProblem(String msg) {
+    warningDialog(msg);
+  }
+
+  /* **********************************************************************
+   * Handling of hideable progress bar (in the bottom (status) part)
+   * ********************************************************************** */
+
+  /* Helper method for show/hide */
+  private void handleProgressBar(Dimension dim, boolean show) {
+    _progressBar.setPreferredSize(dim);
+    _progressBar.setMaximumSize(dim);
+    _progressBar.setVisible(show);
+  }
+
+  /** Show the progress bar */
+  public void showProgressBar() {
+    handleProgressBar(
+        new Dimension(100, (int)(_statusLine.getHeight() * .8)),
+        true);
+  }
+
+  /** Hide the progress bar */
+  public void hideProgressBar() {
+    handleProgressBar(new Dimension(0, 0), false);
+  }
+
+  /** return a new Listener for the progress bar.
+   *  The setMaximum method is for initialization, the progress method is the
+   *  `listen' method, so to say.
+   */
+  public ProgressListener getProgressBarListener() {
+    return new ProgressListener() {
+      public void setMaximum(int max) {
+        _progressBar.setMaximum(max);
+        _progressBar.setValue(0);
+      }
+
+      public void progress(int value) {
+        _progressBar.setValue(value);
+      }
+    };
+  }
+
   /* **********************************************************************
    * Action methods
    * ********************************************************************** */
@@ -494,46 +545,6 @@ public class MainFrame extends JFrame implements FileProcessor {
   }
 
   /* **********************************************************************
-   * Handling of hideable progress bar (in the bottom (status) part)
-   * ********************************************************************** */
-
-  /* Helper method for show/hide */
-  private void handleProgressBar(Dimension dim, boolean show) {
-    _progressBar.setPreferredSize(dim);
-    _progressBar.setMaximumSize(dim);
-    _progressBar.setVisible(show);
-  }
-
-  /** Show the progress bar */
-  public void showProgressBar() {
-    handleProgressBar(
-        new Dimension(100, (int)(_statusLine.getHeight() * .8)),
-        true);
-  }
-
-  /** Hide the progress bar */
-  public void hideProgressBar() {
-    handleProgressBar(new Dimension(0, 0), false);
-  }
-
-  /** return a new Listener for the progress bar.
-   *  The setMaximum method is for initialization, the progress method is the
-   *  `listen' method, so to say.
-   */
-  public ProgressListener getProgressBarListener() {
-    return new ProgressListener() {
-      public void setMaximum(int max) {
-        _progressBar.setMaximum(max);
-        _progressBar.setValue(0);
-      }
-
-      public void progress(int value) {
-        _progressBar.setValue(value);
-      }
-    };
-  }
-
-  /* **********************************************************************
    * Initialization / Creation
    * ********************************************************************** */
 
@@ -558,7 +569,7 @@ public class MainFrame extends JFrame implements FileProcessor {
         }
       }
       catch (IOException ioex) {
-        Logger.getRootLogger().warn("Error reading preferences file: "
+        logger.warn("Error reading preferences file: "
             + ioex.getLocalizedMessage());
       }
     }
@@ -578,8 +589,8 @@ public class MainFrame extends JFrame implements FileProcessor {
             pref.close();
         }
       } catch (IOException ioex) {
-        Logger.getRootLogger().warn(
-            "Error writing preferences file: " + ioex.getLocalizedMessage());
+        logger.warn("Error writing preferences file: "
+            + ioex.getLocalizedMessage());
       }
     }
   }
@@ -616,7 +627,8 @@ public class MainFrame extends JFrame implements FileProcessor {
    *  @param toolBarName  the name of the tool bar
    *  @param buttons      [IN/OUT] the list of buttons created for this tool
    *                      bar, to be able to access them directly.
-   *                      TODO this should be changed using Swing Actions
+   *  TODO this should be removed soon, since it has been replaced by the method
+   *  using actions
    */
   public JToolBar newToolBar0(Object [][] specs, String toolBarName,
     List<JButton> buttons) {
@@ -647,7 +659,9 @@ public class MainFrame extends JFrame implements FileProcessor {
    *  @param toolBarName  the name of the tool bar
    *  @param buttons      [IN/OUT] the list of buttons created for this tool
    *                      bar, to be able to access them directly.
-   *                      TODO this should be changed using Swing Actions
+   *                      TODO: this parameter is not needed anymore, since
+   *                      the state changes in the buttons should be done via
+   *                      the Actions
    */
   public JToolBar newToolBar(RunnableAction[] specs, String toolBarName,
       List<JButton> buttons) {
@@ -744,6 +758,9 @@ public class MainFrame extends JFrame implements FileProcessor {
     setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
     this.addWindowListener(new Terminator());
 
+    // add file associations known to this frame class
+    addAssociations();
+    
     // create content panel and add it to the frame
     JPanel contentPane = new JPanel(new BorderLayout());
     this.setContentPane(contentPane);
@@ -783,29 +800,31 @@ public class MainFrame extends JFrame implements FileProcessor {
     this.setVisible(true);
   }
 
-  public boolean processFile(File toRead) {
-    try {
-      Object fileContent = readFileContent(toRead);
-      if (fileContent != null) {
-        setModel(fileContent);
-        return true;
-      }
-    } catch (IOException ex) {
-      errorDialog("File content of " + toRead + " could not be read:\n"
-          + ((ex.getCause() != null)
-              ? ex.getCause().toString() : ex.toString()));
-    }
-    return false;
+  public void addFileAssociation(ObjectHandler h, String ... extensions) {
+    _fileProcessor.addFileAssociation(h, extensions);
   }
 
-  protected FileNameExtensionFilter getFileFilter() {
-    return new FileNameExtensionFilter("txt/xml files only", "txt", "xml");
+  protected void addAssociations() {
+    addFileAssociation(new ObjectHandler() {
+      @Override
+      public boolean process(InputStream in) throws IOException {
+        Document d = MainFrame.readXmlFile(in);
+        try {
+          MainFrame.this.setModel(d);
+        } catch (Exception ex) {
+          return false;
+        }
+        return true;
+      }
+      
+      public String toString() { return "Display XML files as tree"; }
+    }, "xml");
   }
 
   protected void openFileDialog(FileProcessor proc) {
     // create file chooser for txt files
     JFileChooser fc = new JFileChooser();
-    FileNameExtensionFilter fexf = getFileFilter();
+    FileFilter fexf = proc.getFileFilter();
     if (fexf != null) {
       fc.addChoosableFileFilter(fexf);
     }
@@ -819,17 +838,24 @@ public class MainFrame extends JFrame implements FileProcessor {
         _currentDir = fc.getSelectedFile().getParentFile();
         // get the object read from this file
         File toRead = fc.getSelectedFile();
-        success = proc.processFile(toRead);
+        if (! toRead.exists()) {
+          errorDialog("No such File: " + toRead);
+          success = false;
+        } else {
+          try {
+            success = proc.processFile(toRead);
+          } catch (IOException ex) {
+            errorDialog("File content of " + toRead + " could not be read:\n"
+                + ((ex.getCause() != null)
+                    ? ex.getCause().toString() : ex.toString()));
+          }
+        }
       }
     } while (! success && returnVal != JFileChooser.CANCEL_OPTION);
   }
 
   public void setModel(Object model) {
     _contentArea.setModel(model);
-  }
-
-  public static void addFileAssociation(String extension, ObjectReader r) {
-    _associations.put(extension, r);
   }
 
   public static Document readXmlFile(InputStream xmlFile) {
@@ -850,50 +876,6 @@ public class MainFrame extends JFrame implements FileProcessor {
       e1.printStackTrace();
     }
     return null;
-  }
-
-  public Object readFileContent(File fileToOpen) throws IOException {
-    // add some smart code to assess the file type and call the right `open'
-    // method
-    if (! fileToOpen.exists()) {
-      errorDialog("No such File: " + fileToOpen);
-      return null;
-    }
-    String fileName = fileToOpen.getName();
-    int lastDot = fileName.lastIndexOf('.');
-    String extension = fileName.substring(fileName.lastIndexOf('.') + 1);
-    boolean uncompress = false;
-    if (extension.equals("gz")) {
-      uncompress = true;
-      int secondLast = fileName.lastIndexOf('.', lastDot - 1);
-      extension = fileName.substring(secondLast + 1, lastDot);
-    }
-    Object result = null;
-    if (! extension.isEmpty()) {
-      ObjectReader r = _associations.get(extension);
-      if (r != null) {
-        InputStream in = new FileInputStream(fileToOpen);
-        if (uncompress) {
-          in = new GZIPInputStream(in);
-        }
-        result = r.read(in);
-      }
-    }
-    return result;
-  }
-
-  protected void errorDialog(String string) {
-    JOptionPane.showMessageDialog(this, string, "Error",
-        JOptionPane.ERROR_MESSAGE);
-  }
-
-  protected void warningDialog(String string) {
-    JOptionPane.showMessageDialog(this, string, "Warning",
-        JOptionPane.WARNING_MESSAGE);
-  }
-
-  protected void reportProblem(String msg) {
-    warningDialog(msg);
   }
 
   public static void main(String args[]) {
