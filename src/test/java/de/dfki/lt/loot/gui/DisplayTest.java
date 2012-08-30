@@ -418,7 +418,7 @@ public class DisplayTest {
               new TestIntersectLayout(),
               new EmptyModelAdapter());
         MainFrame mf = new MainFrame("IntersectTest", contentArea);
-        mf.setModel("Test");
+        ((DrawingPanel)mf.getContentArea()).setModel("Test");
         break;
       }
       case 2: {
@@ -442,14 +442,14 @@ public class DisplayTest {
         DrawingPanel dp = new DrawingPanel(new CompactLayout(), ma);
         dp.addListener(new ClickHighlightListener());
         MainFrame mf = new MainFrame("CollectionsTest", dp);
-        mf.setModel(tfs1);
+        ((DrawingPanel)mf.getContentArea()).setModel(tfs1);
         break;
       }
       case 3: {
         DrawingPanel contentArea =
           new DrawingPanel(new TestNodesLayout(), new EmptyModelAdapter());
         MainFrame mf = new MainFrame("NodeTest", contentArea);
-        mf.setModel("Test");
+        ((DrawingPanel)mf.getContentArea()).setModel("Test");
         break;
       }
       case 4: {
@@ -458,7 +458,7 @@ public class DisplayTest {
               new TestBendConnectors(),
               new EmptyModelAdapter());
         MainFrame mf = new MainFrame("SquareBendTest", contentArea);
-        mf.setModel("SquareBendTest");
+        ((DrawingPanel)mf.getContentArea()).setModel("SquareBendTest");
         break;
       }
       case 5: {
@@ -467,7 +467,7 @@ public class DisplayTest {
               new TestTreeLayout(),
               new EmptyModelAdapter());
         MainFrame mf = new MainFrame("TreeLayoutTest", contentArea);
-        mf.setModel("TreeLayoutTest");
+        ((DrawingPanel)mf.getContentArea()).setModel("TreeLayoutTest");
         break;
       }
       case 6: {
@@ -477,7 +477,7 @@ public class DisplayTest {
               new EmptyModelAdapter());
         contentArea.addListener(new ClickHighlightListener());
         MainFrame mf = new MainFrame("BracketTest", contentArea);
-        mf.setModel("BracketTest");
+        ((DrawingPanel)mf.getContentArea()).setModel("BracketTest");
         break;
       }
       case 7: {
@@ -497,7 +497,7 @@ public class DisplayTest {
         contentArea.addListener(new HoverHighlightListener());
 
         MainFrame mf = new MainFrame("CycleTest", contentArea);
-        mf.setModel(root);
+        ((DrawingPanel)mf.getContentArea()).setModel(root);
         break;
       }
 

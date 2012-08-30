@@ -25,34 +25,28 @@ public class ModelAdapterFactory {
     registerLayout(Object.class, CompactLayout.class);
   }
 
-  @SuppressWarnings("rawtypes")
   private static void init() {
     logger = Logger.getLogger(ModelAdapterFactory.class);
-    _adapterPrototypes = new HashMap<Class, Class>();
-    _layoutPrototypes = new HashMap<Class, Class>();
-    _listenerPrototypes = new HashMap<Class, Class>();
-    _classes = new ArrayList<Class>();
+    _adapterPrototypes = new HashMap<Class<?>, Class<? extends ModelAdapter>>();
+    _layoutPrototypes = new HashMap<Class<?>, Class<? extends Layout>>();
+    _listenerPrototypes = new HashMap<Class<?>, Class<? extends MouseListener>>();
+    _classes = new ArrayList<Class<?>>();
   }
 
   private static Logger logger;
 
-  @SuppressWarnings("rawtypes")
-  private static HashMap<Class, Class> _adapterPrototypes;
-  @SuppressWarnings("rawtypes")
-  private static HashMap<Class, Class> _layoutPrototypes;
-  @SuppressWarnings("rawtypes")
-  private static HashMap<Class, Class> _listenerPrototypes;
+  private static HashMap<Class<?>, Class<? extends ModelAdapter>> _adapterPrototypes;
+  private static HashMap<Class<?>, Class<? extends Layout>> _layoutPrototypes;
+  private static HashMap<Class<?>, Class<? extends MouseListener>> _listenerPrototypes;
 
-  @SuppressWarnings("rawtypes")
-  private static List<Class> _classes;
+  private static List<Class<?>> _classes;
 
 
-  @SuppressWarnings("rawtypes")
-  private static class ClassComparator implements Comparator<Class> {;
+  private static class ClassComparator implements Comparator<Class<?>> {;
     @Override
-    public int compare(Class o1, Class o2) {
+    public int compare(Class<?> o1, Class<?> o2) {
       if (o1 == o2) return 0;
-      Class curr = o1.getSuperclass();
+      Class<?> curr = o1.getSuperclass();
       while (curr != null) {
         if (curr == o2) return -1;
         curr = curr.getSuperclass();
@@ -69,7 +63,8 @@ public class ModelAdapterFactory {
 
 
   @SuppressWarnings("rawtypes")
-  public static void registerLayout(Class objClass, Class layoutClass) {
+  public static void registerLayout(Class objClass,
+      Class<? extends Layout> layoutClass) {
     if (!_classes.contains(objClass)) {
       _classes.add(objClass);
       Collections.sort(_classes, new ClassComparator());
@@ -78,7 +73,8 @@ public class ModelAdapterFactory {
   }
 
   @SuppressWarnings("rawtypes")
-  public static void registerAdapter(Class objClass, Class adapterClass) {
+  public static void registerAdapter(Class objClass,
+      Class<? extends ModelAdapter> adapterClass) {
     if (!_classes.contains(objClass)) {
       _classes.add(objClass);
       Collections.sort(_classes, new ClassComparator());
@@ -87,7 +83,8 @@ public class ModelAdapterFactory {
   }
 
   @SuppressWarnings("rawtypes")
-  public static void registerListener(Class objClass, Class listenerClass) {
+  public static void registerListener(Class objClass,
+      Class<? extends MouseListener> listenerClass) {
     if (!_classes.contains(objClass)) {
       _classes.add(objClass);
       Collections.sort(_classes, new ClassComparator());
@@ -95,20 +92,18 @@ public class ModelAdapterFactory {
     _listenerPrototypes.put(objClass, listenerClass);
   }
 
-
   @SuppressWarnings("rawtypes")
-  private static Object getPrototype(HashMap<Class, Class> protos, Object o) {
+  private static <T>
+  T getPrototype(HashMap<Class<?>, Class<? extends T>> protos, Object o) {
     for (Class c : _classes) {
       if (c.isInstance(o)) {
-        Class clazz = protos.get(c);
+        Class<? extends T> clazz = protos.get(c);
         if (clazz != null) {
           try {
             return clazz.newInstance();
-          }
-          catch (InstantiationException iex) {
+          } catch (InstantiationException iex) {
             logger.warn("Could not create Instance for " + clazz);
-          }
-          catch (IllegalAccessException iaex) {
+          } catch (IllegalAccessException iaex) {
             logger.warn("Could not create Instance for " + clazz);
           }
         }
@@ -124,11 +119,8 @@ public class ModelAdapterFactory {
         public int facets(Object model) { return ModelAdapter.NULL; }
       };
     }
-    Object result = getPrototype(_adapterPrototypes, o);
-    if (! (result instanceof ModelAdapter)) {
-      return null;
-    }
-    return (ModelAdapter) result;
+    ModelAdapter result = getPrototype(_adapterPrototypes, o);
+    return result;
   }
 
   public static Layout getLayout(Object o) {
@@ -140,20 +132,13 @@ public class ModelAdapterFactory {
         }
       };
     }
-    Object result = getPrototype(_layoutPrototypes, o);
-    if (! (result instanceof Layout)) {
-      return null;
-    }
-    return (Layout) result;
+    Layout result = getPrototype(_layoutPrototypes, o);
+    return result;
   }
 
   public static MouseListener getListener(Object o) {
     if (o == null) return null;
-
-    Object result = getPrototype(_listenerPrototypes, o);
-    if (! (result instanceof MouseListener)) {
-      return null;
-    }
-    return (MouseListener) result;
+    MouseListener result = getPrototype(_listenerPrototypes, o);
+    return result;
   }
 }

@@ -3,6 +3,7 @@ package de.dfki.lt.loot.gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Window;
@@ -13,7 +14,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -22,7 +22,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Semaphore;
-import java.util.zip.GZIPInputStream;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -52,7 +51,6 @@ import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import de.dfki.lt.loot.gui.util.FileAssociation;
 import de.dfki.lt.loot.gui.util.FileProcessor;
 import de.dfki.lt.loot.gui.util.GenericFileProcessor;
 import de.dfki.lt.loot.gui.util.HistoryView;
@@ -73,7 +71,7 @@ import de.dfki.lt.loot.gui.util.ProgressListener;
 @SuppressWarnings("serial")
 public class MainFrame extends JFrame {
   
-  private static final Logger logger = Logger.getLogger(MainFrame.class);
+  protected static final Logger logger = Logger.getLogger(MainFrame.class);
 
   /** This contains the currently open frames. */
   protected static List<MainFrame> _openFrames = new ArrayList<MainFrame>();
@@ -84,7 +82,7 @@ public class MainFrame extends JFrame {
 
   /** This contains the current directory. */
   protected File _currentDir;
-
+  
   /* *************************************************************************
    * Button and Menu specifications
    * 
@@ -283,7 +281,7 @@ public class MainFrame extends JFrame {
   protected JProgressBar _progressBar;
 
   /** This contains the content area. */
-  protected DrawingPanel _contentArea;
+  protected Component _contentArea;
   
   /** A generic file handler */
   protected GenericFileProcessor _fileProcessor = new GenericFileProcessor();
@@ -358,7 +356,7 @@ public class MainFrame extends JFrame {
       }
     }
   }
-
+  
   public void registerCloseAllListener(CloseAllListener caListener) {
     clAll.add(0, caListener);
   }
@@ -393,7 +391,7 @@ public class MainFrame extends JFrame {
   }
 
   public MainFrame(String title) {
-    this(title, new File("."), new DrawingPanel(null, null));
+    this(title, new File("."), null);
   }
 
   public MainFrame(String title, DrawingPanel dp) {
@@ -401,8 +399,8 @@ public class MainFrame extends JFrame {
   }
 
   protected MainFrame() {}
-
-
+  
+   
   /* **********************************************************************
    *  Communicate things to the user
    * ********************************************************************** */
@@ -486,7 +484,10 @@ public class MainFrame extends JFrame {
    * Action methods
    * ********************************************************************** */
 
-  /** Create a new frame for a possibly different project */
+  /** Create a new frame for a possibly different project
+   * This method must be properly overwritten by subclasses to guarantee a
+   *  correctly working newFrame action.
+   */
   protected void newFrame() {
     @SuppressWarnings("unused")
     MainFrame newFrame = new MainFrame("New Window");
@@ -726,10 +727,19 @@ public class MainFrame extends JFrame {
     this.setJMenuBar(menuBar);
   }
 
+  /** this method is to be overwritten by subclasses to put whatever is feasible
+   *  into the main content panel
+   */
   protected Component newContentPane() {
-    return this._contentArea.wrapScrollable();
+    if (_contentArea == null) {
+      _contentArea = new DrawingPanel(null, null);
+    }
+    if (_contentArea instanceof DrawingPanel)
+      return ((DrawingPanel)_contentArea).wrapScrollable();
+    return _contentArea;
   }
 
+  
   protected void initFrame() {
     try {
       _iconPath = getResourcesDir().getAbsolutePath() + "/icons/";
@@ -807,10 +817,12 @@ public class MainFrame extends JFrame {
   protected void addAssociations() {
     addFileAssociation(new ObjectHandler() {
       @Override
-      public boolean process(InputStream in) throws IOException {
+      public boolean process(File f, InputStream in) throws IOException {
         Document d = MainFrame.readXmlFile(in);
         try {
-          MainFrame.this.setModel(d);
+          DrawingPanel dp = new DrawingPanel(null, null);
+          dp.setModel(d);
+          MainFrame.this.setContentArea(dp);
         } catch (Exception ex) {
           return false;
         }
@@ -853,11 +865,20 @@ public class MainFrame extends JFrame {
       }
     } while (! success && returnVal != JFileChooser.CANCEL_OPTION);
   }
+  
+  public void setContentArea(DrawingPanel panel) {
+    Container contentPane = getContentPane();
+    contentPane.remove(contentPane.getComponentCount() - 1);
 
-  public void setModel(Object model) {
-    _contentArea.setModel(model);
+    _contentArea = panel;
+    contentPane.add(newContentPane(), BorderLayout.CENTER);
+    pack();
   }
-
+  
+  public Component getContentArea() {
+    return _contentArea;
+  }
+  
   public static Document readXmlFile(InputStream xmlFile) {
     try {
       DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();

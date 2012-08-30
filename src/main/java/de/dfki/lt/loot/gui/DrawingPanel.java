@@ -78,16 +78,22 @@ implements MouseMotionListener, java.awt.event.MouseListener {
     setBackground(Color.white);
   }
 
-  public JScrollPane wrapScrollable() {
-    _myScrollPane = new JScrollPane(this);
-    return _myScrollPane;
+  /** Create a new <code>DrawingPanel</code> with a specified layout.
+   * @param aLayout: the object that converts the model into a view
+   */
+  public DrawingPanel(Object aModel, Layout aLayout, ModelAdapter adapter) {
+    this(aLayout, adapter);
+    setModel(aModel, null, null);
   }
-
+  
   /** set the top model node for this panel */
-  public void setModel(Object aModel) {
+  public void setModel(Object aModel, ModelAdapter adapter, Layout layout) {
     if (aModel != null) {
+      if (adapter != null) _adapter = adapter;
+      if (layout != null) _layout = layout;
       if (_adapter == null) {
         _adapter = ModelAdapterFactory.getAdapter(aModel);
+        _layout = layout; // it might be the layout does not fit to the adapter
       }
       if (_layout == null)
         if ((_layout = ModelAdapterFactory.getLayout(aModel)) == null)
@@ -115,6 +121,30 @@ implements MouseMotionListener, java.awt.event.MouseListener {
     repaint();
   }
 
+  /** set the top model node for this panel */
+  public DrawingPanel setModel(Object aModel) {
+    setModel(aModel, null, null);
+    return this;
+  }
+   
+  /** set the top model node for this panel */
+  public DrawingPanel setModel(Object aModel, Layout layout) {
+    setModel(aModel, null, layout);
+    return this;
+  }
+   
+  /** set the top model node for this panel */
+  public DrawingPanel setModel(Object aModel, ModelAdapter adapter) {
+    setModel(aModel, adapter, null);
+    return this;
+  }
+
+  public JScrollPane wrapScrollable() {
+    _myScrollPane = new JScrollPane(this);
+    return _myScrollPane;
+  }
+
+
   public Object getModel() { return _model; }
 
   public GraphicalNode getMainView(Object model) {
@@ -133,6 +163,14 @@ implements MouseMotionListener, java.awt.event.MouseListener {
     return _adapter;
   }
 
+  public void setAdapter(ModelAdapter adapter) {
+    _adapter = adapter;
+  }
+
+  public Layout getModelLayout() {
+    return _layout;
+  }
+  
   public void redraw(GraphicalNode node) {
     Rectangle r = node.getAbsRect(); r.grow(1,1);// r.grow(3,3);
     this.repaint(r);

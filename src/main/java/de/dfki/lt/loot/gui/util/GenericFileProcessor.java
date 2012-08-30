@@ -44,7 +44,7 @@ public class GenericFileProcessor implements FileProcessor {
         if (uncompress) {
           in = new GZIPInputStream(in);
         }
-        return r.process(in);
+        return r.process(toProcess, in);
       }
     }
     return false;
