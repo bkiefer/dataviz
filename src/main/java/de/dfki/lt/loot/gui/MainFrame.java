@@ -487,10 +487,10 @@ public class MainFrame extends JFrame {
   /** Create a new frame for a possibly different project
    * This method must be properly overwritten by subclasses to guarantee a
    *  correctly working newFrame action.
+   * @return 
    */
-  protected void newFrame() {
-    @SuppressWarnings("unused")
-    MainFrame newFrame = new MainFrame("New Window");
+  protected MainFrame newFrame() {
+    return new MainFrame("New Window");
   }
 
   protected void chooseFont() {
