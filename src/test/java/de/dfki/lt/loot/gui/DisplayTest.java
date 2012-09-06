@@ -23,6 +23,7 @@ import de.dfki.lt.loot.gui.connectors.SquareBendConnector;
 import de.dfki.lt.loot.gui.connectors.StraightConnector;
 import de.dfki.lt.loot.gui.controllers.ClickHighlightListener;
 import de.dfki.lt.loot.gui.controllers.HoverHighlightListener;
+import de.dfki.lt.loot.gui.layouts.AlignLayout;
 import de.dfki.lt.loot.gui.layouts.CompactLayout;
 import de.dfki.lt.loot.gui.layouts.Layout;
 import de.dfki.lt.loot.gui.layouts.LayoutAlgorithm;
@@ -381,14 +382,15 @@ class DagNodeAdapter extends CollectionsAdapter {
   @Override
   public int facets(Object model) {
     // TODO Auto-generated method stub
-    return ModelAdapter.MAP;
+    if (model instanceof DagNode)
+      return ModelAdapter.MAP;
+    return ModelAdapter.ATOM;
   }
 
   @Override
   public String getAttribute(Object model, String name) {
-    if (name.equals("type")) {
+    if ((model instanceof DagNode) && name.equals("type"))
       return ((DagNode)model).type;
-    }
     return null;
   }
 
@@ -409,7 +411,7 @@ public class DisplayTest {
   public static void main(String[] args) throws Exception {
     CollectionsAdapter.init();
     DOMAdapter.init();
-    for (int which = 0; which < 8; ++which) {
+    for (int which = 0; which < 9; ++which) {
       //if (which != 6) continue;
       switch(which) {
       case 0: {
@@ -481,8 +483,6 @@ public class DisplayTest {
         break;
       }
       case 7: {
-
-
         DagNode root = new DagNode("1");
         DagNode sub = new DagNode("3");
         DagNode sub2 = new DagNode("77"); sub2.edges.put("feat77", root);
@@ -500,7 +500,24 @@ public class DisplayTest {
         ((DrawingPanel)mf.getContentArea()).setModel(root);
         break;
       }
+      case 8: {
+        DagNode root = new DagNode("1");
+        DagNode sub = new DagNode("3");
+        DagNode sub2 = new DagNode("77"); sub2.edges.put("feat77", root);
+        sub.edges.put("feat2", root);
+        sub.edges.put("feat4", sub2);
+        root.edges.put("feat0", new DagNode("2"));
+        root.edges.put("feat1", sub);
+        root.edges.put("very_long_feature3", new DagNode("4"));
+        DrawingPanel contentArea =
+          new DrawingPanel(new AlignLayout(), new DagNodeAdapter());
 
+        contentArea.addListener(new HoverHighlightListener());
+
+        MainFrame mf = new MainFrame("CycleTest", contentArea);
+        ((DrawingPanel)mf.getContentArea()).setModel(root);
+        break;
+      }
       /*
       case 1: {
         FSGrammar gram =

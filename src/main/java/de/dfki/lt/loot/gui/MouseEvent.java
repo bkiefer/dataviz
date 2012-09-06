@@ -9,4 +9,6 @@ public class MouseEvent {
   public java.awt.event.MouseEvent awtEvent;
 
   public DrawingPanel panel;
+  
+  
 }

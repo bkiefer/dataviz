@@ -3,7 +3,7 @@ package de.dfki.lt.loot.gui.adapters;
 public abstract class ModelAdapter {
 
   public static final int NONE = 0,
-  NULL = 1, ATOM = NULL << 1, CONS = ATOM << 1, TREE = CONS << 1,
+  NULL = 1, ATOM = NULL << 1, SYMBOL = ATOM << 1, CONS = SYMBOL << 1, TREE = CONS << 1,
   MAP = TREE << 1, MATRIX = MAP << 1, GRAPH = MATRIX << 1,
   ALL = (GRAPH << 1) -1 ;
 
@@ -15,6 +15,12 @@ public abstract class ModelAdapter {
     return null;
   }
 
+  /* -- SymbolFacet -- */
+  
+  public String getString(Object model) {
+    throw new UnsupportedOperationException();
+  }
+  
   /* -- ConsFacet -- */
 
   public Object getFirst(Object model){

@@ -250,6 +250,12 @@ implements MouseMotionListener, java.awt.event.MouseListener {
     }
   }
 
+  public void clearListeners() {
+    _nodeListeners.clear();
+    removeMouseMotionListener(this);
+    removeMouseListener(this);
+  }
+  
   private void fireMouseEnters(MouseEvent e, GraphicalNode node) {
     for (MouseListener l : _nodeListeners) {
       l.mouseEnters(new de.dfki.lt.loot.gui.MouseEvent(this, e), node);

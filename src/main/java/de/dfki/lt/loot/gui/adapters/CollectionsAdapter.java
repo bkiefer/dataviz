@@ -72,11 +72,9 @@ public class CollectionsAdapter extends ModelAdapter {
     }
 
     @Override
-    public Pair<String, Object> next() {
+    public Pair<Object, Object> next() {
       Map.Entry entry = (Map.Entry) _entryIterator.next();
-      return new Pair<String, Object>(
-          entry.getKey().toString(),
-          entry.getValue());
+      return new Pair<Object, Object>(entry.getKey(), entry.getValue());
     }
   }
 

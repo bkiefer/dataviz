@@ -284,7 +284,7 @@ public class MainFrame extends JFrame {
   protected Component _contentArea;
   
   /** A generic file handler */
-  protected GenericFileProcessor _fileProcessor = new GenericFileProcessor();
+  protected FileProcessor _fileProcessor = new GenericFileProcessor();
 
   /* **********************************************************************
    * Window closing functionality
@@ -435,7 +435,12 @@ public class MainFrame extends JFrame {
     JOptionPane.showMessageDialog(this, string, "Warning",
         JOptionPane.WARNING_MESSAGE);
   }
-
+  
+  protected void infoDialog(String string) {
+    JOptionPane.showMessageDialog(this, string, "Information",
+        JOptionPane.INFORMATION_MESSAGE);
+  }
+  
   protected void reportProblem(String msg) {
     warningDialog(msg);
   }
@@ -487,7 +492,7 @@ public class MainFrame extends JFrame {
   /** Create a new frame for a possibly different project
    * This method must be properly overwritten by subclasses to guarantee a
    *  correctly working newFrame action.
-   * @return 
+   * @return
    */
   protected MainFrame newFrame() {
     return new MainFrame("New Window");
@@ -811,7 +816,8 @@ public class MainFrame extends JFrame {
   }
 
   public void addFileAssociation(ObjectHandler h, String ... extensions) {
-    _fileProcessor.addFileAssociation(h, extensions);
+    if (_fileProcessor instanceof GenericFileProcessor)
+      ((GenericFileProcessor)_fileProcessor).addFileAssociation(h, extensions);
   }
 
   protected void addAssociations() {

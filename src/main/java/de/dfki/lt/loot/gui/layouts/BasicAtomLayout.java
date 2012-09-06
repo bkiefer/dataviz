@@ -10,15 +10,17 @@ public class BasicAtomLayout implements FacetLayout {
   @Override
   public
   int facet() {
-    return ModelAdapter.ATOM;
+    return ModelAdapter.ATOM | ModelAdapter.SYMBOL;
   }
 
   @Override
   public
   GraphicalNode transform(Object model, ViewContext context, int facetMask) {
+    if (model == null) return new TextNode("<NULL>");
     GraphicalNode result =
-      new TextNode(model == null ? "<NULL>" : model.toString());
-    if (model != null) result.setModel(model);
+      new TextNode(((context._adapt.facets(model) | ModelAdapter.SYMBOL) != 0)
+          ? context._adapt.getString(model) : model.toString());
+    result.setModel(model);
     return result;
   }
 

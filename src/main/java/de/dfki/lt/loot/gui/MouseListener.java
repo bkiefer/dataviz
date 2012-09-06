@@ -8,4 +8,6 @@ public interface MouseListener {
   public abstract void mouseLeaves(MouseEvent e, GraphicalNode node);
 
   public abstract void mouseClicked(MouseEvent e, GraphicalNode node);
+
+  public abstract void mouseReleased(MouseEvent e, GraphicalNode node);
 }

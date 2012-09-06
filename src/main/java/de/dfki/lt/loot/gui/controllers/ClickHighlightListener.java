@@ -1,10 +1,10 @@
 package de.dfki.lt.loot.gui.controllers;
 
+import de.dfki.lt.loot.gui.MouseAdapter;
 import de.dfki.lt.loot.gui.MouseEvent;
-import de.dfki.lt.loot.gui.MouseListener;
 import de.dfki.lt.loot.gui.nodes.GraphicalNode;
 
-public class ClickHighlightListener implements MouseListener {
+public class ClickHighlightListener extends MouseAdapter {
 
   private GraphicalNode lastInverted = null;
 
@@ -35,13 +35,4 @@ public class ClickHighlightListener implements MouseListener {
       }
     }
   }
-
-  /** Ignored */
-  @Override
-  public void mouseEnters(MouseEvent e, GraphicalNode node) { }
-
-  /** Ignored */
-  @Override
-  public void mouseLeaves(MouseEvent e, GraphicalNode node) { }
-
 }

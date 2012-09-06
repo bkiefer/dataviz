@@ -49,9 +49,10 @@ public class AlignMapLayout extends FacetLayoutBase {
       // create child nodes
       // add feature value pairs
       while (fvpList.hasNext()) {
-        Pair<String, Object> fvp = fvpList.next();
+        Pair<Object, Object> fvp = fvpList.next();
         fvlistNode.startNext();
-        TextNode featureNode = new TextNode(fvp.getFirst());
+        GraphicalNode featureNode = // new TextNode(fvp.getFirst());
+            _meta.transform(fvp.getFirst(), context, facetMask);
         featureNode.setStyle(Style.get("feature"));
         fvlistNode.addNode(featureNode);
         fvlistNode.addNode(

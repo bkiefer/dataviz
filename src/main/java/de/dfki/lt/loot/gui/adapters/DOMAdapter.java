@@ -58,10 +58,10 @@ public class DOMAdapter extends ModelAdapter {
     }
 
     @Override
-    public Pair<String, Object> next() {
+    public Pair<Object, Object> next() {
       Attr node = (Attr) _map.item(_current);
       ++_current;
-      return new Pair<String, Object>(node.getName(), node.getValue());
+      return new Pair<Object, Object>(node.getName(), node.getValue());
     }
 
   }

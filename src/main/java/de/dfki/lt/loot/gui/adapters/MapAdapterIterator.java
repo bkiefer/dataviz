@@ -6,6 +6,6 @@ public interface MapAdapterIterator {
 
   public abstract boolean hasNext();
 
-  public abstract Pair<String, Object> next();
+  public abstract Pair<Object, Object> next();
 
 }

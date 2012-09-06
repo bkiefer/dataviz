@@ -1,10 +1,10 @@
 package de.dfki.lt.loot.gui.controllers;
 
+import de.dfki.lt.loot.gui.MouseAdapter;
 import de.dfki.lt.loot.gui.MouseEvent;
-import de.dfki.lt.loot.gui.MouseListener;
 import de.dfki.lt.loot.gui.nodes.GraphicalNode;
 
-public class HoverHighlightListener implements MouseListener {
+public class HoverHighlightListener extends MouseAdapter {
   GraphicalNode lastInverted = null;
 
   @Override

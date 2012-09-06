@@ -38,11 +38,12 @@ public class CompactMapLayout extends FacetLayoutBase {
 
       // create child nodes: add feature value pairs
       while (fvpList.hasNext()) {
-        Pair<String, Object> fvp = fvpList.next();
+        Pair<Object, Object> fvp = fvpList.next();
         AligningNode fvpNode = new AligningNode('n');
-        fvpNode.addNode(new TextNode(fvp.getFirst(), Style.get("feature")));
-        fvpNode.addNode(_meta.transform(fvp.getSecond(), context,
-                                                facetMask));
+        GraphicalNode feat = _meta.transform(fvp.getFirst(), context, facetMask);
+        feat.setStyle(Style.get("feature"));
+        fvpNode.addNode(feat);
+        fvpNode.addNode(_meta.transform(fvp.getSecond(), context, facetMask));
         fvlistNode.addNode(fvpNode);
       }
 
