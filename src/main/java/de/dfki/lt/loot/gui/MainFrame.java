@@ -839,7 +839,7 @@ public class MainFrame extends JFrame {
     }, "xml");
   }
 
-  protected void openFileDialog(FileProcessor proc) {
+  protected boolean openFileDialog(FileProcessor proc) {
     // create file chooser for txt files
     JFileChooser fc = new JFileChooser();
     FileFilter fexf = proc.getFileFilter();
@@ -870,6 +870,7 @@ public class MainFrame extends JFrame {
         }
       }
     } while (! success && returnVal != JFileChooser.CANCEL_OPTION);
+    return success;
   }
   
   public void setContentArea(DrawingPanel panel) {
