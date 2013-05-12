@@ -102,6 +102,10 @@ public class Style {
     this.stroke = (null == aStroke ? new BasicStroke() : aStroke);
   }
 
+  public Style copy() {
+    return new Style(font, fgCol, bgCol, padding, stroke);
+  }
+
   public static void add(String name,
       Font aFont, Color foreground, Color background,
       Padding aPadding, Stroke aStroke) {
@@ -111,6 +115,11 @@ public class Style {
     } else {
       styleMap.put(name, style);
     }
+  }
+
+  public static boolean contains(String name) {
+    return (null != name && 0 != name.length()
+        && Style.styleMap.get(name) != null);
   }
 
   /**

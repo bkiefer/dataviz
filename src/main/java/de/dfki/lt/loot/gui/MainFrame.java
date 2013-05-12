@@ -70,7 +70,7 @@ import de.dfki.lt.loot.gui.util.ProgressListener;
  */
 @SuppressWarnings("serial")
 public class MainFrame extends JFrame {
-  
+
   protected static final Logger logger = Logger.getLogger(MainFrame.class);
 
   /** This contains the currently open frames. */
@@ -82,10 +82,10 @@ public class MainFrame extends JFrame {
 
   /** This contains the current directory. */
   protected File _currentDir;
-  
+
   /* *************************************************************************
    * Button and Menu specifications
-   * 
+   *
    * Implemented as methods to avoid the bogus fields in derived classes
    * *************************************************************************/
 
@@ -97,10 +97,10 @@ public class MainFrame extends JFrame {
     }
     return null;
   }
-  
+
   public static class RunnableAction extends AbstractAction {
     private Runnable _r;
-    
+
     public RunnableAction(String title, String iconName, String toolTipText,
         String altText, Object key, Runnable r) {
       super(title);
@@ -115,19 +115,19 @@ public class MainFrame extends JFrame {
         putValue(ACCELERATOR_KEY, key);
       _r = r;
     }
-    
+
     @Override
     public void actionPerformed(ActionEvent e) {
       _r.run();
     }
   }
-  
+
   protected class MyMenu extends JMenu {
     public MyMenu(String title, Object key, Object ... menuItems) {
       super(title);
       if (key != null)
         setMnemonic((Integer)key);
-      
+
       for (Object spec : menuItems) {
         if (spec == null) {
           addSeparator();
@@ -140,14 +140,14 @@ public class MainFrame extends JFrame {
       }
     }
   }
-  
+
   protected RunnableAction newAction() {
     return new RunnableAction(
       "New", "window-new", "New Frame", "New Frame",
       KeyStroke.getKeyStroke(Character.valueOf('n'), InputEvent.ALT_DOWN_MASK),
       new Runnable() { public void run() { newFrame(); } });
   }
-    
+
   protected RunnableAction closeAction() {
     return new RunnableAction(
       "Close", "window-close", "Close", "Close Window",
@@ -155,45 +155,45 @@ public class MainFrame extends JFrame {
           InputEvent.META_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK),
           new Runnable() { public void run() { close(); } });
   }
-    
+
   protected RunnableAction openAction() {
     return new RunnableAction(
       "Open", "document-open", "Open", "Open File",
       KeyStroke.getKeyStroke((char)KeyEvent.VK_O),
       new Runnable() { public void run() { openFileDialog(_fileProcessor); } });
   }
-  
+
   protected RunnableAction chooseFontAction() {
     return new RunnableAction(
       "Select Font", "go-next", "Select Font", "Select Font", null,
       new Runnable() { public void run() { chooseFont(); } });
   }
-  
+
   protected RunnableAction exitAction() {
     return new RunnableAction(
       "Quit", "application-exit", "Quit", "Quit",
       KeyStroke.getKeyStroke(Character.valueOf('a'), InputEvent.ALT_DOWN_MASK),
       new Runnable() { public void run() { closeAll(); } });
   }
-  
+
   protected RunnableAction loadHistoryAction() {
     return new RunnableAction(
       "Load History", null, "Load History", "Load History", null,
       new Runnable() { public void run() { loadHistory(); } });
   }
-  
+
   protected RunnableAction saveHistoryAction() {
     return new RunnableAction(
       "Save History", null, "Save History", "Save History", null,
       new Runnable() { public void run() { saveHistory(); } });
   }
-  
+
   protected RunnableAction clearHistoryAction() {
     return new RunnableAction(
       "Clear History", null, "Clear History", "Clear History", null,
       new Runnable() { public void run() { _history.clear(); } });
   }
-  
+
   protected JMenu recentFiles() {
     return new HistoryView("Recent Files", _recentFiles, null,
         new ActionListener() {
@@ -208,7 +208,7 @@ public class MainFrame extends JFrame {
           }
         }).getMenu();
   }
-  
+
   protected RunnableAction[] actionSpecs() {
     RunnableAction[] results = {
         newAction(), openAction(), chooseFontAction(), closeAction(),
@@ -282,7 +282,7 @@ public class MainFrame extends JFrame {
 
   /** This contains the content area. */
   protected Component _contentArea;
-  
+
   /** A generic file handler */
   protected FileProcessor _fileProcessor = new GenericFileProcessor();
 
@@ -356,7 +356,7 @@ public class MainFrame extends JFrame {
       }
     }
   }
-  
+
   public void registerCloseAllListener(CloseAllListener caListener) {
     clAll.add(0, caListener);
   }
@@ -399,8 +399,8 @@ public class MainFrame extends JFrame {
   }
 
   protected MainFrame() {}
-  
-   
+
+
   /* **********************************************************************
    *  Communicate things to the user
    * ********************************************************************** */
@@ -435,18 +435,18 @@ public class MainFrame extends JFrame {
     JOptionPane.showMessageDialog(this, string, "Warning",
         JOptionPane.WARNING_MESSAGE);
   }
-  
+
   protected void infoDialog(String string) {
     JOptionPane.showMessageDialog(this, string, "Information",
         JOptionPane.INFORMATION_MESSAGE);
   }
-  
+
   protected void reportProblem(String msg) {
     warningDialog(msg);
   }
 
-  /* **********************************************************************
-   * Handling of hideable progress bar (in the bottom (status) part)
+  /* ********************************************************************** *
+   * Handling of progress bar (in the bottom (status) part; may be hidden)  *
    * ********************************************************************** */
 
   /* Helper method for show/hide */
@@ -682,9 +682,9 @@ public class MainFrame extends JFrame {
     }
     return toolBar;
   }
- 
-      
-      
+
+
+
   /** Create a new menu item out from name and key spec and add it to the
    *  given menu
    */
@@ -744,7 +744,7 @@ public class MainFrame extends JFrame {
     return _contentArea;
   }
 
-  
+
   protected void initFrame() {
     try {
       _iconPath = getResourcesDir().getAbsolutePath() + "/icons/";
@@ -775,7 +775,7 @@ public class MainFrame extends JFrame {
 
     // add file associations known to this frame class
     addAssociations();
-    
+
     // create content panel and add it to the frame
     JPanel contentPane = new JPanel(new BorderLayout());
     this.setContentPane(contentPane);
@@ -834,7 +834,7 @@ public class MainFrame extends JFrame {
         }
         return true;
       }
-      
+
       public String toString() { return "Display XML files as tree"; }
     }, "xml");
   }
@@ -872,7 +872,7 @@ public class MainFrame extends JFrame {
     } while (! success && returnVal != JFileChooser.CANCEL_OPTION);
     return success;
   }
-  
+
   public void setContentArea(DrawingPanel panel) {
     Container contentPane = getContentPane();
     contentPane.remove(contentPane.getComponentCount() - 1);
@@ -881,11 +881,11 @@ public class MainFrame extends JFrame {
     contentPane.add(newContentPane(), BorderLayout.CENTER);
     pack();
   }
-  
+
   public Component getContentArea() {
     return _contentArea;
   }
-  
+
   public static Document readXmlFile(InputStream xmlFile) {
     try {
       DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();

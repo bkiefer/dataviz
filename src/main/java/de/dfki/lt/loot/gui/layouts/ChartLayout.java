@@ -134,8 +134,10 @@ public class ChartLayout implements Layout {
       if (edges != null) {
         for (Object edge : edges) {
           String name = adapt.getAttribute(edge, "name");
+          String active = adapt.getAttribute(edge, "active");
           GraphicalNode edgeNode =
-            new TextNode((name != null) ? name : "", Style.get("edge"));
+            new TextNode(((name != null) ? name : ""),
+                Style.get(active != null ? "active_edge" : "edge"));
           _context.setRepresentative(edge, edgeNode);
           graphNode.addNode(edgeNode);
 
