@@ -142,6 +142,9 @@ public class InputHistory implements HistoryModel {
     }
   }
 
+  /** merge the current and given history, such that ??? NOT IMPLEMENTED YET */
+  public void merge(Iterable<String> history) {
+  }
 
   /** Save the history to a file that separates the single inputs by empty lines.
    *  Therefore, empty lines are stripped from the input

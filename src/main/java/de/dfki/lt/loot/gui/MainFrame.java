@@ -17,8 +17,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Semaphore;
@@ -54,10 +52,9 @@ import org.xml.sax.SAXException;
 import de.dfki.lt.loot.gui.util.FileProcessor;
 import de.dfki.lt.loot.gui.util.GenericFileProcessor;
 import de.dfki.lt.loot.gui.util.HistoryView;
-import de.dfki.lt.loot.gui.util.IniFileReader;
-import de.dfki.lt.loot.gui.util.IniFileWriter;
 import de.dfki.lt.loot.gui.util.InputHistory;
 import de.dfki.lt.loot.gui.util.ObjectHandler;
+import de.dfki.lt.loot.gui.util.Preferences;
 import de.dfki.lt.loot.gui.util.ProgressListener;
 
 /**
@@ -82,6 +79,11 @@ public class MainFrame extends JFrame {
 
   /** This contains the current directory. */
   protected File _currentDir;
+
+  /** Among others used to find the preferences file in the user's home
+   *  directory.
+   */
+  protected static String _applicationName = "jmainframe";
 
   /* *************************************************************************
    * Button and Menu specifications
@@ -195,7 +197,7 @@ public class MainFrame extends JFrame {
   }
 
   protected JMenu recentFiles() {
-    return new HistoryView("Recent Files", _recentFiles, null,
+    return new HistoryView("Recent Files", _preferences.recentFiles(), null,
         new ActionListener() {
           @Override
           public void actionPerformed(ActionEvent e) {
@@ -253,10 +255,7 @@ public class MainFrame extends JFrame {
    *             traceWindow (fourQuadrants|tabbed)
    *             emacs (yes|no)
    */
-  protected HashMap<String, String> _preferences;
-
-  /** Recently loaded project files */
-  protected InputHistory _recentFiles;
+  protected Preferences _preferences = null;
 
   /** Font chooser dialog */
   protected FontChooser f;
@@ -347,7 +346,7 @@ public class MainFrame extends JFrame {
         Window win = we.getWindow();
         _openFrames.remove(win);
       }
-      savePreferences();
+      _preferences.save();
       // if this was the last frame, completely shut down the application
       if (MainFrame._openFrames.isEmpty()) {
         for (CloseAllListener caListener : clAll) {
@@ -537,7 +536,8 @@ public class MainFrame extends JFrame {
 
   protected boolean saveHistoryMaybeAsk() {
     try {
-      if (_historyView.getHistoryFile() != null) {
+      if (_historyView.getHistoryFile() != null
+          && !_historyView.getHistoryFile().isDirectory()) {
         _history.save(_historyView.getHistoryFile());
         return true;
       }
@@ -555,35 +555,60 @@ public class MainFrame extends JFrame {
    * ********************************************************************** */
 
   protected File getPreferencesFile() {
-    return new File(_currentDir, ".preferences");
+    return new File(System.getProperty("user.home"), "." + _applicationName);
   }
 
   protected File getResourcesDir() {
     return _currentDir;
   }
 
-  protected void loadPreferences() {
+  /*
+  protected void installPreferences(
+      Map<String, LinkedHashMap<String, String>> sections){
+    _preferences = sections.get("Settings");
+    if (sections.containsKey("RecentFiles")) {
+      _recentFiles = new InputHistory(5);
+      _recentFiles.addAll(sections.get("RecentFiles").keySet());
+    }
+  }
+
+
+  protected void initPreferences() {
     File prefFile = getPreferencesFile();
     if (prefFile != null && prefFile.isFile()) {
-      try {
-        LinkedHashMap<String, LinkedHashMap<String, String>> sections =
-          IniFileReader.readIniFile(prefFile);
-        _preferences = sections.get("Settings");
-        if (sections.containsKey("RecentFiles")) {
-          _recentFiles = new InputHistory(5);
-          _recentFiles.addAll(sections.get("RecentFiles").keySet());
-        }
-      }
-      catch (IOException ioex) {
-        logger.warn("Error reading preferences file: "
-            + ioex.getLocalizedMessage());
-      }
+      _prefFileModified = prefFile.lastModified();
+      Map<String, LinkedHashMap<String, String>> sections =
+          loadPreferences(prefFile);
+      if (sections != null)
+        installPreferences(sections);
     }
+  }
+
+  protected LinkedHashMap<String, LinkedHashMap<String, String>>
+  loadPreferences(File prefFile) {
+    try {
+      LinkedHashMap<String, LinkedHashMap<String, String>> sections =
+          IniFileReader.readIniFile(prefFile);
+      return sections;
+    }
+    catch (IOException ioex) {
+      logger.warn("Error reading preferences file: "
+          + ioex.getLocalizedMessage());
+    }
+    return null;
   }
 
   protected void savePreferences() {
     File prefFile = getPreferencesFile();
+    // TODO: maybe create directory??
     if (prefFile != null) {
+      long modification = prefFile.lastModified();
+      if (modification != _prefFileModified) {
+        // this should be merged such that only modified preferences are stored
+        Map<String, LinkedHashMap<String, String>> sections =
+            loadPreferences(prefFile);
+
+      }
       IniFileWriter pref = null;
       try {
         try {
@@ -598,6 +623,13 @@ public class MainFrame extends JFrame {
         logger.warn("Error writing preferences file: "
             + ioex.getLocalizedMessage());
       }
+    }
+  }
+  */
+  protected void initPreferences() {
+    _preferences = new Preferences(getPreferencesFile());
+    if (_preferences.recentFiles() == null) {
+      _preferences.recentFiles(5);
     }
   }
 
@@ -781,9 +813,7 @@ public class MainFrame extends JFrame {
     this.setContentPane(contentPane);
 
     // create menu bar
-    if (_recentFiles == null) {
-      _recentFiles = new InputHistory(5);
-    }
+    initPreferences();
     RunnableAction[] actions = actionSpecs();
     this.newMainMenuBar(actions);
     JToolBar toolBar = newToolBar(actions, _toolBarName, _actionButtons);
