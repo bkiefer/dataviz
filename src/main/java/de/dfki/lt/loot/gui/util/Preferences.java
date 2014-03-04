@@ -104,24 +104,26 @@ public class Preferences {
     try {
       // TODO: maybe create directory??
       if (_prefFile != null) {
-        long modification = _prefFile.lastModified();
-        if (modification != _prefFileModified) {
-          // this should be merged such that only modified preferences are stored
-          Map<String, LinkedHashMap<String, String>> sections =
-              loadPreferences();
-          // add all prefs not in here, supersede all that have been changed
-          LinkedHashMap<String, String> prefs = sections.get("Settings");
-          if (prefs != null)
-            for (Map.Entry<String, String> entry : prefs.entrySet()) {
-              // if the value is new or has changed somewhere else, take it
-              if (! _preferences.containsKey(entry.getKey())
-                  || (! get(entry.getKey()).equals(entry.getValue())
-                      && ! _changed.contains(entry.getKey()))) {
-                put(entry.getKey(), entry.getValue());
+        if (_prefFile.exists()) {
+          long modification = _prefFile.lastModified();
+          if (modification != _prefFileModified) {
+            // this is be merged such that only modified preferences are stored
+            Map<String, LinkedHashMap<String, String>> sections =
+                loadPreferences();
+            // add all prefs not in here, supersede all that have been changed
+            LinkedHashMap<String, String> prefs = sections.get("Settings");
+            if (prefs != null)
+              for (Map.Entry<String, String> entry : prefs.entrySet()) {
+                // if the value is new or has changed somewhere else, take it
+                if (! _preferences.containsKey(entry.getKey())
+                    || (! get(entry.getKey()).equals(entry.getValue())
+                        && ! _changed.contains(entry.getKey()))) {
+                  put(entry.getKey(), entry.getValue());
+                }
               }
-            }
-          // merge the recent files
-          _recentFiles.merge(sections.get("RecentFiles").keySet());
+            // merge the recent files
+            _recentFiles.merge(sections.get("RecentFiles").keySet());
+          }
         }
         IniFileWriter pref = null;
         try {
