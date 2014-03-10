@@ -258,7 +258,7 @@ public class MainFrame extends JFrame {
   protected Preferences _preferences = null;
 
   /** Font chooser dialog */
-  protected FontChooser f;
+  protected FontChooser fc;
 
   /** Name of tool bar containing the action buttons */
   protected String _toolBarName = "Main Tools";
@@ -498,8 +498,8 @@ public class MainFrame extends JFrame {
   }
 
   protected void chooseFont() {
-    FontChooser f = new FontChooser();
-    _textFont = f.getChosenFont();
+    fc = new FontChooser();
+    _textFont = fc.getChosenFont();
   }
 
   protected void setInput(String input) {
@@ -871,21 +871,21 @@ public class MainFrame extends JFrame {
 
   protected boolean openFileDialog(FileProcessor proc) {
     // create file chooser for txt files
-    JFileChooser fc = new JFileChooser();
+    JFileChooser jfc = new JFileChooser();
     FileFilter fexf = proc.getFileFilter();
     if (fexf != null) {
-      fc.addChoosableFileFilter(fexf);
+      jfc.addChoosableFileFilter(fexf);
     }
-    fc.setCurrentDirectory(_currentDir);
+    jfc.setCurrentDirectory(_currentDir);
     int returnVal = -1;
     boolean success = false;
     do {
-      returnVal = fc.showOpenDialog(MainFrame.this);
+      returnVal = jfc.showOpenDialog(MainFrame.this);
       if (returnVal == JFileChooser.APPROVE_OPTION) {
         // update current directory
-        _currentDir = fc.getSelectedFile().getParentFile();
+        _currentDir = jfc.getSelectedFile().getParentFile();
         // get the object read from this file
-        File toRead = fc.getSelectedFile();
+        File toRead = jfc.getSelectedFile();
         if (! toRead.exists()) {
           errorDialog("No such File: " + toRead);
           success = false;
