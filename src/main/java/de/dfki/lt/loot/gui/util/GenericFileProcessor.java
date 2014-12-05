@@ -13,6 +13,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.apache.log4j.Logger;
 
+import de.dfki.lt.loot.gui.MainFrame;
+
 
 public class GenericFileProcessor implements FileProcessor {
   private static final Logger logger = Logger.getLogger(FileProcessor.class);
@@ -20,11 +22,11 @@ public class GenericFileProcessor implements FileProcessor {
   /** Associates file extensions with input readers */
   protected HashMap<String, FileAssociation> _associations =
       new HashMap<String, FileAssociation>();
-  
+
   protected FileAssociation _default = null;
 
   @Override
-  public boolean processFile(File toProcess) throws IOException {
+  public boolean processFile(File toProcess, MainFrame mf) throws IOException {
     // add some smart code to assess the file type and call the right `open'
     // method
     String fileName = toProcess.getName();
@@ -44,7 +46,7 @@ public class GenericFileProcessor implements FileProcessor {
         if (uncompress) {
           in = new GZIPInputStream(in);
         }
-        return r.process(toProcess, in);
+        return r.process(toProcess, in, mf);
       }
     }
     return false;
@@ -68,11 +70,11 @@ public class GenericFileProcessor implements FileProcessor {
     return new FileNameExtensionFilter(sw.toString(),
         _associations.keySet().toArray(new String[0]));
   }
-  
+
   /** Add a new file association (a mapping from extensions to ObjectHandler)
    *  If extensions is null, the hander is used as default handler if no other
    *  association can be found.
-   * 
+   *
    * @param r the ObjectHandler to treat these files
    * @param extensions the possible extensions to be treated by the handler
    */

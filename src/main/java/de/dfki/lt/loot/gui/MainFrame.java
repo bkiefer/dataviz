@@ -203,7 +203,7 @@ public class MainFrame extends JFrame {
           public void actionPerformed(ActionEvent e) {
             String fileName = e.getActionCommand();
             try {
-              _fileProcessor.processFile(new File(fileName));
+              _fileProcessor.processFile(new File(fileName), MainFrame.this);
             } catch (IOException ex) {
               errorDialog("Problem during file processing:\n" + ex);
             }
@@ -382,10 +382,15 @@ public class MainFrame extends JFrame {
    * Constructors
    * ********************************************************************** */
 
-  protected MainFrame(String title, File currDir, DrawingPanel dp) {
-    super(title);
+  /** Initialization hook */
+  protected void init(File currDir, DrawingPanel dp) {
     this._currentDir = currDir;
     this._contentArea = dp;
+  }
+
+  protected MainFrame(String title, File currDir, DrawingPanel dp) {
+    super(title);
+    this.init(currDir, dp);
     this.initFrame();
   }
 
@@ -853,18 +858,20 @@ public class MainFrame extends JFrame {
   protected void addAssociations() {
     addFileAssociation(new ObjectHandler() {
       @Override
-      public boolean process(File f, InputStream in) throws IOException {
+      public boolean process(File f, InputStream in, MainFrame mf)
+          throws IOException {
         Document d = MainFrame.readXmlFile(in);
         try {
           DrawingPanel dp = new DrawingPanel(null, null);
           dp.setModel(d);
-          MainFrame.this.setContentArea(dp);
+          mf.setContentArea(dp);
         } catch (Exception ex) {
           return false;
         }
         return true;
       }
 
+      @Override
       public String toString() { return "Display XML files as tree"; }
     }, "xml");
   }
@@ -891,7 +898,7 @@ public class MainFrame extends JFrame {
           success = false;
         } else {
           try {
-            success = proc.processFile(toRead);
+            success = proc.processFile(toRead, MainFrame.this);
           } catch (IOException ex) {
             errorDialog("File content of " + toRead + " could not be read:\n"
                 + ((ex.getCause() != null)
