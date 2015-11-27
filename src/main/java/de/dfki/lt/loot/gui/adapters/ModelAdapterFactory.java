@@ -43,7 +43,6 @@ public class ModelAdapterFactory {
 
 
   private static class ClassComparator implements Comparator<Class<?>> {;
-    @Override
     public int compare(Class<?> o1, Class<?> o2) {
       if (o1 == o2) return 0;
       Class<?> curr = o1.getSuperclass();
@@ -126,7 +125,6 @@ public class ModelAdapterFactory {
   public static Layout getLayout(Object o) {
     if (o == null) {
       return new Layout() {
-        @Override
         public GraphicalNode computeView(Object model, ViewContext context) {
           return null;
         }

@@ -71,7 +71,6 @@ public class SimpleTreeLayoutAlgorithm implements LayoutAlgorithm {
     }
   }
 
-  @Override
   public Rectangle execute(GraphNode node, Graphics g) {
     RectTreeNode boxes = computeArea(_root);
     // now the origins of the immediately enclosed boxes have to be adjusted

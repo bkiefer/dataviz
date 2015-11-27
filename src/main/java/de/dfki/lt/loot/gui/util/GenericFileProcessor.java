@@ -25,7 +25,6 @@ public class GenericFileProcessor implements FileProcessor {
 
   protected FileAssociation _default = null;
 
-  @Override
   public boolean processFile(File toProcess, MainFrame mf) throws IOException {
     // add some smart code to assess the file type and call the right `open'
     // method
@@ -52,12 +51,10 @@ public class GenericFileProcessor implements FileProcessor {
     return false;
   }
 
-  @Override
   public FileAssociation getAssociation(String extension) {
     return _associations.get(extension);
   }
 
-  @Override
   public FileFilter getFileFilter() {
     StringWriter sw = new StringWriter();
     boolean first = true;

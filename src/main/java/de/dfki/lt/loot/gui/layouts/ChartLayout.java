@@ -119,7 +119,6 @@ public class ChartLayout implements Layout {
    *  eventually with hints already given in this method.
    */
   @SuppressWarnings({ "rawtypes", "unchecked" })
-  @Override
   public GraphicalNode computeView(Object model, ViewContext context) {
     _context = context;
     ModelAdapter adapt = _context._adapt;

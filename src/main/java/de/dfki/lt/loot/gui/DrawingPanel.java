@@ -313,7 +313,6 @@ implements MouseMotionListener, java.awt.event.MouseListener {
    * MouseListener implementation
    * *********************************************************************/
 
-  @Override
   public void mouseClicked(MouseEvent e) {
     Component originator = e.getComponent();
     assert(originator instanceof DrawingPanel);
@@ -331,18 +330,14 @@ implements MouseMotionListener, java.awt.event.MouseListener {
   }
 
   /** currently not used */
-  @Override
   public void mouseReleased(MouseEvent e) { }
 
   /** currently not used */
-  @Override
   public void mouseEntered(MouseEvent e) { }
 
   /** currently not used */
-  @Override
   public void mouseExited(MouseEvent e) { }
 
   /** currently not used */
-  @Override
   public void mousePressed(MouseEvent e) { }
 }

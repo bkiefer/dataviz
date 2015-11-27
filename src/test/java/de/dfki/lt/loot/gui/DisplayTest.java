@@ -170,7 +170,6 @@ class TestNodesLayout implements Layout {
 class TestIntersectLayout implements Layout {
   public class NoLayoutAlgorithm implements LayoutAlgorithm {
 
-    @Override
     public Rectangle execute(GraphNode root, Graphics g) {
       int width = 0 , height = 0;
       for (GraphicalNode node : root.getNodes()) {
@@ -220,13 +219,11 @@ class TestBendConnectors implements Layout {
 
   class NoLayoutAlgorithm implements LayoutAlgorithm {
 
-    @Override
     public Rectangle execute(GraphNode result, Graphics g) {
       return new Rectangle(0,0,340,340);
     }
   }
 
-  @Override
   public GraphicalNode computeView(Object model, ViewContext ctxt) {
     GraphNode result = new GraphNode(model);
     result.setLayoutAlgorithm(new NoLayoutAlgorithm());
@@ -268,7 +265,6 @@ class TestTreeLayout implements Layout {
 
   TextNode[] nodes = new TextNode[11];
 
-  @Override
   public GraphicalNode computeView(Object model, ViewContext ctxt) {
     GraphNode treeNode = new GraphNode(null);
     TextNode[] nodes = new TextNode[11];
@@ -290,7 +286,6 @@ class TestTreeLayout implements Layout {
 
 class TestBracketsLayout implements Layout {
 
-  @Override
   public GraphicalNode computeView(Object model, ViewContext ctxt) {
     Style.add("pad", null, null, null, new Padding(2,0,2), null);
     TabularNode res = new TabularNode(true, "cc");

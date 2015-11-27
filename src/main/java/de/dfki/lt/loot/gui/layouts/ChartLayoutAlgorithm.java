@@ -27,7 +27,6 @@ public class ChartLayoutAlgorithm implements LayoutAlgorithm {
   /** This computes real coordinates from the abstract, grid-based coordinates
    *  given by the vertex number and edgeLevel.
    */
-  @Override
   public Rectangle execute(GraphNode node, Graphics g) {
 
     int y = node.getStyle().getPadding().getOffset();

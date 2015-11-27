@@ -52,7 +52,6 @@ public abstract class AbstractLayout implements Layout, FacetLayout {
    * @return a GraphicalNode representation of the model You will need to call
    *         adjustSize(Graphics g) on the return value.
    */
-  @Override
   public GraphicalNode computeView(Object model, ViewContext context) {
     GraphicalNode root = this.transform(model, context, ModelAdapter.ALL);
     // maybe the root node got a coref, but then, this can only occur because

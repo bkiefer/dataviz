@@ -52,12 +52,10 @@ public class DOMAdapter extends ModelAdapter {
       _current = 0;
     }
 
-    @Override
     public boolean hasNext() {
       return _current < _map.getLength();
     }
 
-    @Override
     public Pair<Object, Object> next() {
       Attr node = (Attr) _map.item(_current);
       ++_current;
@@ -110,7 +108,6 @@ public class DOMAdapter extends ModelAdapter {
       advance();
     }
 
-    @Override
     public Iterator iterator() {
       return new Iterator() {
         public boolean hasNext() {
@@ -122,7 +119,6 @@ public class DOMAdapter extends ModelAdapter {
           advance();
           return result;
         }
-        @Override
         public void remove() {
           throw new UnsupportedOperationException();
         }

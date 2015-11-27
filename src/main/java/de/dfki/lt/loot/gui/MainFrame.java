@@ -118,7 +118,6 @@ public class MainFrame extends JFrame {
       _r = r;
     }
 
-    @Override
     public void actionPerformed(ActionEvent e) {
       _r.run();
     }
@@ -199,7 +198,6 @@ public class MainFrame extends JFrame {
   protected JMenu recentFiles() {
     return new HistoryView("Recent Files", _preferences.recentFiles(), null,
         new ActionListener() {
-          @Override
           public void actionPerformed(ActionEvent e) {
             String fileName = e.getActionCommand();
             try {
@@ -684,7 +682,6 @@ public class MainFrame extends JFrame {
           newButton((String) spec[1],(String) spec[0],
               (String) spec[2],(String) spec[3],
               new ActionListener() {
-                 @Override
                  public void actionPerformed(ActionEvent e) {
                    clearStatusLine(); r.run();
                  }
@@ -756,7 +753,6 @@ public class MainFrame extends JFrame {
     if (_history != null) {
       _historyView = new HistoryView("Recent Input", _history,
           this, new ActionListener() {
-        @Override
         public void actionPerformed(ActionEvent e) {
           setInput(e.getActionCommand());
         }
@@ -857,7 +853,6 @@ public class MainFrame extends JFrame {
 
   protected void addAssociations() {
     addFileAssociation(new ObjectHandler() {
-      @Override
       public boolean process(File f, InputStream in, MainFrame mf)
           throws IOException {
         Document d = MainFrame.readXmlFile(in);
