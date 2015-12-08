@@ -14,12 +14,10 @@ import de.dfki.lt.loot.gui.nodes.BracketNode.Orientation;
 
 public class AlignMapLayout extends FacetLayoutBase {
 
-  @Override
   public int facet() {
     return ModelAdapter.MAP;
   }
 
-  @Override
   public GraphicalNode
   transform(Object model, ViewContext context, int facetMask) {
     ModelAdapter adapt = context._adapt;

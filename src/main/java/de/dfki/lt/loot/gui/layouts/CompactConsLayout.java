@@ -11,12 +11,10 @@ import de.dfki.lt.loot.gui.nodes.BracketNode.Orientation;
 
 public class CompactConsLayout extends FacetLayoutBase {
 
-  @Override
   public int facet() {
     return ModelAdapter.CONS;
   }
 
-  @Override
   public GraphicalNode
   transform(Object model, ViewContext context, int facetMask) {
     AligningNode node = new AligningNode('h');

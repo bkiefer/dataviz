@@ -33,22 +33,18 @@ public class IniFileReader {
 
       private LinkedHashMap<String, String> _currentSection = null;
 
-      @Override
       public LinkedHashMap<String, LinkedHashMap<String, String>> getResult() {
         return _result;
       }
 
-      @Override
       public void keyValuePair(String key, String value) {
         _currentSection.put(key, value);
       }
 
-      @Override
       public void sectionEnd(String name) {
         _currentSection = null;
       }
 
-      @Override
       public void sectionStart(String name) {
         _currentSection = new LinkedHashMap<String, String>();
         _result.put(name, _currentSection);

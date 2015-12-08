@@ -7,13 +7,11 @@ import de.dfki.lt.loot.gui.nodes.TextNode;
 
 public class BasicAtomLayout implements FacetLayout {
 
-  @Override
   public
   int facet() {
     return ModelAdapter.ATOM | ModelAdapter.SYMBOL;
   }
 
-  @Override
   public
   GraphicalNode transform(Object model, ViewContext context, int facetMask) {
     if (model == null) return new TextNode("<NULL>");
@@ -25,7 +23,6 @@ public class BasicAtomLayout implements FacetLayout {
   }
 
   /** This layout does not use any meta layout */
-  @Override
   public void register(FacetLayout metaLayout) {}
 
 }

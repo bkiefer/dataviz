@@ -51,12 +51,10 @@ public class SimpleTreeLayout extends FacetLayoutBase {
     this.nodeDistance = nodeDistance;
   }
 
-  @Override
   public int facet() {
     return ModelAdapter.TREE;
   }
 
-  @Override
   public GraphicalNode
   transform(Object model, ViewContext context, int facetMask) {
     GraphNode result = new GraphNode(model);
