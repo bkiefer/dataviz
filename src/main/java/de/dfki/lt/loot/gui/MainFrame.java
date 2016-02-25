@@ -100,6 +100,16 @@ public class MainFrame extends JFrame {
     return null;
   }
 
+  public static void setUIFont (javax.swing.plaf.FontUIResource f) {
+    java.util.Enumeration keys = UIManager.getLookAndFeelDefaults().keys();
+    while (keys.hasMoreElements()) {
+      Object key = keys.nextElement();
+      Object value = UIManager.get (key);
+      if (value != null && value instanceof javax.swing.plaf.FontUIResource)
+        UIManager.put (key, f);
+    }
+  }
+
   public static class RunnableAction extends AbstractAction {
     private Runnable _r;
 
