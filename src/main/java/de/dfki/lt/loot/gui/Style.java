@@ -1,12 +1,8 @@
 package de.dfki.lt.loot.gui;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Stroke;
+import java.awt.*;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This is the <code>Style</code> class. There are four different Styles:
@@ -200,6 +196,22 @@ public class Style {
 
     // return changed Graphics object
     return g;
+  }
+
+  public static void increaseDefaultFontSize(int points) {
+    for (Style entry : styleMap.values()) {
+      Font f = entry.font;
+      entry.font = new Font(f.getName(), f.getStyle(),
+          (int)(f.getSize() + points));
+    }
+  }
+
+  public static void increaseDefaultFontSize(double factor) {
+    for (Style entry : styleMap.values()) {
+      Font f = entry.font;
+      entry.font = new Font(f.getName(), f.getStyle(),
+          (int)(f.getSize() * factor));
+    }
   }
 
 }
