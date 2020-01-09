@@ -45,7 +45,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -68,7 +69,7 @@ import de.dfki.lt.loot.gui.util.ProgressListener;
 @SuppressWarnings("serial")
 public class MainFrame extends JFrame {
 
-  protected static final Logger logger = Logger.getLogger(MainFrame.class);
+  protected static final Logger logger = LoggerFactory.getLogger(MainFrame.class);
 
   /** This contains the currently open frames. */
   protected static List<MainFrame> _openFrames = new ArrayList<MainFrame>();

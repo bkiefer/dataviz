@@ -6,7 +6,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.dfki.lt.loot.gui.MouseListener;
 import de.dfki.lt.loot.gui.ViewContext;
@@ -26,7 +27,7 @@ public class ModelAdapterFactory {
   }
 
   private static void init() {
-    logger = Logger.getLogger(ModelAdapterFactory.class);
+    logger = LoggerFactory.getLogger(ModelAdapterFactory.class);
     _adapterPrototypes = new HashMap<Class<?>, Class<? extends ModelAdapter>>();
     _layoutPrototypes = new HashMap<Class<?>, Class<? extends Layout>>();
     _listenerPrototypes = new HashMap<Class<?>, Class<? extends MouseListener>>();

@@ -1,23 +1,20 @@
 package de.dfki.lt.loot.gui.util;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
+import java.io.*;
 import java.util.HashMap;
 import java.util.zip.GZIPInputStream;
 
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.dfki.lt.loot.gui.MainFrame;
 
 
 public class GenericFileProcessor implements FileProcessor {
-  private static final Logger logger = Logger.getLogger(FileProcessor.class);
+  private static final Logger logger = LoggerFactory.getLogger(FileProcessor.class);
 
   /** Associates file extensions with input readers */
   protected HashMap<String, FileAssociation> _associations =
