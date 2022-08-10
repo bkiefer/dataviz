@@ -8,6 +8,7 @@ import java.util.PriorityQueue;
 import de.dfki.lt.loot.gui.Style;
 import de.dfki.lt.loot.gui.ViewContext;
 import de.dfki.lt.loot.gui.adapters.ModelAdapter;
+import de.dfki.lt.loot.gui.connectors.EmptyConnector;
 import de.dfki.lt.loot.gui.connectors.SquareBendConnector;
 import de.dfki.lt.loot.gui.nodes.CircleNode;
 import de.dfki.lt.loot.gui.nodes.GraphNode;
@@ -144,14 +145,18 @@ public class ChartLayout implements Layout {
                 Style.get(active != null ? active : "edge"));
           _context.setRepresentative(edge, edgeNode);
           graphNode.addNode(edgeNode);
-
-          graphNode.addConnector(
-              new SquareBendConnector(sourceNode, edgeNode, 'H'));
           GraphicalNode targetNode =
             _context.getRepresentative(adapt.target(edge));
           assert(targetNode != null);
+          boolean targetIsSource = sourceNode.equals(targetNode);
           graphNode.addConnector(
-              new SquareBendConnector(edgeNode, targetNode, 'V'));
+              targetIsSource
+              ? new EmptyConnector(sourceNode, edgeNode)
+                  : new SquareBendConnector(sourceNode, edgeNode, 'H'));
+          graphNode.addConnector(
+              targetIsSource
+              ? new EmptyConnector(edgeNode, targetNode)
+                  : new SquareBendConnector(edgeNode, targetNode, 'V'));
         }
       }
     }
