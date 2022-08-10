@@ -71,7 +71,7 @@ public class ChartLayout implements Layout {
 
     public ChartEdge(int s, int e, Object edge){
       start = s; end = e; modelEdge = edge;
-      level = -1;
+      level = 0;
     }
 
     /** This computes the height of an edge based on its children only.
@@ -81,7 +81,7 @@ public class ChartLayout implements Layout {
      */
     @SuppressWarnings("rawtypes")
     public int computeTreeLevel(IdentityHashMap<Object, ChartEdge> edgeLevel) {
-      if (level >= 0) {
+      if (level != 0) {
         return level;
       }
 
@@ -90,13 +90,18 @@ public class ChartLayout implements Layout {
         for (Object child : children) {
           if (child != null) {
             int sublevel = edgeLevel.get(child).computeTreeLevel(edgeLevel);
-            level = Math.max(level, sublevel);
+            level = (start == end)
+                ?  Math.min(level, sublevel) : Math.max(level, sublevel);
           }
         }
-        ++level;
+        if (start == end) {
+          --level;
+        } else {
+          ++level;
+        }
       }
 
-      return level;
+      return (start == end) ? -level : level;
     }
 
     /** Compare edges on the basis of a) span and b) tree height (max path
@@ -183,8 +188,10 @@ public class ChartLayout implements Layout {
     // maxHeight[j] contains the maximum height of an edge in the gap between
     // nodes j and j + 1
     int[] maxHeight = new int[vertexNo];
+    int[] minLoop = new int[vertexNo];
     for (int j = 0; j < vertexNo; ++j) {
       maxHeight[j] = 0;
+      minLoop[j] = 0;
     }
     IdentityHashMap<GraphicalNode, Integer> edgeLevel =
       new IdentityHashMap<GraphicalNode, Integer>();
@@ -192,18 +199,23 @@ public class ChartLayout implements Layout {
     while (! edgeQueue.isEmpty()) {
       ChartEdge cEdge = edgeQueue.poll();
       int edgeHeight = 0;
-      // after this loop, edgeHeight will be the maximum height of an edge
-      // between cEdge.start and cEdge.end
-      for (int j = cEdge.start; j < cEdge.end; ++j) {
-        edgeHeight = Math.max(edgeHeight, maxHeight[j]);
+      if (cEdge.start < cEdge.end) {
+        // after this loop, edgeHeight will be the maximum height of an edge
+        // between cEdge.start and cEdge.end
+        for (int j = cEdge.start; j < cEdge.end; ++j) {
+          edgeHeight = Math.max(edgeHeight, maxHeight[j]);
+        }
+        ++edgeHeight;
+        // update maxHeight to include the currently treated edge
+        for (int j = cEdge.start; j < cEdge.end; ++j) {
+          maxHeight[j] = Math.max(edgeHeight, maxHeight[j]);
+        }
+      } else {
+        edgeHeight = minLoop[cEdge.start] - 1;
+        minLoop[cEdge.start] = edgeHeight;
       }
-      ++edgeHeight;
       // now we've computed the abstract (grid) height for an edge
       edgeLevel.put(_context.getRepresentative(cEdge.modelEdge), edgeHeight);
-      // update maxHeight to include the currently treated edge
-      for (int j = cEdge.start; j < cEdge.end; ++j) {
-        maxHeight[j] = Math.max(edgeHeight, maxHeight[j]);
-      }
     }
 
     graphNode.setLayoutAlgorithm(new ChartLayoutAlgorithm(vertices, edgeLevel));
