@@ -46,6 +46,9 @@ public class ChartLayoutAlgorithm implements LayoutAlgorithm {
     }
     maxVerticesHeight = (int) ((1 + _relativeGap) * maxVerticesHeight);
 
+    // make room for the bend of the connector on both sides
+    maxVerticesWidth += 2 * maxVerticesHeight;
+
     // now compute offset from left border
     int leftOffset = (maxVerticesWidth + paddingOffset) / 2;
     int topOffset = (maxVerticesHeight + paddingOffset) / 2;
@@ -84,7 +87,7 @@ public class ChartLayoutAlgorithm implements LayoutAlgorithm {
         if (edgeY < depth)
           depth = edgeY;
       }
-      // edgeY will have to be corrected after we now height and depth
+      // edgeY will have to be corrected after we know height and depth
       // because the zero line will have to be moved
       edgeNode.setOrigin(edgeX, edgeY);
     }

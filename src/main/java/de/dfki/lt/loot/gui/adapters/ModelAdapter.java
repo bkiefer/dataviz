@@ -16,11 +16,11 @@ public abstract class ModelAdapter {
   }
 
   /* -- SymbolFacet -- */
-  
+
   public String getString(Object model) {
     throw new UnsupportedOperationException();
   }
-  
+
   /* -- ConsFacet -- */
 
   public Object getFirst(Object model){
@@ -67,7 +67,7 @@ public abstract class ModelAdapter {
    * but besides the target vertex, it can only contain attribute information.
    */
   @SuppressWarnings("rawtypes")
-  public Iterable outEdges(Object edge) {
+  public Iterable outEdges(Object vertex) {
     throw new UnsupportedOperationException();
   }
 
@@ -75,5 +75,4 @@ public abstract class ModelAdapter {
   public Object target(Object edge) {
     throw new UnsupportedOperationException();
   }
-
 }

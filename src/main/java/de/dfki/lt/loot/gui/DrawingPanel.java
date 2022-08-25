@@ -85,7 +85,7 @@ implements MouseMotionListener, java.awt.event.MouseListener {
     this(aLayout, adapter);
     setModel(aModel, null, null);
   }
-  
+
   /** set the top model node for this panel */
   public void setModel(Object aModel, ModelAdapter adapter, Layout layout) {
     if (aModel != null) {
@@ -126,17 +126,22 @@ implements MouseMotionListener, java.awt.event.MouseListener {
     setModel(aModel, null, null);
     return this;
   }
-   
+
   /** set the top model node for this panel */
   public DrawingPanel setModel(Object aModel, Layout layout) {
     setModel(aModel, null, layout);
     return this;
   }
-   
+
   /** set the top model node for this panel */
   public DrawingPanel setModel(Object aModel, ModelAdapter adapter) {
     setModel(aModel, adapter, null);
     return this;
+  }
+
+  public void updateView() {
+    _context = new ViewContext(_model, _adapter);
+    _root = _layout.computeView(_model, _context);
   }
 
   public JScrollPane wrapScrollable() {
@@ -170,7 +175,7 @@ implements MouseMotionListener, java.awt.event.MouseListener {
   public Layout getModelLayout() {
     return _layout;
   }
-  
+
   public void redraw(GraphicalNode node) {
     Rectangle r = node.getAbsRect(); r.grow(1,1);// r.grow(3,3);
     this.repaint(r);
@@ -255,7 +260,7 @@ implements MouseMotionListener, java.awt.event.MouseListener {
     removeMouseMotionListener(this);
     removeMouseListener(this);
   }
-  
+
   private void fireMouseEnters(MouseEvent e, GraphicalNode node) {
     for (MouseListener l : _nodeListeners) {
       l.mouseEnters(new de.dfki.lt.loot.gui.MouseEvent(this, e), node);
