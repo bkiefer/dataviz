@@ -29,4 +29,8 @@ public class CompactLayout extends AbstractLayout {
     stl.setNodeDistance(nodeDistance);
   }
 
+  /** @param straight tree edges or zig zag tree edges? */
+  public void setTreeEdgesStraight(boolean straight) {
+    stl.straightEdges(straight);
+  }
 }

@@ -3,6 +3,7 @@ package de.dfki.lt.loot.gui.layouts;
 import de.dfki.lt.loot.gui.ViewContext;
 import de.dfki.lt.loot.gui.adapters.ModelAdapter;
 import de.dfki.lt.loot.gui.connectors.StraightConnector;
+import de.dfki.lt.loot.gui.connectors.ZigZagConnector;
 import de.dfki.lt.loot.gui.nodes.GraphNode;
 import de.dfki.lt.loot.gui.nodes.GraphicalNode;
 
@@ -16,6 +17,9 @@ public class SimpleTreeLayout extends FacetLayoutBase {
 
   /** Holds the nodeDistance. Default is 20. */
   protected int nodeDistance = 20;
+
+  /** Straight connector or ZigZag connector? */
+  protected boolean straight;
 
   /** If true, this algorithm layouts from right to left, otherwise from top
    *  to bottom.
@@ -51,10 +55,16 @@ public class SimpleTreeLayout extends FacetLayoutBase {
     this.nodeDistance = nodeDistance;
   }
 
+  public void straightEdges(boolean straight) {
+    this.straight = straight;
+  }
+
+  @Override
   public int facet() {
     return ModelAdapter.TREE;
   }
 
+  @Override
   public GraphicalNode
   transform(Object model, ViewContext context, int facetMask) {
     GraphNode result = new GraphNode(model);
@@ -85,8 +95,9 @@ public class SimpleTreeLayout extends FacetLayoutBase {
           ? transformTreeInner(dtr, context, graphNode, facetMask)
           : _meta.transform(dtr, context, ModelAdapter.ALL);
           graphNode.addNode(nextDaughter);
-          graphNode.addConnector(new StraightConnector(parentNode,
-                                                       nextDaughter));
+          graphNode.addConnector(straight
+              ? new StraightConnector(parentNode, nextDaughter)
+              : new ZigZagConnector(parentNode, nextDaughter, this.horizontal ? 'H':'V'));
       }
     }
     return parentNode;

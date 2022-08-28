@@ -1,7 +1,5 @@
 package de.dfki.lt.loot.gui;
 
-import static org.junit.Assert.*;
-
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
@@ -19,7 +17,7 @@ import de.dfki.lt.loot.gui.adapters.EmptyModelAdapter;
 import de.dfki.lt.loot.gui.adapters.MapAdapterIterator;
 import de.dfki.lt.loot.gui.adapters.ModelAdapter;
 import de.dfki.lt.loot.gui.adapters.ModelAdapterFactory;
-import de.dfki.lt.loot.gui.connectors.SquareBendConnector;
+import de.dfki.lt.loot.gui.connectors.ZigZagConnector;
 import de.dfki.lt.loot.gui.connectors.StraightConnector;
 import de.dfki.lt.loot.gui.controllers.ClickHighlightListener;
 import de.dfki.lt.loot.gui.controllers.HoverHighlightListener;
@@ -40,6 +38,7 @@ import de.dfki.lt.loot.gui.nodes.TabularNode;
 import de.dfki.lt.loot.gui.nodes.TextNode;
 
 class TestNodesLayout implements Layout {
+  @Override
   public GraphicalNode computeView(Object model, ViewContext ctxt) {
     return level5();
   }
@@ -170,6 +169,7 @@ class TestNodesLayout implements Layout {
 class TestIntersectLayout implements Layout {
   public class NoLayoutAlgorithm implements LayoutAlgorithm {
 
+    @Override
     public Rectangle execute(GraphNode root, Graphics g) {
       int width = 0 , height = 0;
       for (GraphicalNode node : root.getNodes()) {
@@ -183,6 +183,7 @@ class TestIntersectLayout implements Layout {
     }
   }
 
+  @Override
   public GraphicalNode computeView(Object model, ViewContext ctxt) {
     int radius = 400;
     GraphNode node = new GraphNode(null);
@@ -219,11 +220,13 @@ class TestBendConnectors implements Layout {
 
   class NoLayoutAlgorithm implements LayoutAlgorithm {
 
+    @Override
     public Rectangle execute(GraphNode result, Graphics g) {
       return new Rectangle(0,0,340,340);
     }
   }
 
+  @Override
   public GraphicalNode computeView(Object model, ViewContext ctxt) {
     GraphNode result = new GraphNode(model);
     result.setLayoutAlgorithm(new NoLayoutAlgorithm());
@@ -252,11 +255,61 @@ class TestBendConnectors implements Layout {
     for (i = 0; i < 3; ++i) {
       for (int j = 0; j < 3; ++j) {
         if (i != 1 && j != 1) {
-          result.addConnector(new SquareBendConnector(grid[1][1], grid[i][j], 'H'));
-          result.addConnector(new SquareBendConnector(grid[i][j], grid[1][1], 'H'));
+          result.addConnector(new ZigZagConnector(grid[1][1], grid[i][j], 'H'));
+          result.addConnector(new ZigZagConnector(grid[i][j], grid[1][1], 'H'));
         }
       }
     }
+    return result;
+  }
+}
+
+class TestBendBendConnectors implements Layout {
+
+  class NoLayoutAlgorithm implements LayoutAlgorithm {
+
+    @Override
+    public Rectangle execute(GraphNode result, Graphics g) {
+      return new Rectangle(0,0,340,340);
+    }
+  }
+
+  @Override
+  public GraphicalNode computeView(Object model, ViewContext ctxt) {
+    GraphNode result = new GraphNode(model);
+    result.setLayoutAlgorithm(new NoLayoutAlgorithm());
+    int[] xCoord = {40, 140, 240};
+    int[] yCoord = {40, 140, 240};
+    GraphicalNode[][] grid = new GraphicalNode[3][];
+    int i = 0;
+    for (int x : xCoord) {
+      grid[i] = new GraphicalNode[3];
+      int j = 0;
+      for (int y : yCoord) {
+        if (i != 1 && j != 1) {
+          GraphicalNode c = new TextNode("" + i + "x" + j);
+          grid[i][j] = c;
+          c.setOrigin(x, y);
+          result.addNode(c);
+        }
+        ++j;
+      }
+      ++i;
+    }
+    grid[1][1] = new TextNode("CENTER");
+    grid[1][1].setOrigin(xCoord[1], yCoord[1]);
+    result.addNode(grid[1][1]);
+
+    result.addConnector(new ZigZagConnector(grid[1][1], grid[2][2], 'H'));
+    result.addConnector(new ZigZagConnector(grid[1][1], grid[0][2], 'H'));
+    result.addConnector(new ZigZagConnector(grid[1][1], grid[2][0], 'H'));
+    result.addConnector(new ZigZagConnector(grid[1][1], grid[0][0], 'H'));
+
+    result.addConnector(new ZigZagConnector(grid[1][1], grid[2][2], 'V'));
+    result.addConnector(new ZigZagConnector(grid[1][1], grid[0][2], 'V'));
+    result.addConnector(new ZigZagConnector(grid[1][1], grid[2][0], 'V'));
+    result.addConnector(new ZigZagConnector(grid[1][1], grid[0][0], 'V'));
+
     return result;
   }
 }
@@ -265,6 +318,7 @@ class TestTreeLayout implements Layout {
 
   TextNode[] nodes = new TextNode[11];
 
+  @Override
   public GraphicalNode computeView(Object model, ViewContext ctxt) {
     GraphNode treeNode = new GraphNode(null);
     TextNode[] nodes = new TextNode[11];
@@ -286,6 +340,7 @@ class TestTreeLayout implements Layout {
 
 class TestBracketsLayout implements Layout {
 
+  @Override
   public GraphicalNode computeView(Object model, ViewContext ctxt) {
     Style.add("pad", null, null, null, new Padding(2,0,2), null);
     TabularNode res = new TabularNode(true, "cc");
@@ -406,7 +461,7 @@ public class DisplayTest {
   public static void main(String[] args) throws Exception {
     CollectionsAdapter.init();
     DOMAdapter.init();
-    for (int which = 0; which < 9; ++which) {
+    for (int which = 9; which < 10; ++which) {
       //if (which != 6) continue;
       switch(which) {
       case 0: {
@@ -513,6 +568,15 @@ public class DisplayTest {
         ((DrawingPanel)mf.getContentArea()).setModel(root);
         break;
       }
+      case 9: {
+        DrawingPanel contentArea =
+          new DrawingPanel(
+              new TestBendBendConnectors(),
+              new EmptyModelAdapter());
+        MainFrame mf = new MainFrame("SquareBendBendTest", contentArea);
+        ((DrawingPanel)mf.getContentArea()).setModel("SquareBendBendTest");
+        break;
+      }
       /*
       case 1: {
         FSGrammar gram =
@@ -549,6 +613,6 @@ public class DisplayTest {
       }
     }
   }
-  
+
   @Test public void testDisplay() {}
 }
