@@ -7,7 +7,7 @@
 
   <groupId>de.dfki.mlt</groupId>
   <artifactId>dataviz</artifactId>
-  <version>0.1.4</version>
+  <version>0.1.5</version>
   <packaging>jar</packaging>
 
   <inceptionYear>2009</inceptionYear>
@@ -18,7 +18,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <junit.version>4.13.2</junit.version>
     <slf4j.version>2.0.9</slf4j.version>
-    <logback.version>1.5.20</logback.version>
+    <logback.version>1.5.26</logback.version>
   </properties>
 
   <build>
